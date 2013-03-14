@@ -2076,7 +2076,21 @@ public class Item extends DSpaceObject
         // leaving the database in an inconsistent state
         AuthorizeManager.authorizeAction(ourContext, this, Constants.REMOVE);
 
-        ourContext.addEvent(new Event(Event.DELETE, Constants.ITEM, getID(), getHandle()));
+
+        VersioningService versioningService = new DSpace().getSingletonService(VersioningService.class);
+        VersionHistory history = versioningService.findVersionHistory(ourContext, this.getID());
+
+        Version version=null;
+        Version previous=null;
+        int objectId=-1;
+        if(history!=null){
+            version  = versioningService.getVersion(ourContext, this);
+            previous = history.getPrevious(version);
+            if(previous!=null)
+                objectId=previous.getItem().getID();
+        }
+
+        ourContext.addEvent(new Event(Event.DELETE, Constants.ITEM, getID(), Constants.ITEM, objectId, getHandle()));
 
         VersioningService versioningService = new DSpace().getSingletonService(VersioningService.class);
         VersionHistory history = versioningService.findVersionHistory(ourContext, this.getID());
