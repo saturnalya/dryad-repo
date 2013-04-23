@@ -1376,7 +1376,7 @@ public class Collection extends DSpaceObject
      *
      * @return  total items
      */
-     public int countItems(String ...afterDate)
+     public int countItems(String ...x)
         throws SQLException
      {
          int itemcount = 0;
@@ -1390,21 +1390,21 @@ public class Collection extends DSpaceObject
                     + "AND collection2item.item_id = item.item_id "
                     + "AND in_archive ='1' AND item.withdrawn='0' ";
 
-             if(afterDate.length>0){
+             if(x.length>0){
                  query = "select count(*) from collection2item,item, metadatavalue " +
                          "where collection2item.collection_id= ? " +
                          "AND collection2item.item_id = item.item_id " +
                          "and item.item_id=metadatavalue.item_id " +
                          "AND in_archive ='1' AND item.withdrawn='0' " +
                          "and metadatavalue.metadata_field_id=11 " +
-                         "and to_date(metadatavalue.text_value, 'YYYY-MM-DD') >= to_date( ? , 'YYYY-MM-DD')";
+                         "and to_date(metadatavalue.text_value, 'YYYYMMDD') >= to_date( ? , 'YYYYMMDD')";
              }
 
             statement = ourContext.getDBConnection().prepareStatement(query);
             statement.setInt(1,getID());
 
-            if(afterDate.length>0){
-                statement.setString(2,afterDate[0]);
+            if(x.length>0){
+                statement.setString(2,x[0]);
             }
 
             rs = statement.executeQuery();
