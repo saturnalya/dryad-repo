@@ -10,8 +10,6 @@ package org.dspace.app.xmlui.aspect.paymentsystem;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.cocoon.environment.ObjectModelHelper;
@@ -60,6 +58,25 @@ public class ShoppingCartTransformer extends AbstractDSpaceTransformer {
 
     private static final Logger log = Logger.getLogger(AbstractDSpaceTransformer.class);
 
+    protected static final Message T_Header=
+            message("xmlui.PaymentSystem.shoppingcart.order.header");
+
+    protected static final Message T_Payer=
+            message("xmlui.PaymentSystem.shoppingcart.order.payer");
+    protected static final Message T_Price=
+            message("xmlui.PaymentSystem.shoppingcart.order.price");
+    protected static final Message T_Surcharge=
+            message("xmlui.PaymentSystem.shoppingcart.order.surcharge");
+    protected static final Message T_Total=
+            message("xmlui.PaymentSystem.shoppingcart.order.total");
+    protected static final Message T_noInteg=
+            message("xmlui.PaymentSystem.shoppingcart.order.noIntegrateFee");
+    protected static final Message T_Country=
+            message("xmlui.PaymentSystem.shoppingcart.order.country");
+    protected static final Message T_Voucher=
+            message("xmlui.PaymentSystem.shoppingcart.order.voucher");
+   protected static final Message T_Apply=
+            message("xmlui.PaymentSystem.shoppingcart.order.apply");
     protected static final Message T_CartHelp=
             message("xmlui.PaymentSystem.shoppingcart.help");
     private static final String DSPACE_SUBMISSION_INFO = "dspace.submission.info";
@@ -68,12 +85,6 @@ public class ShoppingCartTransformer extends AbstractDSpaceTransformer {
             SQLException, IOException, AuthorizeException {
 
         Request request = ObjectModelHelper.getRequest(objectModel);
-
-        String shoppingCartExist =  request.getParameter("shopping-cart-exist");
-
-        if(shoppingCartExist==null||!shoppingCartExist.equals("true")){
-
-        Map<String,String> messages = new HashMap<String,String>();
 
         PaymentSystemConfigurationManager manager = new PaymentSystemConfigurationManager();
         Enumeration s = request.getParameterNames();
@@ -110,27 +121,17 @@ public class ShoppingCartTransformer extends AbstractDSpaceTransformer {
             }
             if(!initalPage){
             //DryadJournalSubmissionUtils.journalProperties.get("");
-            PaymentSystemService paymentSystemService = new DSpace().getSingletonService(PaymentSystemService.class);
-            ShoppingCart shoppingCart = null;
+            PaymentSystemService payementSystemService = new DSpace().getSingletonService(PaymentSystemService.class);
+            ShoppingCart transaction = null;
             //create new transaction or update transaction id with item
-            shoppingCart = paymentSystemService.getShoppingCartByItemId(context,item.getID());
-            paymentSystemService.updateTotal(context,shoppingCart,null);
+            transaction = getTransaction(item, payementSystemService);
+            payementSystemService.updateTotal(context,transaction,null);
 
             //add the order summary form (wrapped in div.ds-option-set for proper sidebar style)
 
             List info = options.addList("Payment",List.TYPE_FORM,"paymentsystem");
 
-            //todo:find a better way to detect the step we are in
-
-            if(request.getRequestURI().contains("deposit-confirmed"))
-            {
-                paymentSystemService.generateNoEditableShoppingCart(context,info,shoppingCart,manager,request.getContextPath(),messages);
-            }
-            else {
-                paymentSystemService.generateShoppingCart(context,info,shoppingCart,manager,request.getContextPath(),messages);
-
-            }
-
+            generateOrderFrom(info,transaction,manager,payementSystemService,request.getContextPath());
 
             org.dspace.app.xmlui.wing.element.Item help = options.addList("need-help").addItem();
             help.addContent(T_CartHelp);
@@ -141,5 +142,84 @@ public class ShoppingCartTransformer extends AbstractDSpaceTransformer {
         }
     }
     }
+
+    private void generateVoucherForm(org.dspace.app.xmlui.wing.element.List info,PaymentSystemConfigurationManager manager,ShoppingCart shoppingCart) throws WingException,SQLException{
+        Voucher voucher1 = Voucher.findById(context,shoppingCart.getVoucher());
+        info.addItem("errorMessage","errorMessage").addContent("");
+        info.addLabel(T_Voucher);
+        org.dspace.app.xmlui.wing.element.Item voucher = info.addItem("voucher-list","voucher-list");
+
+            Text voucherText = voucher.addText("voucher","voucher");
+            voucher.addButton("apply","apply");
+            if(voucher1!=null){
+                voucherText.setValue(voucher1.getCode());
+                info.addItem("remove-voucher","remove-voucher").addXref("#","Remove Voucher : "+voucher1.getCode());
+            }
+            else{
+                info.addItem("remove-voucher","remove-voucher").addXref("#","Remove Voucher : ");
+            }
+
+
+
+    }
+
+    private void generatePrice(org.dspace.app.xmlui.wing.element.List info,PaymentSystemConfigurationManager manager,ShoppingCart shoppingCart,PaymentSystemService paymentSystemService) throws WingException,SQLException{
+        String waiverMessage = "";
+        String symbol = PaymentSystemConfigurationManager.getCurrencySymbol(shoppingCart.getCurrency());
+        switch (paymentSystemService.getWaiver(context,shoppingCart,""))
+        {
+	case ShoppingCart.COUNTRY_WAIVER: waiverMessage = "Data Publishing Charge has been waived due to submitter's association with " + shoppingCart.getCountry() + "."; break;
+	case ShoppingCart.JOUR_WAIVER: waiverMessage = "Data Publishing Charges are covered for all submissions to " + shoppingCart.getJournal() + "."; break;
+	case ShoppingCart.VOUCHER_WAIVER: waiverMessage = "Voucher code applied to Data Publishing Charge."; break;
+	}
+        info.addLabel(T_Price);
+        if(paymentSystemService.hasDiscount(context,shoppingCart,null))
+        {
+            info.addItem("price","price").addContent(symbol+"0");
+        }
+        else
+        {
+            info.addItem("price","price").addContent(String.format("%s%.0f", symbol, shoppingCart.getBasicFee()));
+        }
+        Double noIntegrateFee =  paymentSystemService.getNoIntegrateFee(context,shoppingCart,null);
+
+        //add the no integrate fee if it is not 0
+        info.addLabel(T_noInteg);
+        if(!paymentSystemService.hasDiscount(context,shoppingCart,null)&&noIntegrateFee>0&&!paymentSystemService.hasDiscount(context,shoppingCart,null))
+        {
+            info.addItem("no-integret","no-integret").addContent(String.format("%s%.0f", symbol, noIntegrateFee));
+        }
+        else
+        {
+            info.addItem("no-integret","no-integret").addContent(symbol+"0");
+        }
+        generateSurchargeFeeForm(info,manager,shoppingCart,paymentSystemService);
+
+
+        //add the final total price
+        info.addLabel(T_Total);
+        info.addItem("total","total").addContent(String.format("%s%.0f",symbol, shoppingCart.getTotal()));
+        info.addItem("waiver-info","waiver-info").addContent(waiverMessage);
+    }
+    private void generatePayer(Request request,org.dspace.app.xmlui.wing.element.List info,ShoppingCart shoppingCart,PaymentSystemService paymentSystemService,Item item) throws WingException,SQLException{
+        info.addLabel(T_Payer);
+        String payerName = paymentSystemService.getPayer(context, shoppingCart, null);
+        //if(request.getRequestURI().endsWith("submit"))
+        DCValue[] values= item.getMetadata("prism.publicationName");
+        //WorkspaceItem submission=WorkspaceItem.find(context,item.getID());
+        if(values!=null&&values.length>0)
+        {
+            //on the first page don't generate the payer name, wait until user choose country or journal
+            info.addItem("payer","payer").addContent(payerName);
+        }
+        else
+        {
+            info.addItem("payer","payer").addContent("");
+        }
+
+
+    }
+
+
 
 }
