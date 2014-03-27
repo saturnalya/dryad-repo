@@ -25,12 +25,11 @@ public class DoiDBCheck {
             // Attempts a simple write operation to see if the DOI file is usable
             writer = response.getWriter();
             Minter myMinter = new Minter();
-            // Minter does not instantiate a DOIDatabase until calling getKnownDOI()
+            // getKnownDOI instantiates the DOIDatabase
             DOI doi = myMinter.getKnownDOI(DUMMY_DOI_STRING);
             DOI dummyDoi = new DOI(DUMMY_DOI_STRING, DOI.Type.TOMBSTONE);
-            // Mint a DOI then remove it
-            myMinter.mintDOI(dummyDoi); // If DOI is already in DB this does not write
-            myMinter.remove(dummyDoi); // This writes
+            // mintDOI is the only exposed write operation
+            myMinter.mintDOI(dummyDoi);
             writer.println("OK");
         } catch (Exception ex) {
             writer.println("Exception: " + ex);
