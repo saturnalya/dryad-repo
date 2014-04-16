@@ -2,9 +2,8 @@
  */
 package org.dspace.curate;
 
-import java.io.ByteArrayInputStream;
+import com.sun.org.apache.bcel.internal.generic.D2F;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -25,22 +24,21 @@ import org.jdom.JDOMException;
  * failed DOI Registration.
  * @author Dan Leehr <dan.leehr@nescent.org>
  */
-@Distributive
 public class DataCiteXMLValidator extends AbstractCurationTask {
     private static final Logger log = Logger.getLogger(DataCiteXMLValidator.class);
-    private static final String HEADERS = "\"Identifier\",\"Status\",\"Result\",\"Detail\"";
+    private static final String HEADERS = "\"DOI\",\"Status\",\"Result\",\"Detail\"";
     private static SAXBuilder builder = new SAXBuilder("org.apache.xerces.parsers.SAXParser", true);
     private void report(Item item, Integer status, String result, String detail) {
-        DCValue[] dcIdentifier = item.getMetadata("dc.identifier");
-        String identifier;
-        if (dcIdentifier.length > 0) {
-            identifier = dcIdentifier[0].value;
-        } else {
-            identifier = String.valueOf(item.getID());
+        //TODO: Do something with the result.
+        // DOI, status code, result, detail
+        DCValue[] dcdoi = item.getMetadata("dc.identifier");
+        String doi = "";
+        if (dcdoi.length > 0) {
+            doi = dcdoi[0].value;
         }
 
         String message = String.format("\"%s\",%d,\"%s\",\"%s\"",
-                identifier,
+                doi,
                 status,
                 result,
                 detail);
@@ -85,8 +83,7 @@ public class DataCiteXMLValidator extends AbstractCurationTask {
         // validate xml against datacite schema
         // from http://www.jdom.org/docs/faq.html#a0370
         try {
-            InputStream in = new ByteArrayInputStream(dataCiteXmlMetadata.getBytes("UTF-8"));
-            Document doc = builder.build(in);
+            Document doc = builder.build(dataCiteXmlMetadata);
             report(item, Curator.CURATE_SUCCESS, "Validated", null);
         } catch (JDOMException ex) {
             // There was an exception validating
