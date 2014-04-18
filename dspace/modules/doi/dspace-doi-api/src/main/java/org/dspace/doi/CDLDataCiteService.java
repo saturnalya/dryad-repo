@@ -192,7 +192,7 @@ public class CDLDataCiteService {
      * collections
      * @return true if item is in a dryad collection and archived or in blackout
      */
-    public static boolean shouldRegister(Item item) {
+    private static boolean shouldRegister(Item item) {
         // First check publication blackout
         // Items in publication blackout are not archived and are not yet in a
         // collection
@@ -286,14 +286,9 @@ public class CDLDataCiteService {
                 item = item1;
                 doi = getDoiValue(item);
 
-                // Only register/update items that are archived or in blackout
-                boolean shouldRegister = (
-                        item.isArchived() ||
-                        DryadDOIRegistrationHelper.isDataPackageInPublicationBlackout(item)
-                        );
-                if(shouldRegister == false) {
-                    // Impossible to process
-                    System.out.println("Item not processed because it is not in the archive: " + item.getID());
+                // shouldRegister checks blackout/collection/archived
+                if(shouldRegister(item) == false) {
+                    System.out.println("Item not processed because shouldRegister() returned false: " + item.getID());
                     notProcessItems++;
                 } else if (doi != null) {
                     // lookup makes an HTTP call
