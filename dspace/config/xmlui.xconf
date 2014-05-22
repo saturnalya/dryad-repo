@@ -68,6 +68,8 @@
 
 		<aspect name="Administration" path="resource://aspects/Administrative/" />
 
+		<aspect name="Authority" path="resource://aspects/Authority/" />
+
         <aspect name="E-Person" path="resource://aspects/EPerson/" />
 
 	    <aspect name="Statistics" path="resource://aspects/Statistics/" />
