@@ -39,6 +39,7 @@
         <module>versioning</module>
         <module>payment-system</module>
 
+        <module>atmire-authority</module>
         <!--module>solr-load-tester</module-->
 	</modules>
 
@@ -109,6 +110,20 @@
                    <artifactId>versioning-api</artifactId>
                    <version>${pom.version}</version>
                </dependency>
+
+               <dependency>
+                   <groupId>com.atmire</groupId>
+                   <artifactId>atmire-authority</artifactId>
+                   <version>${pom.version}</version>
+               </dependency>
+
+               <!--
+               <dependency>
+                   <groupId>com.atmire</groupId>
+                   <artifactId>authority</artifactId>
+                   <version>${pom.version}</version>
+               </dependency>
+               -->
 
 
                <dependency>
