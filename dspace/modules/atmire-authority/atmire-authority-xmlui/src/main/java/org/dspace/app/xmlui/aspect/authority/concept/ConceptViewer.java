@@ -303,7 +303,7 @@ public class ConceptViewer extends AbstractDSpaceTransformer implements Cacheabl
                 Row header = table.addRow(Row.ROLE_HEADER);
                 header.addCell().addContent("ID");
                 header.addCell().addContent("Identifier");
-                header.addCell().addContent("Preferred Lable");
+                header.addCell().addContent("Preferred Label");
 
                 for(Term term : altTerms)
                 {

@@ -310,7 +310,7 @@ public class TermViewer extends AbstractDSpaceTransformer implements CacheablePr
                 Row header = table.addRow(Row.ROLE_HEADER);
                 header.addCell().addContent("ID");
                 header.addCell().addContent("Identifier");
-                header.addCell().addContent("Preferred Lable");
+                header.addCell().addContent("Preferred Label");
                 for(Concept concept : concepts)
                 {
                     Row item = table.addRow();
