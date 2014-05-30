@@ -579,7 +579,7 @@ public class Scheme extends AuthorityObject
         List<Concept> concepts = new ArrayList<Concept>();
 
         // Get the table rows
-        TableRowIterator tri = DatabaseManager.query(
+        TableRowIterator tri = DatabaseManager.queryTable(
                 myContext,"concept",
                 "SELECT concept.* FROM concept, scheme2concept WHERE " +
                         "scheme2concept.concept_id=concept.id " +

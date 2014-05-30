@@ -210,12 +210,12 @@ CREATE TABLE Scheme2Concept
 --------------------------------------------------------------------------------------------------------------
 --
 
-INSERT INTO Concept2TermRole VALUES (nextval('concept2termrole_seq'),'prefLabel','prefLabel');
-INSERT INTO Concept2TermRole VALUES (nextval('concept2termrole_seq'),'alt','altfLabel');
+INSERT INTO Concept2TermRole VALUES (nextval('concept2termrole_seq'),'preferredLabel','preferredLabel');
+INSERT INTO Concept2TermRole VALUES (nextval('concept2termrole_seq'),'alternateLabel','alternateLabel');
 
-INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'hire','Broder/Narower');
-INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'associate','Associate');
-INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'associate','Equal');
+INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'hierarchical','Broader/Narrower');
+INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'associative','Similar');
+INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'associative','Equivalent');
 
 
 
