@@ -23,6 +23,9 @@ public class SolrChoiceAuthority implements ChoiceAuthority {
 
     private static final Logger log = Logger.getLogger(SolrChoiceAuthority.class);
 
+    public SolrChoiceAuthority() {
+    }
+
     public Choices getMatches(String field, String text, int collection, int start, int limit, String locale, boolean bestMatch) {
         if(limit == 0)
             limit = 10;
@@ -210,7 +213,7 @@ public class SolrChoiceAuthority implements ChoiceAuthority {
     }
 
 
-    public static AuthoritySearchService getSearchService() {
+    private AuthoritySearchService getSearchService() {
         DSpace dspace = new DSpace();
 
         org.dspace.kernel.ServiceManager manager = dspace.getServiceManager();
