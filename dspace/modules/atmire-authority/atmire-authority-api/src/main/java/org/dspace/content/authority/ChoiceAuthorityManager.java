@@ -214,9 +214,10 @@ public final class ChoiceAuthorityManager
         ChoiceAuthority ma = controller.get(fieldKey);
         if (ma == null)
         {
-            throw new IllegalArgumentException(
-                    "No choices plugin was configured for  field \"" + fieldKey
-                            + "\".");
+//            throw new IllegalArgumentException(
+//                    "No choices plugin was configured for  field \"" + fieldKey
+//                            + "\".");
+            return new Choices(true);
         }
         return ma.getBestMatch(fieldKey, query, collection, locale);
     }

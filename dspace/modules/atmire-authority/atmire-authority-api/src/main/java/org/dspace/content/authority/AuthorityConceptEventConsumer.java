@@ -211,7 +211,7 @@ public class AuthorityConceptEventConsumer implements Consumer {
         authorityValue.setLastModified(concept.getLastModified());
         authorityValue.setDeleted(false);
         authorityValue.setValue(concept.getPreferredLabel());
-        authorityValue.setField(concept.getScheme().getIdentifier());
+        authorityValue.setField(concept.getScheme().getIdentifier().replace(".","_"));
         return authorityValue;
     }
 

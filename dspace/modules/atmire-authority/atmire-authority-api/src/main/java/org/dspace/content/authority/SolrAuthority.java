@@ -11,20 +11,17 @@ import org.dspace.core.ConfigurationManager;
 import org.dspace.utils.DSpace;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Solr BAsed Choice Authority to support interaction with a core Solr based Authority Control Service.
- *
- * @author Lantian Gai, Mark Diggory, Kevin Van de Velde, Ben Bosman
+ * User: kevin (kevin at atmire.com)
+ * Date: 6-dec-2010
+ * Time: 13:37:50
  */
-public class SolrChoiceAuthority implements ChoiceAuthority {
+public class SolrAuthority implements ChoiceAuthority {
 
-    private static final Logger log = Logger.getLogger(SolrChoiceAuthority.class);
-
-    public SolrChoiceAuthority() {
-    }
+    private static final Logger log = Logger.getLogger(SolrAuthority.class);
 
     public Choices getMatches(String field, String text, int collection, int start, int limit, String locale, boolean bestMatch) {
         if(limit == 0)
@@ -68,9 +65,7 @@ public class SolrChoiceAuthority implements ChoiceAuthority {
         queryArgs.addFilterQuery("field:" + field);
         queryArgs.set(CommonParams.START, start);
         //We add one to our facet limit so that we know if there are more matches
-        int maxNumberOfSolrResults = limit + 1;
-
-        queryArgs.set(CommonParams.ROWS, maxNumberOfSolrResults);
+        queryArgs.set(CommonParams.ROWS, limit + 1);
 
         if (ConfigurationManager.getBooleanProperty("solrauthority.sort-alphabetically", true)) {
             String sortField = ConfigurationManager.getProperty("solrauthority.sortfieldtype." + field);
@@ -102,7 +97,6 @@ public class SolrChoiceAuthority implements ChoiceAuthority {
                 int maxDocs = authDocs.size();
                 if (limit < maxDocs)
                     maxDocs = limit;
-                List<AuthorityValue> alreadyPresent = new ArrayList<AuthorityValue>();
                 for (int i = 0; i < maxDocs; i++) {
                     SolrDocument solrDocument = authDocs.get(i);
                     if (solrDocument != null) {
@@ -111,11 +105,10 @@ public class SolrChoiceAuthority implements ChoiceAuthority {
                         Map<String, String> extras = val.choiceSelectMap();
                         extras.put("insolr", val.getId());
                         choices.add(new Choice(val.getId(), val.getValue(), val.getValue(), extras));
-                        alreadyPresent.add(val);
                     }
                 }
 
-                hasMore = true;
+                hasMore = (authDocs.size() == (limit + 1));
             }
 
 
