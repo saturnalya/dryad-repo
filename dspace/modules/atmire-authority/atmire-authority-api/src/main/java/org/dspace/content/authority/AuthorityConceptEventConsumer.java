@@ -165,7 +165,7 @@ public class AuthorityConceptEventConsumer implements Consumer {
                 String identifier = concept.getIdentifier();
                 if (identifier != null && !identifiersToDelete.contains(identifier)) {
                     try {
-                        indexer.indexContent(generateAuthorityValue(concept), true);
+                        indexer.indexContent(ctx,concept, true);
                         log.debug("Indexed "
                                 + Constants.typeText[concept.getType()]
                                 + ", id=" + String.valueOf(concept.getID())
@@ -201,18 +201,6 @@ public class AuthorityConceptEventConsumer implements Consumer {
     public void finish(Context ctx) throws Exception {
         // No-op
 
-    }
-
-    private AuthorityValue generateAuthorityValue(Concept concept) throws SQLException {
-
-        AuthorityValue authorityValue = new AuthorityValue();
-        authorityValue.setId(concept.getIdentifier());
-        authorityValue.setCreationDate(concept.getCreated());
-        authorityValue.setLastModified(concept.getLastModified());
-        authorityValue.setDeleted(false);
-        authorityValue.setValue(concept.getPreferredLabel());
-        authorityValue.setField(concept.getScheme().getIdentifier().replace(".","_"));
-        return authorityValue;
     }
 
 

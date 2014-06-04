@@ -7,7 +7,11 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.dspace.content.AuthorityObject;
+import org.dspace.content.Concept;
+import org.dspace.content.DSpaceObject;
 import org.dspace.core.ConfigurationManager;
+import org.dspace.core.Constants;
 import org.dspace.core.Context;
 import org.dspace.services.ConfigurationService;
 
@@ -58,12 +62,31 @@ public class SolrAuthorityServiceImpl implements AuthorityIndexingService, Autho
 
     public void indexContent(AuthorityValue value, boolean force) {
         SolrInputDocument doc = value.getSolrInputDocument();
-
+        //TODO STILL NEED LOGIC TO ONLY UPDATE SOLR IF CONCEPT IS OLDER
         try{
             writeDocument(doc);
         }catch (Exception e){
             log.error("Error while writing authority value to the index: " + value.toString(), e);
         }
+    }
+
+    private AuthorityValue getAuthorityValue(Concept concept) throws SQLException {
+
+        AuthorityValue authorityValue = new AuthorityValue();
+        authorityValue.setId(concept.getIdentifier());
+        authorityValue.setCreationDate(concept.getCreated());
+        authorityValue.setLastModified(concept.getLastModified());
+        authorityValue.setDeleted(false);
+        authorityValue.setValue(concept.getPreferredLabel());
+        if(concept.getScheme()!=null)
+        authorityValue.setField(concept.getScheme().getIdentifier().replace(".","_"));
+        return authorityValue;
+    }
+
+    @Override
+    public void indexContent(Context context, Concept concept, boolean force) throws SQLException {
+        indexContent(getAuthorityValue(concept), force);
+
     }
 
     /**
@@ -87,6 +110,11 @@ public class SolrAuthorityServiceImpl implements AuthorityIndexingService, Autho
         }
     }
 
+    @Override
+    public void unIndexContent(Context context, Concept concept) throws SQLException, IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void cleanIndex() throws Exception {
         try{
             getSolr().deleteByQuery("*:*");
@@ -103,6 +131,46 @@ public class SolrAuthorityServiceImpl implements AuthorityIndexingService, Autho
             log.error("Error while committing authority solr server", e);
         } catch (IOException e) {
             log.error("Error while committing authority solr server", e);
+        }
+    }
+
+    @Override
+    public void updateIndex(Context context, boolean force) {
+        //To change body of implemented methods use File | Settings | File Templates.
+
+        try {
+            Concept[] concepts = Concept.findAll(context, AuthorityObject.ID);
+            try {
+                for (Concept concept : concepts) {
+
+                    indexContent(context, concept, force);
+
+                }
+            } catch (Exception e)
+            {
+                log.error(e.getMessage());
+            }
+
+            getSolr().commit();
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void optimize() {
+        try {
+            long start = System.currentTimeMillis();
+            System.out.println(this.getClass().getName() + " - Optimize -- Process Started:"+start);
+            getSolr().optimize();
+            long finish = System.currentTimeMillis();
+            System.out.println(this.getClass().getName() + " - Optimize -- Process Finished:"+finish);
+            System.out.println(this.getClass().getName() + " - Optimize -- Total time taken:"+(finish-start) + " (ms).");
+        } catch (SolrServerException sse) {
+            System.err.println(sse.getMessage());
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
         }
     }
 
