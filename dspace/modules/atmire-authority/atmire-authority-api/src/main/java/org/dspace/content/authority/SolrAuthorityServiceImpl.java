@@ -85,7 +85,8 @@ public class SolrAuthorityServiceImpl implements AuthorityIndexingService, Autho
 
     @Override
     public void indexContent(Context context, Concept concept, boolean force) throws SQLException {
-        indexContent(getAuthorityValue(concept), force);
+        if(Concept.Status.ACCEPTED.name().equals(concept.getStatus()))
+            indexContent(getAuthorityValue(concept), force);
 
     }
 
