@@ -66,7 +66,7 @@ public class FlowTermUtils {
      * @param objectModel Cocoon's object model
      * @return A process result's object.
      */
-    public static FlowResult processAddTerm(Context context, Request request, Map objectModel) throws SQLException, AuthorizeException
+    public static FlowResult processAddTerm(Context context, String conceptId,Request request, Map objectModel) throws SQLException, AuthorizeException
     {
         FlowResult result = new FlowResult();
         result.setContinue(false); // default to no continue
@@ -89,12 +89,29 @@ public class FlowTermUtils {
         // No errors, so we try to create the Term from the data provided
         if (result.getErrors() == null)
         {
-            if(request.getParameter("concept")!=null)
+            if(conceptId!=null&&conceptId.length()>0)
             {
-                Concept concept = Concept.find(context, Integer.parseInt(request.getParameter("concept")));
+                Concept concept = Concept.find(context, Integer.parseInt(conceptId));
                 Term newTerm = concept.createTerm(literalForm,1);
-                concept.update();
+                newTerm.update();
 
+                context.commit();
+                // success
+                result.setContinue(true);
+                result.setOutcome(true);
+                result.setMessage(T_add_Term_success_notice);
+                result.setParameter("termID", newTerm.getID());
+            }
+            else
+            {
+                //create term without concept
+                Term newTerm = Term.create(context);
+                newTerm.setStatus(status);
+                newTerm.setLang(language);
+                newTerm.setSource(source);
+                newTerm.setCreated(newTerm.getCreated());
+                newTerm.setLastModified(newTerm.getCreated());
+                newTerm.update();
                 context.commit();
                 // success
                 result.setContinue(true);

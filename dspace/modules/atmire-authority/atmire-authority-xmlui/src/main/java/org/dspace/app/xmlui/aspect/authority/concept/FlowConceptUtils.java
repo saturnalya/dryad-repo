@@ -69,7 +69,7 @@ public class FlowConceptUtils {
      * @param objectModel Cocoon's object model
      * @return A process result's object.
      */
-    public static FlowResult processAddConcept(Context context, Request request, Map objectModel) throws SQLException, AuthorizeException,NoSuchAlgorithmException
+    public static FlowResult processAddConcept(Context context,String schemeId, Request request, Map objectModel) throws SQLException, AuthorizeException,NoSuchAlgorithmException
     {
         FlowResult result = new FlowResult();
         result.setContinue(false); // default to no continue
@@ -86,21 +86,26 @@ public class FlowConceptUtils {
         // No errors, so we try to create the Concept from the data provided
         if (result.getErrors() == null)
         {
-            if(request.getParameter("scheme")!=null)
+            if(schemeId!=null&&schemeId.length()>0)
             {
-                Scheme scheme = Scheme.find(context, Integer.parseInt(request.getParameter("scheme")));
+                Scheme scheme = Scheme.find(context, Integer.parseInt(schemeId));
                 newConcept = scheme.createConcept();
                 newConcept.setStatus(status);
                 newConcept.setLang(language);
                 newConcept.setTopConcept(topConcept);
                 newConcept.update();
-                newConcept.createTerm(value,1);
+                Term newTerm = newConcept.createTerm(value,1);
+                newTerm.update();
                 context.commit();
                 // success
                 result.setContinue(true);
                 result.setOutcome(true);
                 result.setMessage(T_add_Concept_success_notice);
                 result.setParameter("ConceptID", newConcept.getID());
+            }
+            else
+            {
+                result.addError("Please select a scheme to add a new concept");
             }
         }
 

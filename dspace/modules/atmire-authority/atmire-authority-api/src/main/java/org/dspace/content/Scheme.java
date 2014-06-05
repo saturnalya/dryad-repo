@@ -127,6 +127,8 @@ public class Scheme extends AuthorityObject
 
         Scheme e = new Scheme(context, row);
 
+        e.setIdentifier(AuthorityObject.createIdentifier());
+
         log.info(LogManager.getHeader(context, "create_scheme", "metadata_scheme_id="
                 + e.getID()));
 
@@ -754,7 +756,15 @@ public class Scheme extends AuthorityObject
 
 
     public Concept createConcept() throws SQLException, AuthorizeException, NoSuchAlgorithmException {
-           return Concept.create(this.myContext);
+        Concept concept = Concept.create(this.myContext);
+        Date date = new Date();
+        concept.setLastModified(date);
+        concept.setCreated(date);
+        concept.setLang(I18nUtil.getDefaultLocale().getLanguage());
+        concept.setTopConcept(true);
+        concept.setStatus(Concept.Status.CANDIDATE);
+        this.addConcept(concept);
+        return concept;
     }
 
     public Concept createConcept(String identifier) throws SQLException, AuthorizeException, NoSuchAlgorithmException {

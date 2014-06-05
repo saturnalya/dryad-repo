@@ -111,10 +111,8 @@ public class AddConceptForm extends AbstractDSpaceTransformer
         String formUrl = contextPath+"/admin/concept";
         String schemeId = request.getParameter("schemeID");
         String value = request.getParameter("value");
-        if(schemeId!=null&&schemeId.length()>0)
-        {
-           formUrl =contextPath + "/admin/scheme";
-        }
+
+        formUrl =contextPath + "/admin/scheme";
         // DIVISION: concept-add
         Division add = body.addInteractiveDivision("concept-add",formUrl,Division.METHOD_POST,"primary administrative concept");
 
@@ -122,8 +120,10 @@ public class AddConceptForm extends AbstractDSpaceTransformer
 
 
         List identity = add.addList("identity",List.TYPE_FORM);
+        if(schemeId!=null&&schemeId.length()>0)
+        {
         identity.setHead(T_head2);
-
+        identity.addItem().addHidden("scheme").setValue(schemeId);
 
         identity.addLabel("Concept Value");
         Text valueText = identity.addItem().addText("value");
@@ -187,8 +187,12 @@ public class AddConceptForm extends AbstractDSpaceTransformer
         List children =  identity.addList("children");
         children.addLabel("Children");
         children.addItem("child");
+        }
 
-
+        else
+        {
+            identity.addItem().addContent("Please select a scheme to add the concept into");
+        }
         Item buttons = identity.addItem();
         buttons.addButton("submit_save").setValue(T_submit_create);
         buttons.addButton("submit_cancel").setValue(T_submit_cancel);

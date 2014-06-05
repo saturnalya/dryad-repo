@@ -436,21 +436,6 @@ function doEditScheme(schemeId)
             // No matter what just bail out to the group list.
             return null;
         }
-        var names = cocoon.request.getParameterNames();
-        while (names.hasMoreElements())
-        {
-            var name = names.nextElement();
-            var match = null;
-
-            if ((match = name.match(/submit_add_concept_(\d+)/)) != null)
-            {
-                // Delete this user
-                assertAdministrator();
-                var addConceptId = match[1];
-                FlowSchemeUtils.addConcept2Scheme(getDSContext(), schemeId,addConceptId);
-
-            }
-        }
 
     } while (result == null || !result.getContinue())
 
@@ -521,7 +506,7 @@ function doAddConcept2Scheme(schemeId){
             // Save the new term, assuming they have met all the requirements.
             assertAdministrator();
 
-            result = FlowConceptUtils.processAddConcept(getDSContext(), cocoon.request,getObjectModel());
+            result = FlowConceptUtils.processAddConcept(getDSContext(),schemeId, cocoon.request,getObjectModel());
             errorMessage = result.getErrorString();
         }
         else if (cocoon.request.get("submit_cancel"))
@@ -682,7 +667,7 @@ function doAddConcept(schemeId)
             // Save the new concept, assuming they have met all the requirements.
             assertAdministrator();
 
-            result = FlowConceptUtils.processAddConcept(getDSContext(),cocoon.request,getObjectModel());
+            result = FlowConceptUtils.processAddConcept(getDSContext(),schemeId,cocoon.request,getObjectModel());
             var conceptId = result.getParameter("ConceptID");
             errorMessage = result.getErrorString();
 
@@ -1100,7 +1085,7 @@ function doAddTerm(conceptId,request)
     var result;
     var errorMessage;
     do {
-        sendPageAndWait("admin/term/add",{"errors":errorMessage},result);
+        sendPageAndWait("admin/term/add",{"errors":errorMessage,"conceptId":conceptId},result);
         result = null;
         if (cocoon.request.get("submit_save"))
         {

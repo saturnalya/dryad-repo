@@ -543,11 +543,11 @@ public class Concept extends AuthorityObject
 
         if(schemeId==null){
             queryBuf.append("SELECT distinct(concept.*) FROM concept LEFT JOIN concept2term ON concept.id=concept2term.concept_id LEFT JOIN term on concept2term.concept_id = term.id WHERE concept.id = ? OR " +
-                    "LOWER(concept.identifier) like ? OR (concept2term.concept_id = concept.id AND concept2term.term_id=term.id AND term.literalform like ?) ORDER BY concept.id, concept.created ASC");
+                    "LOWER(concept.identifier) like ? OR LOWER(term.literalform) like ? ORDER BY concept.id, concept.created ASC");
         }
         else
         {
-            queryBuf.append("SELECT distinct(concept.*) FROM concept LEFT JOIN scheme2concept ON concept.id=scheme2concept.concept_id LEFT JOIN concept2term ON concept.id=concept2term.concept_id LEFT JOIN term on concept2term.term_id = term.id WHERE concept.id = scheme2concept.concept_id AND scheme2concept.scheme_id = "+schemeId+" AND (concept.id = ? OR LOWER(concept.identifier) like ? OR (concept2term.concept_id = concept.id AND concept2term.term_id=term.id AND term.literalform like ?) ) ORDER BY concept.id ASC");
+            queryBuf.append("SELECT distinct(concept.*) FROM concept LEFT JOIN scheme2concept ON concept.id=scheme2concept.concept_id LEFT JOIN concept2term ON concept.id=concept2term.concept_id LEFT JOIN term on concept2term.term_id = term.id WHERE scheme2concept.scheme_id = "+schemeId+" AND (concept.id = ? OR LOWER(concept.identifier) like ? OR LOWER(term.literalform) like ? ) ORDER BY concept.id ASC");
         }
 
 
@@ -1269,7 +1269,7 @@ public class Concept extends AuthorityObject
         try
         {
 
-            TableRowIterator rows = DatabaseManager.query(context, dbquery, query);
+            TableRowIterator rows = DatabaseManager.queryTable(context,"Concept", dbquery, query);
 
             List<TableRow> conceptRows = rows.toList();
 
