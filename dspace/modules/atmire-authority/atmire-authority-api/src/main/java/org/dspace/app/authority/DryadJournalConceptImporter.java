@@ -25,6 +25,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 
+import org.dspace.core.I18nUtil;
 import org.dspace.utils.DSpace;
 
 /**
@@ -116,9 +117,9 @@ public final class DryadJournalConceptImporter {
             Date date = new Date();
 
 
-            Scheme authScheme = Scheme.findByIdentifier(context, "prism.publicationName");
+            Scheme authScheme = Scheme.findByIdentifier(context, "prism_publicationName");
             if(authScheme==null){
-                authScheme = Scheme.create(context,"prism.publicationName");
+                authScheme = Scheme.create(context,"prism_publicationName");
                 authScheme.addMetadata("dc","title",null,"en","Dryad Journal Authority",null,1);
                 authScheme.setLastModified(date);
                 authScheme.setCreated(date);
@@ -144,6 +145,7 @@ public final class DryadJournalConceptImporter {
                             ArrayList<Concept> aConcepts = Concept.findByIdentifier(context,authorityValue.getId());
                             if(aConcepts==null||aConcepts.size()==0)  {
                                 Concept aConcept = authScheme.createConcept(authorityValue.getId());
+                                aConcept.setStatus(Concept.Status.ACCEPTED);
 
                                 if(solrDocument.getFieldValue("source")!=null) {
                                     String source = String.valueOf(solrDocument.getFieldValue("source"));
@@ -215,6 +217,7 @@ public final class DryadJournalConceptImporter {
                                 }
                                 aConcept.update();
                                 Term term = aConcept.createTerm(authorityValue.getValue(),1);
+                                term.update();
                                 context.commit();
                             }
                         }
@@ -230,12 +233,13 @@ public final class DryadJournalConceptImporter {
                 Map<String,String> val = journalProperties.get(key);
 
                 // TODO: THIS SHOULD BE NARROWED BY SCHEME
-                Concept[] aConcepts = Concept.findByPreferredLabel(context,val.get("fullname"));
+                Concept[] aConcepts = Concept.findByPreferredLabel(context,val.get("fullname"),authScheme.getID());
                 if(aConcepts==null||aConcepts.length==0)  {
                     String id = AuthorityObject.createIdentifier();
 
-                    Concept aConcept = authScheme.createConcept();
+                    Concept aConcept = authScheme.createConcept(id);
                     aConcept.setSource("LOCAL-DryadJournal");
+                    aConcept.setStatus(Concept.Status.ACCEPTED);
 
                     if(val.get("fullname")!=null)
                     {
@@ -295,7 +299,8 @@ public final class DryadJournalConceptImporter {
                         aConcept.addMetadata("internal","journal","notifyWeekly","",val.get("notifyWeekly"),id,0);
                     }
                     aConcept.update();
-                    aConcept.createTerm(val.get("fullname"),1);
+                    Term term = aConcept.createTerm(val.get("fullname"),1);
+                    term.update();
                     context.commit();
                 }
             }

@@ -698,7 +698,7 @@ public abstract class AuthorityObject extends DSpaceObject{
     }
 
     public static String createIdentifier(){
-        return java.util.UUID.randomUUID().toString();
+        return java.util.UUID.randomUUID().toString().replace("-","");
     }
 
     public static String hash(String input) {

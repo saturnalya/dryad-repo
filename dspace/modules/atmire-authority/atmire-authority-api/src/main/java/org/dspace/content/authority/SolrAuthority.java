@@ -36,7 +36,7 @@ public class SolrAuthority implements ChoiceAuthority {
                 searchField = ConfigurationManager.getProperty("solrauthority.searchfieldtype");
 
                 if (searchField == null) {
-                    searchField = "value";
+                    searchField = "full-text";
                 }
             }
             if (searchField.contains("nodiacritics")) {
@@ -134,7 +134,7 @@ public class SolrAuthority implements ChoiceAuthority {
     }
 
     private String toQuery(String searchField, String text) {
-        return searchField + ":\"" + text.toLowerCase().replaceAll(":", "\\:") + "*\" or " + searchField + ":\"" + text.toLowerCase().replaceAll(":", "\\:")+"\"";
+        return searchField + ":" + text.toLowerCase().replaceAll(":", "\\:") + "* or " + searchField + ":" + text.toLowerCase().replaceAll(":", "\\:");
     }
 
     @Override

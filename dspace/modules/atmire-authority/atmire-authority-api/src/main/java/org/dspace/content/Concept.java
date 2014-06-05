@@ -1262,21 +1262,24 @@ public class Concept extends AuthorityObject
         }
     }
 
-    public static Concept[] findByPreferredLabel(Context context,String query){
+    public static Concept[] findByPreferredLabel(Context context,String query,int schemeId){
+        //make schemeId == -1 to get all match preferred label
         ArrayList<Concept> concepts = new ArrayList<Concept>();
-        String dbquery = "SELECT concept.* FROM concept,concept2term,term where concept.id=concept2term.concept_id and concept2term.term_id=term.id and term.literalform = '"+query+"'";
+        String dbquery = "SELECT concept.* FROM concept,concept2term,term where concept.id=concept2term.concept_id and concept2term.term_id=term.id and term.literalform = ?";
         try
         {
 
-            TableRowIterator rows = DatabaseManager.query(context, dbquery, null);
+            TableRowIterator rows = DatabaseManager.query(context, dbquery, query);
 
             List<TableRow> conceptRows = rows.toList();
 
             for (int i = 0; i < conceptRows.size(); i++)
             {
                 TableRow row = conceptRows.get(i);
-
-                concepts.add(new Concept(context, row));
+                Concept concept = new Concept(context,row);
+                if(schemeId==-1||concept.getScheme().getID()==schemeId){
+                    concepts.add(new Concept(context, row));
+                }
 
             }
             if (rows != null)
@@ -1355,7 +1358,6 @@ public class Concept extends AuthorityObject
         term.setLastModified(getLastModified());
         term.setStatus(getStatus());
         addTermByType(term,relationType);
-        term.update();
         return term;
 
     }

@@ -291,7 +291,7 @@ public class ManageConceptMain extends AbstractDSpaceTransformer
 
             row.addCellContent(conceptID);
             row.addCell().addXref("/concept/"+concept.getID(), concept.getCreated().toString());
-            row.addCell().addXref("/concept/"+concept.getID(), concept.getIdentifier());
+            row.addCell().addXref("/concept/"+concept.getID(), concept.getLabel());
             row.addCell().addXref(conceptURL+"&submit_edit_concept&conceptID="+concept.getID(),"edit");
         }
 

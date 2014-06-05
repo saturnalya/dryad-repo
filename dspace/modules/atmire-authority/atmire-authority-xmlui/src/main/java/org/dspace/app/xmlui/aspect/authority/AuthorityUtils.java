@@ -34,6 +34,7 @@ public class AuthorityUtils {
         if(schemeId!=null) {
             Scheme scheme = (Scheme)AuthorityObject.find(context,Constants.SCHEME, Integer.parseInt(schemeId));
             Concept concept = scheme.createConcept(value);
+            concept.update();
             context.commit();
             return concept;
         }

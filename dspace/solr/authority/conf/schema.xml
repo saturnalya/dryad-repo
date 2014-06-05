@@ -294,7 +294,7 @@
      <field name="id" type="string" multiValued="false" indexed="true" stored="true" required="true"/>
      <field name="source" type="string" multiValued="false" indexed="true" stored="true" required="true"/>
      <field name="field" type="string" multiValued="false" indexed="true" stored="true" required="true" />
-     <field name="value" type="text" multiValued="false" indexed="true" stored="true" required="true" />
+     <field name="value" type="string" multiValued="false" indexed="true" stored="true" required="true" />
      <field name="display-value" type="string" multiValued="false" indexed="true" stored="true" required="true" />
      <field name="full-text" type="text_autocomplete" multiValued="false" indexed="true" stored="true" required="true" />
 
