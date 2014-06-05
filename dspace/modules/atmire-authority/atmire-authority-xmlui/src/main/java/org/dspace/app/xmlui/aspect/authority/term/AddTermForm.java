@@ -123,7 +123,6 @@ public class AddTermForm extends AbstractDSpaceTransformer
         String source = request.getParameter("source");
         String language = request.getParameter("language");
         String status = request.getParameter("status");
-        String identifier = request.getParameter("identifier");
         String literalForm = request.getParameter("literalForm");
 
         // DIVISION: term-add
@@ -157,23 +156,6 @@ public class AddTermForm extends AbstractDSpaceTransformer
         identity.addLabel("Preferred Term");
         CheckBox preferred = identity.addItem().addCheckBox("preferred");
         preferred.addOption("1","Preferred Term");
-
-        identity.addLabel("Identifier");
-        Hidden identifierText = identity.addItem().addHidden("identifier");
-        if(identifier==null||identifier.length()==0)
-        {
-            try{
-                identifier= AuthorityObject.createIdentifier();
-            }
-            catch (Exception e)
-            {
-                errors.add("identifier");
-                identifierText.addError("Error in generating the identifier");
-                identity.addItem().addContent("Error in generating identifier");
-            }
-        }
-        identifierText.setValue(identifier);
-        identity.addItem().addContent(identifier);
 
         identity.addLabel("Source");
         identity.addItem().addText("source").setValue(source);

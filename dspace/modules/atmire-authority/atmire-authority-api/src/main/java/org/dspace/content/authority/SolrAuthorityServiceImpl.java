@@ -10,6 +10,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.dspace.content.AuthorityObject;
 import org.dspace.content.Concept;
 import org.dspace.content.DSpaceObject;
+import org.dspace.content.Term;
 import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Constants;
 import org.dspace.core.Context;
@@ -78,6 +79,13 @@ public class SolrAuthorityServiceImpl implements AuthorityIndexingService, Autho
         authorityValue.setLastModified(concept.getLastModified());
         authorityValue.setDeleted(false);
         authorityValue.setValue(concept.getPreferredLabel());
+
+        // Set all terms as full text for search and term completion.
+        for(Term term : concept.getTerms() )
+        {
+            authorityValue.setFullText(authorityValue.getFullText() + " " + term.getLiteralForm());
+        }
+
         if(concept.getScheme()!=null)
         authorityValue.setField(concept.getScheme().getIdentifier().replace(".","_"));
         return authorityValue;

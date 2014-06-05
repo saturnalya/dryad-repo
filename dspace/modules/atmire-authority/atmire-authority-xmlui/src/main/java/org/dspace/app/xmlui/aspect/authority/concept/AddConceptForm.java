@@ -108,9 +108,9 @@ public class AddConceptForm extends AbstractDSpaceTransformer
         Boolean topConcept = (request.getParameter("topConcept") == null)  ? false : true;
         String language = request.getParameter("language");
         String status = request.getParameter("status");
-        String identifier = request.getParameter("identifier");
         String formUrl = contextPath+"/admin/concept";
         String schemeId = request.getParameter("schemeID");
+        String value = request.getParameter("value");
         if(schemeId!=null&&schemeId.length()>0)
         {
            formUrl =contextPath + "/admin/scheme";
@@ -123,22 +123,18 @@ public class AddConceptForm extends AbstractDSpaceTransformer
 
         List identity = add.addList("identity",List.TYPE_FORM);
         identity.setHead(T_head2);
-        identity.addLabel("Identifier");
-        Hidden identifierText = identity.addItem().addHidden("identifier");
-        if(identifier==null||identifier.length()==0)
-        {
-            try{
-                identifier = AuthorityObject.createIdentifier();
-            }
-            catch (Exception e)
-            {
-                errors.add("identifier");
-                identifierText.addError("Error in generating identifier");
-                identity.addItem().addContent("Error in generating identifier");
-            }
+
+
+        identity.addLabel("Concept Value");
+        Text valueText = identity.addItem().addText("value");
+        if(errors.contains("value")) {
+            valueText.addError("Concept must have a preferred label");
         }
-        identifierText.setValue(identifier);
-        identity.addItem().addContent(identifier);
+        if(value!=null&&value.length()==0)
+        {
+            valueText.setValue(value);
+        }
+
         identity.addLabel("Top Concept");
         CheckBox topConceptBox = identity.addItem().addCheckBox("topConcept");
         topConceptBox.setLabel(T_top_concept);

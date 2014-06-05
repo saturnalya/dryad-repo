@@ -8,6 +8,7 @@
 package org.dspace.app.xmlui.aspect.authority.concept;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,34 +69,39 @@ public class FlowConceptUtils {
      * @param objectModel Cocoon's object model
      * @return A process result's object.
      */
-    public static FlowResult processAddConcept(Context context, Request request, Map objectModel) throws SQLException, AuthorizeException
+    public static FlowResult processAddConcept(Context context, Request request, Map objectModel) throws SQLException, AuthorizeException,NoSuchAlgorithmException
     {
         FlowResult result = new FlowResult();
         result.setContinue(false); // default to no continue
-
+        Concept newConcept = null;
         Boolean topConcept    = (request.getParameter("topConcept") == null)  ? false : true;
         String language = request.getParameter("language");
         String status = request.getParameter("status");
-        String identifier = request.getParameter("identifier");
+
+        String value = request.getParameter("value");
+        if(value==null||value.length()==0)
+        {
+            result.addError("value");
+        }
         // No errors, so we try to create the Concept from the data provided
         if (result.getErrors() == null)
         {
-            Concept newConcept = AuthorityUtils.createNewConcept(objectModel, topConcept, status, language, identifier);
-
-
             if(request.getParameter("scheme")!=null)
             {
                 Scheme scheme = Scheme.find(context, Integer.parseInt(request.getParameter("scheme")));
-                scheme.addConcept(newConcept);
-                scheme.update();
+                newConcept = scheme.createConcept();
+                newConcept.setStatus(status);
+                newConcept.setLang(language);
+                newConcept.setTopConcept(topConcept);
+                newConcept.update();
+                newConcept.createTerm(value,1);
+                context.commit();
+                // success
+                result.setContinue(true);
+                result.setOutcome(true);
+                result.setMessage(T_add_Concept_success_notice);
+                result.setParameter("ConceptID", newConcept.getID());
             }
-
-            context.commit();
-            // success
-            result.setContinue(true);
-            result.setOutcome(true);
-            result.setMessage(T_add_Concept_success_notice);
-            result.setParameter("ConceptID", newConcept.getID());
         }
 
         return result;
@@ -140,10 +146,6 @@ public class FlowConceptUtils {
             String originalStatus = conceptModified.getStatus();
             if (originalStatus == null || !originalStatus.equals(status)) {
                 conceptModified.setStatus(status);
-            }
-            String originalIdentifier = conceptModified.getIdentifier();
-            if (originalIdentifier == null || !originalIdentifier.equals(identifier)) {
-                conceptModified.setIdentifier(identifier);
             }
             String originalLang = conceptModified.getLang();
             if (originalLang == null || !originalLang.equals(language)) {
@@ -280,21 +282,22 @@ public class FlowConceptUtils {
 
             FlowResult result = new FlowResult();
             result.setContinue(false); // default to failure
+            Concept concept = (Concept)AuthorityObject.find(context,Constants.CONCEPT,conceptId);
 
             // Get all our request parameters
             String literalForm = request.getParameter("literalForm");
-            String identifier =  request.getParameter("literalForm");
             String source =  request.getParameter("source");
             String status =  request.getParameter("status");
             String lang =  request.getParameter("lang");
             String preferred = request.getParameter("preferred");
-            //boolean certificate = (request.getParameter("certificate") != null) ? true : false;
-
-            // No errors, so we edit the Concept with the data provided
             if (result.getErrors() == null)
             {
-                // Grab the person in question
-                Term term = Term.create(context);
+                if(preferred==null)
+                {
+                    //add it as alt term
+                    preferred="2";
+                }
+                Term term = concept.createTerm(literalForm,Integer.parseInt(preferred));
                 java.util.Date date = new java.util.Date();
                 term.setCreated(date);
 
@@ -308,10 +311,6 @@ public class FlowConceptUtils {
 
                 if (status == null ) {
                     term.setStatus(status);
-                }
-
-                if (identifier == null ) {
-                    term.setIdentifier(identifier);
                 }
 
                 if (lang == null ) {
@@ -334,16 +333,6 @@ public class FlowConceptUtils {
             // Everything was fine
             return result;
         }
-
-    public static void addPreferredTerm2Concept(Context context, String conceptId, String termId) throws NumberFormatException, SQLException, AuthorizeException
-    {
-        Concept concept = Concept.find(context, Integer.parseInt(conceptId));
-        Term term = Term.find(context, Integer.parseInt(termId));
-        concept.addPreferredTerm(term);
-        concept.update();
-        context.commit();
-    }
-
 
     public static FlowResult processEditConceptMetadata(Context context, String id,Request request){
         return FlowAuthorityMetadataValueUtils.processEditMetadata(context, Constants.CONCEPT, id, request);

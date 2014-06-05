@@ -107,7 +107,7 @@ public class AddSchemeForm extends AbstractDSpaceTransformer
 
         String language = request.getParameter("language");
         String status = request.getParameter("status");
-        String identifier = request.getParameter("identifier");
+
 
         // DIVISION: scheme-add
         Division add = body.addInteractiveDivision("scheme-add",contextPath+"/admin/scheme",Division.METHOD_POST,"primary thesaurus scheme");
@@ -117,24 +117,6 @@ public class AddSchemeForm extends AbstractDSpaceTransformer
 
         List attribute = add.addList("identity",List.TYPE_FORM);
         attribute.setHead(T_head2);
-        attribute.addLabel("Identifier");
-
-        Hidden identifierText = attribute.addItem().addHidden("identifier");
-        if(identifier==null||identifier.length()==0)
-        {   try{
-            identifier = AuthorityObject.createIdentifier();
-            }catch (Exception e)
-            {
-                errors.add("Identifier");
-            }
-        }
-        identifierText.setValue(identifier);
-
-        if(errors.contains("Identifier")) {
-            identifierText.addError("Identifier Error");
-            attribute.addItem().addContent("Identifier Error");
-        }
-        attribute.addItem().addContent(identifier);
 
         attribute.addLabel("Status");
         attribute.addItem().addText("status").setValue(status);

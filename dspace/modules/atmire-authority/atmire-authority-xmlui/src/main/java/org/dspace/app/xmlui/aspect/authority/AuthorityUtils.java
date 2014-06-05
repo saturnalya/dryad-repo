@@ -4,13 +4,12 @@ import org.apache.cocoon.environment.http.HttpEnvironment;
 import org.apache.log4j.Logger;
 import org.dspace.app.xmlui.utils.ContextUtil;
 import org.dspace.authorize.AuthorizeException;
-import org.dspace.content.Concept;
-import org.dspace.content.Concept2Term;
-import org.dspace.content.Scheme;
-import org.dspace.content.Term;
+import org.dspace.content.*;
+import org.dspace.core.Constants;
 import org.dspace.core.Context;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -25,52 +24,46 @@ public class AuthorityUtils {
     /** log4j category */
     private static final Logger log = Logger.getLogger(AuthorityUtils.class);
 
-    public static Concept createNewConcept(Map objectModel,Boolean topConcept,String status,String language,String identifier) throws
-            SQLException, AuthorizeException
+    public static Concept createNewConcept(Map objectModel,Boolean topConcept,String status,String language,String identifier,String value) throws
+            SQLException, AuthorizeException,NoSuchAlgorithmException
     {
         final HttpServletRequest request = (HttpServletRequest) objectModel.get(HttpEnvironment.HTTP_REQUEST_OBJECT);
         Context context = ContextUtil.obtainContext(objectModel);
-
+        String schemeId = request.getParameter("scheme");
         // Need to create new concept
-
-        Concept concept = Concept.create(context);
-        Date date = new Date();
-        concept.setLastModified(date);
-        concept.setCreated(date);
-        concept.setLang(language);
-        concept.setTopConcept(topConcept);
-        concept.setStatus(status);
-        concept.setIdentifier(identifier);
-        concept.update();
-        context.commit();
-        // Give site auth a chance to set/override appropriate fields
-        //AuthenticationManager.initEPerson(context, request, eperson);
-
-        return concept;
+        if(schemeId!=null) {
+            Scheme scheme = (Scheme)AuthorityObject.find(context,Constants.SCHEME, Integer.parseInt(schemeId));
+            Concept concept = scheme.createConcept(value);
+            context.commit();
+            return concept;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
-    public static Term createNewTerm(Map objectModel,String literalForm,String status,String source,String language,String identifier) throws
+    public static Term createNewTerm(Map objectModel,String literalForm,String status,String source,String language) throws
             SQLException, AuthorizeException
     {
-        final HttpServletRequest request = (HttpServletRequest) objectModel.get(HttpEnvironment.HTTP_REQUEST_OBJECT);
-        Context context = ContextUtil.obtainContext(objectModel);
+            final HttpServletRequest request = (HttpServletRequest) objectModel.get(HttpEnvironment.HTTP_REQUEST_OBJECT);
+            Context context = ContextUtil.obtainContext(objectModel);
+            String conceptId = request.getParameter("concept");
+            if(conceptId!=null){
+                Concept concept = (Concept) AuthorityObject.find(context,Constants.CONCEPT,Integer.parseInt(conceptId));
+                Term term = concept.createTerm(literalForm,1);
+                term.setStatus(status);
+                term.setLang(language);
+                term.setSource(source);
+                context.commit();
 
-        // Need to create new concept
+            return term;
+        }else
+        {
+            return null;
+        }
 
-        Term term = Term.create(context);
-        Date date = new Date();
-        term.setCreated(date);
-        term.setLastModified(date);
-        term.setLiteralForm(literalForm);
-        term.setLang(language);
-        term.setSource(source);
-        term.setStatus(status);
-        term.setIdentifier(identifier);
-        term.update();
-        context.commit();
-
-        return term;
     }
 
 
@@ -92,7 +85,7 @@ public class AuthorityUtils {
         return concept2Term;
     }
 
-    public static Scheme createNewScheme(Map objectModel,String status,String language,String identifier) throws
+    public static Scheme createNewScheme(Map objectModel,String status,String language) throws
             SQLException, AuthorizeException
     {
         final HttpServletRequest request = (HttpServletRequest) objectModel.get(HttpEnvironment.HTTP_REQUEST_OBJECT);
@@ -100,20 +93,19 @@ public class AuthorityUtils {
 
         // Need to create new concept
 
-        Scheme concept = Scheme.create(context);
+        Scheme scheme = Scheme.create(context);
         Date date = new Date();
-        concept.setLastModified(date);
-        concept.setCreated(date);
-        concept.setLang(language);
+        scheme.setLastModified(date);
+        scheme.setCreated(date);
+        scheme.setLang(language);
         //concept.setTopConcept(topConcept);
-        concept.setStatus(status);
-        concept.setIdentifier(identifier);
-        concept.update();
+        scheme.setStatus(status);
+        scheme.update();
         context.commit();
         // Give site auth a chance to set/override appropriate fields
         //AuthenticationManager.initEPerson(context, request, eperson);
 
-        return concept;
+        return scheme;
     }
 
 }

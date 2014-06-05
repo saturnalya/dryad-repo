@@ -8,6 +8,7 @@
 package org.dspace.content;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -171,10 +172,25 @@ public class Concept extends AuthorityObject
                     "You must be an admin to create an Concept");
         }
 
+        return create(context, AuthorityObject.createIdentifier());
+    }
+
+    public static Concept create(Context context, String identifier) throws SQLException,
+            AuthorizeException
+    {
+        // authorized?
+        if (!AuthorizeManager.isAdmin(context))
+        {
+            throw new AuthorizeException(
+                    "You must be an admin to create an Concept");
+        }
+
         // Create a table row
         TableRow row = DatabaseManager.create(context, "concept");
 
         Concept e = new Concept(context, row);
+
+        e.setIdentifier(identifier);
 
         log.info(LogManager.getHeader(context, "create_concept", "metadata_concept_id="
                 + e.getID()));
@@ -183,7 +199,6 @@ public class Concept extends AuthorityObject
 
         return e;
     }
-
     /**
      * get the ID of the concept object
      *
@@ -203,46 +218,8 @@ public class Concept extends AuthorityObject
     public void addPreferredTerm(Term t)
     {
 
-        log.info(LogManager.getHeader(myContext, "add_preferredTerm",
-                "concept_id=" + getID() + ",term_id=" + t.getID()));
-        TableRowIterator tri = null;
-        try
-        {
-            // Find out if mapping exists
-            tri = DatabaseManager.queryTable(myContext,
-                "concept2term",
-                "SELECT * FROM concept2term WHERE " +
-                        "concept_id= ? AND term_id= ? AND role_id = 1",getID(),t.getID());
 
-
-            if (!tri.hasNext())
-            {
-                // No existing mapping, so add one
-                TableRow mappingRow = DatabaseManager.row("concept2term");
-
-                mappingRow.setColumn("concept_id", getID());
-                mappingRow.setColumn("term_id", t.getID());
-                mappingRow.setColumn("role_id", 1);
-                DatabaseManager.insert(myContext, mappingRow);
-                myContext.addEvent(new Event(Event.ADD, Constants.TERM, t.getID(), null));
-            }
-        }        catch (Exception e)
-        {
-            // close the TableRowIterator to free up resources
-            if (tri != null)
-            {
-                tri.close();
-            }
-            log.error("error when add preferred term");
-        }
-        finally
-        {
-            // close the TableRowIterator to free up resources
-            if (tri != null)
-            {
-                tri.close();
-            }
-        }
+       addTermByType(t,1);
 
     }
     /**
@@ -254,46 +231,7 @@ public class Concept extends AuthorityObject
     public void addAltTerm(Term t)
     {
 
-        log.info(LogManager.getHeader(myContext, "add_altTerm",
-                "concept_id=" + getID() + ",term_id=" + t.getID()));
-        TableRowIterator tri = null;
-        try
-        {
-            // Find out if mapping exists
-            tri = DatabaseManager.queryTable(myContext,
-                    "concept2term",
-                    "SELECT * FROM concept2term WHERE " +
-                            "concept_id= ? AND term_id= ? AND role_id= 2",getID(),t.getID());
-
-
-            if (!tri.hasNext())
-            {
-                // No existing mapping, so add one
-                TableRow mappingRow = DatabaseManager.row("concept2term");
-
-                mappingRow.setColumn("concept_id", getID());
-                mappingRow.setColumn("term_id", t.getID());
-                mappingRow.setColumn("role_id", 1);
-                DatabaseManager.insert(myContext, mappingRow);
-                myContext.addEvent(new Event(Event.ADD, Constants.TERM, t.getID(), null));
-            }
-        }        catch (Exception e)
-        {
-            // close the TableRowIterator to free up resources
-            if (tri != null)
-            {
-                tri.close();
-            }
-            log.error("error when add preferred term");
-        }
-        finally
-        {
-            // close the TableRowIterator to free up resources
-            if (tri != null)
-            {
-                tri.close();
-            }
-        }
+       addTermByType(t,2);
 
     }
     /**
@@ -1408,5 +1346,69 @@ public class Concept extends AuthorityObject
 
         return termArray;
     }
+    public Term createTerm(String literalForm,int relationType)throws SQLException,AuthorizeException{
+        Term term = Term.create(this.myContext);
+        term.setLiteralForm(literalForm);
+        term.setCreated(getCreated());
+        term.setLang(getLang());
+        term.setSource(getSource());
+        term.setLastModified(getLastModified());
+        term.setStatus(getStatus());
+        addTermByType(term,relationType);
+        term.update();
+        return term;
 
+    }
+
+    /**
+     * add an term member
+     *
+     * @param t
+     *            term
+     */
+    public void addTermByType(Term t,int type)
+    {
+
+        log.info(LogManager.getHeader(myContext, "add_Term_by_type",
+                "concept_id=" + getID() + ",term_id=" + t.getID())+",type="+type);
+        TableRowIterator tri = null;
+        try
+        {
+            // Find out if mapping exists
+            tri = DatabaseManager.queryTable(myContext,
+                    "concept2term",
+                    "SELECT * FROM concept2term WHERE " +
+                            "concept_id= ? AND term_id= ? AND role_id= ?",getID(),t.getID(),type);
+
+
+            if (!tri.hasNext())
+            {
+                // No existing mapping, so add one
+                TableRow mappingRow = DatabaseManager.row("concept2term");
+
+                mappingRow.setColumn("concept_id", getID());
+                mappingRow.setColumn("term_id", t.getID());
+                mappingRow.setColumn("role_id", type);
+                DatabaseManager.insert(myContext, mappingRow);
+                myContext.addEvent(new Event(Event.ADD, Constants.TERM, t.getID(), null));
+            }
+        }        catch (Exception e)
+        {
+            // close the TableRowIterator to free up resources
+            if (tri != null)
+            {
+                tri.close();
+            }
+            log.error("error when add preferred term");
+        }
+        finally
+        {
+            // close the TableRowIterator to free up resources
+            if (tri != null)
+            {
+                tri.close();
+            }
+        }
+
+    }
 }

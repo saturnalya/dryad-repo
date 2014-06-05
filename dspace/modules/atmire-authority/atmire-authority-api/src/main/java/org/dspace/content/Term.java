@@ -347,6 +347,7 @@ public class Term extends AuthorityObject {
 
         Term e = new Term(context, row);
 
+        e.setIdentifier(AuthorityObject.createIdentifier());
         log.info(LogManager.getHeader(context, "create_term", "metadata_term_id="
                 + e.getID()));
 

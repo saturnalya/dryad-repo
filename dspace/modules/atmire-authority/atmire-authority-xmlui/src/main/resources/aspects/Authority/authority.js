@@ -685,10 +685,7 @@ function doAddConcept(schemeId)
             result = FlowConceptUtils.processAddConcept(getDSContext(),cocoon.request,getObjectModel());
             var conceptId = result.getParameter("ConceptID");
             errorMessage = result.getErrorString();
-            if(schemeId!=null&&conceptId!=null)
-            {
-                FlowSchemeUtils.addConcept2Scheme(getDSContext(),schemeId,conceptId);
-            }
+
         }
         else if (cocoon.request.get("submit_cancel"))
         {
@@ -1113,15 +1110,7 @@ function doAddTerm(conceptId,request)
             result = FlowTermUtils.processAddTerm(getDSContext(),cocoon.request,getObjectModel());
 
             var termId = result.getParameter("termID");
-
-            if(conceptId!=null&&termId!=null)
-            {
-                FlowConceptUtils.addTerm2Concept(getDSContext(),conceptId,termId,request);
-            }
-            else
-            {
-                errorMessage = result.getErrorString();
-            }
+            errorMessage = result.getErrorString();
         }
         else if (cocoon.request.get("submit_cancel"))
         {

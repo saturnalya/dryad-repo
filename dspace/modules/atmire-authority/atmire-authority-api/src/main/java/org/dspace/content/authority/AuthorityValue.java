@@ -53,6 +53,8 @@ public class AuthorityValue {
      */
     private Date lastModified;
 
+    private String fullText;
+
     public AuthorityValue() {
     }
 
@@ -70,6 +72,14 @@ public class AuthorityValue {
 
     public String getValue() {
         return value;
+    }
+
+    public String getFullText() {
+        return fullText == null ? value : fullText;
+    }
+
+    public void setFullText(String fullText) {
+        this.fullText = fullText;
     }
 
     public void setId(String id) {
@@ -139,7 +149,7 @@ public class AuthorityValue {
         doc.addField("field", getField());
         doc.addField("value", getValue());
         doc.addField("display-value", getValue());
-        doc.addField("full-text", getValue());
+        doc.addField("full-text", getFullText());
         doc.addField("source", "LOCAL");
         doc.addField("deleted", isDeleted());
         doc.addField("creation_date", dateToString(getCreationDate()));

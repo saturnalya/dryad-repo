@@ -7,17 +7,16 @@
  */
 package org.dspace.content;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.*;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.authorize.AuthorizeManager;
 
-import org.dspace.core.ConfigurationManager;
-import org.dspace.core.Constants;
-import org.dspace.core.Context;
-import org.dspace.core.LogManager;
+import org.dspace.core.*;
 import org.dspace.event.Event;
 import org.dspace.storage.rdbms.DatabaseManager;
 import org.dspace.storage.rdbms.TableRow;
@@ -135,7 +134,35 @@ public class Scheme extends AuthorityObject
 
         return e;
     }
+    /**
+     * Create a new metadata scheme
+     *
+     * @param context
+     *            DSpace context object
+     */
+    public static Scheme create(Context context,String identifier) throws SQLException,
+            AuthorizeException
+    {
+        // authorized?
+        if (!AuthorizeManager.isAdmin(context))
+        {
+            throw new AuthorizeException(
+                    "You must be an admin to create an Metadata Scheme");
+        }
 
+        // Create a table row
+        TableRow row = DatabaseManager.create(context, "scheme");
+
+        Scheme e = new Scheme(context, row);
+
+        e.setIdentifier(identifier);
+        log.info(LogManager.getHeader(context, "create_scheme", "metadata_scheme_id="
+                + e.getID()));
+
+        context.addEvent(new Event(Event.CREATE, Constants.SCHEME, e.getID(), null));
+
+        return e;
+    }
     /**
      * get the ID of the scheme object
      *
@@ -723,6 +750,27 @@ public class Scheme extends AuthorityObject
         {
             removeConcept(concept);
         }
+    }
+
+
+    public Concept createConcept() throws SQLException, AuthorizeException, NoSuchAlgorithmException {
+           return Concept.create(this.myContext);
+    }
+
+    public Concept createConcept(String identifier) throws SQLException, AuthorizeException, NoSuchAlgorithmException {
+
+        Concept concept = Concept.create(this.myContext, identifier);
+
+        Date date = new Date();
+        concept.setLastModified(date);
+        concept.setCreated(date);
+        concept.setLang(I18nUtil.getDefaultLocale().getLanguage());
+        concept.setTopConcept(true);
+        concept.setStatus(Concept.Status.CANDIDATE);
+
+        this.addConcept(concept);
+
+        return concept;
     }
 
 }

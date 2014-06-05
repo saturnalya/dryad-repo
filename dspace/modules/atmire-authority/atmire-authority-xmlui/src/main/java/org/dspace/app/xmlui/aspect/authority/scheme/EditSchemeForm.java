@@ -159,10 +159,7 @@ public class EditSchemeForm extends AbstractDSpaceTransformer
         {
             status = request.getParameter("status");
         }
-        if (request.getParameter("identifier") != null)
-        {
-            identifier = request.getParameter("identifier");
-        }
+
         if (request.getParameter("lang") != null)
         {
             language = request.getParameter("lang");
@@ -193,12 +190,6 @@ public class EditSchemeForm extends AbstractDSpaceTransformer
         {
             identity.addLabel(T_status);
             identity.addItem(status);
-        }
-
-        if (admin)
-        {
-            Hidden identifierText = identity.addItem().addHidden("identifier");
-            identifierText.setValue(identifier);
         }
 
         identity.addLabel(T_identifier);

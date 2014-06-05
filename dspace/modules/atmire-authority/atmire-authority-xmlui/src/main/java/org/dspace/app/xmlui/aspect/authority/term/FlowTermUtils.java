@@ -86,24 +86,22 @@ public class FlowTermUtils {
         String source = request.getParameter("source");
         String language = request.getParameter("language");
         String status = request.getParameter("status");
-        String identifier = request.getParameter("identifier");
         // No errors, so we try to create the Term from the data provided
         if (result.getErrors() == null)
         {
-            Term newTerm = AuthorityUtils.createNewTerm(objectModel,literalForm,status,source,language,identifier);
             if(request.getParameter("concept")!=null)
             {
                 Concept concept = Concept.find(context, Integer.parseInt(request.getParameter("concept")));
-                concept.addPreferredTerm(newTerm);
+                Term newTerm = concept.createTerm(literalForm,1);
                 concept.update();
-            }
 
-            context.commit();
-            // success
-            result.setContinue(true);
-            result.setOutcome(true);
-            result.setMessage(T_add_Term_success_notice);
-            result.setParameter("termID", newTerm.getID());
+                context.commit();
+                // success
+                result.setContinue(true);
+                result.setOutcome(true);
+                result.setMessage(T_add_Term_success_notice);
+                result.setParameter("termID", newTerm.getID());
+            }
         }
 
         return result;
@@ -174,10 +172,6 @@ public class FlowTermUtils {
             String originalStatus = termModified.getStatus();
             if (originalStatus == null || !originalStatus.equals(status)) {
                 termModified.setStatus(status);
-            }
-            String originalIdentifier = termModified.getIdentifier();
-            if (originalIdentifier == null || !originalIdentifier.equals(identifier)) {
-                termModified.setIdentifier(identifier);
             }
             String originalLang = termModified.getLang();
             if (originalLang == null || !originalLang.equals(language)) {

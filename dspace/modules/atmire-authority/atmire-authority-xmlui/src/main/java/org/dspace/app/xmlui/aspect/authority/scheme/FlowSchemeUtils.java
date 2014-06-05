@@ -76,16 +76,10 @@ public class FlowSchemeUtils {
 
         String language = request.getParameter("language");
         String status = request.getParameter("status");
-        String identifier = request.getParameter("identifier");
-        // No errors, so we try to create the Scheme from the data provided
-        if(Scheme.findByIdentifier(context, identifier)!=null)
-        {
-            result.addError("Identifier");
-        }
 
         if (result.getErrors() == null)
         {
-            Scheme newScheme = AuthorityUtils.createNewScheme(objectModel, status, language, identifier);
+            Scheme newScheme = AuthorityUtils.createNewScheme(objectModel, status, language);
             context.commit();
             // success
             result.setContinue(true);
@@ -125,10 +119,6 @@ public class FlowSchemeUtils {
             String originalStatus = schemeModified.getStatus();
             if (originalStatus == null || !originalStatus.equals(status)) {
                 schemeModified.setStatus(status);
-            }
-            String originalIdentifier = schemeModified.getIdentifier();
-            if (originalIdentifier == null || !originalIdentifier.equals(identifier)) {
-                schemeModified.setIdentifier(identifier);
             }
             String originalLang = schemeModified.getLang();
             if (originalLang == null || !originalLang.equals(language)) {

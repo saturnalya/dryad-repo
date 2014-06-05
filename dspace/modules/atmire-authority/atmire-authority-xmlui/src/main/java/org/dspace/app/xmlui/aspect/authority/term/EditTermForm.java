@@ -180,10 +180,7 @@ public class EditTermForm extends AbstractDSpaceTransformer
         {
             source = request.getParameter("source");
         }
-        if (request.getParameter("identifier") != null)
-        {
-            identifier = request.getParameter("identifier");
-        }
+
         if (request.getParameter("lang") != null)
         {
             language = request.getParameter("lang");
@@ -273,14 +270,6 @@ public class EditTermForm extends AbstractDSpaceTransformer
         {
             identity.addLabel(T_source);
             identity.addItem(source);
-        }
-
-        if (admin)
-        {
-            Hidden identifierText = identity.addItem().addHidden("identifier");
-
-            identifierText.setValue(identifier);
-
         }
 
             identity.addLabel(T_identifier);

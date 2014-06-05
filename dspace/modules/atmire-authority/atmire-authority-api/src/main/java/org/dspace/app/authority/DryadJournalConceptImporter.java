@@ -118,13 +118,12 @@ public final class DryadJournalConceptImporter {
 
             Scheme authScheme = Scheme.findByIdentifier(context, "prism.publicationName");
             if(authScheme==null){
-                authScheme = Scheme.create(context);
+                authScheme = Scheme.create(context,"prism.publicationName");
                 authScheme.addMetadata("dc","title",null,"en","Dryad Journal Authority",null,1);
                 authScheme.setLastModified(date);
                 authScheme.setCreated(date);
                 authScheme.setLang("en");
                 authScheme.setStatus("Published");
-                authScheme.setIdentifier("prism.publicationName");
                 authScheme.update();
             }
 
@@ -144,13 +143,7 @@ public final class DryadJournalConceptImporter {
                         if(authorityValue.getId() != null){
                             ArrayList<Concept> aConcepts = Concept.findByIdentifier(context,authorityValue.getId());
                             if(aConcepts==null||aConcepts.size()==0)  {
-                                Concept aConcept = Concept.create(context);
-                                aConcept.setLastModified(authorityValue.getLastModified());
-                                aConcept.setCreated(authorityValue.getCreationDate());
-                                aConcept.setLang("en");
-                                aConcept.setTopConcept(true);
-                                aConcept.setStatus(Concept.Status.CANDIDATE);
-
+                                Concept aConcept = authScheme.createConcept(authorityValue.getId());
 
                                 if(solrDocument.getFieldValue("source")!=null) {
                                     String source = String.valueOf(solrDocument.getFieldValue("source"));
@@ -220,22 +213,8 @@ public final class DryadJournalConceptImporter {
                                         }
                                     }
                                 }
-                                aConcept.setIdentifier(authorityValue.getId());
                                 aConcept.update();
-
-                                String identifier = AuthorityObject.createIdentifier();
-                                Term aTerm = Term.create(context);
-                                aTerm.setLastModified(authorityValue.getLastModified());
-                                aTerm.setCreated(authorityValue.getCreationDate());
-                                aTerm.setLang("en");
-                                aTerm.setIdentifier(identifier);
-                                aTerm.setLiteralForm(authorityValue.getValue());
-                                aTerm.update();
-
-                                aConcept.addPreferredTerm(aTerm);
-
-
-                                authScheme.addConcept(aConcept);
+                                Term term = aConcept.createTerm(authorityValue.getValue(),1);
                                 context.commit();
                             }
                         }
@@ -253,15 +232,10 @@ public final class DryadJournalConceptImporter {
                 // TODO: THIS SHOULD BE NARROWED BY SCHEME
                 Concept[] aConcepts = Concept.findByPreferredLabel(context,val.get("fullname"));
                 if(aConcepts==null||aConcepts.length==0)  {
-                    Concept aConcept = Concept.create(context);
-                    aConcept.setLastModified(date);
-                    aConcept.setCreated(date);
-                    aConcept.setLang("en");
-                    aConcept.setTopConcept(true);
-                    aConcept.setSource("LOCAL-DryadJournal");
-                    aConcept.setStatus(Concept.Status.ACCEPTED);
-
                     String id = AuthorityObject.createIdentifier();
+
+                    Concept aConcept = authScheme.createConcept();
+                    aConcept.setSource("LOCAL-DryadJournal");
 
                     if(val.get("fullname")!=null)
                     {
@@ -320,22 +294,8 @@ public final class DryadJournalConceptImporter {
                     {
                         aConcept.addMetadata("internal","journal","notifyWeekly","",val.get("notifyWeekly"),id,0);
                     }
-                    aConcept.setIdentifier(id);
                     aConcept.update();
-
-
-                    Term aTerm = Term.create(context);
-                    aTerm.setLastModified(date);
-                    aTerm.setCreated(date);
-                    aTerm.setLang("en");
-                    aTerm.setIdentifier(AuthorityObject.createIdentifier());
-                    aTerm.setLiteralForm(val.get("fullname"));
-                    aTerm.update();
-
-                    aConcept.addPreferredTerm(aTerm);
-
-
-                    authScheme.addConcept(aConcept);
+                    aConcept.createTerm(val.get("fullname"),1);
                     context.commit();
                 }
             }

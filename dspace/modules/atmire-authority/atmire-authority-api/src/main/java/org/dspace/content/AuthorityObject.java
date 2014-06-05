@@ -72,7 +72,7 @@ public abstract class AuthorityObject extends DSpaceObject{
 
     }
 
-    public void setIdentifier(String identifier)
+    protected void setIdentifier(String identifier)
     {
         myRow.setColumn("identifier", identifier);
         modified = true;
@@ -697,16 +697,23 @@ public abstract class AuthorityObject extends DSpaceObject{
         return null;
     }
 
-    public static String createIdentifier() throws NoSuchAlgorithmException{
+    public static String createIdentifier(){
         return java.util.UUID.randomUUID().toString();
     }
 
-    public static String hash(String input) throws NoSuchAlgorithmException {
-        MessageDigest m = MessageDigest.getInstance("MD5");
-        byte[] data = input.getBytes();
-        m.update(data, 0, data.length);
-        BigInteger i = new BigInteger(1, m.digest());
-        return String.format("%1$032X", i);
+    public static String hash(String input) {
+
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            byte[] data = input.getBytes();
+            m.update(data, 0, data.length);
+            BigInteger i = new BigInteger(1, m.digest());
+            return String.format("%1$032X", i);
+        } catch (NoSuchAlgorithmException e) {
+            log.error(e.getMessage(),e);
+            throw new RuntimeException(e.getMessage(),e);
+        }
+
     }
 
 }

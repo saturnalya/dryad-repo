@@ -170,10 +170,7 @@ public class EditConceptForm extends AbstractDSpaceTransformer
         {
             topConcept    = (request.getParameter("topConcept") == null)  ? false : true;
         }
-        if (request.getParameter("identifier") != null)
-        {
-            identifier = request.getParameter("identifier");
-        }
+
         if (request.getParameter("lang") != null)
         {
             language = request.getParameter("lang");
@@ -240,11 +237,6 @@ public class EditConceptForm extends AbstractDSpaceTransformer
             identity.addItem();
         }
 
-        if (admin)
-        {
-            Hidden identifierText = identity.addItem().addHidden("identifier");
-            identifierText.setValue(identifier);
-        }
 
             identity.addLabel(T_identifier);
             identity.addItem(identifier);
