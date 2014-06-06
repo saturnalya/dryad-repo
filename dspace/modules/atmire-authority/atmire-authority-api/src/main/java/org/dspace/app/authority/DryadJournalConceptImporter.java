@@ -117,9 +117,9 @@ public final class DryadJournalConceptImporter {
             Date date = new Date();
 
 
-            Scheme authScheme = Scheme.findByIdentifier(context, "prism_publicationName");
+            Scheme authScheme = Scheme.findByIdentifier(context, "prism.publicationName");
             if(authScheme==null){
-                authScheme = Scheme.create(context,"prism_publicationName");
+                authScheme = Scheme.create(context,"prism.publicationName");
                 authScheme.addMetadata("dc","title",null,"en","Dryad Journal Authority",null,1);
                 authScheme.setLastModified(date);
                 authScheme.setCreated(date);

@@ -88,7 +88,7 @@ public class AuthorityItemConsumer implements Consumer {
                 journal = journal.replace("*","");
             }
             try{
-                Scheme scheme = Scheme.findByIdentifier(context,"prism_publicationName");
+                Scheme scheme = Scheme.findByIdentifier(context,"prism.publicationName");
                 if(scheme!=null&&item.isArchived())
                 {
 
