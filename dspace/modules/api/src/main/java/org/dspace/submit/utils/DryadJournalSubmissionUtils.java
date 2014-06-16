@@ -1,9 +1,10 @@
 package org.dspace.submit.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.dspace.content.*;
 import org.dspace.content.Collection;
-import org.dspace.content.DCValue;
-import org.dspace.content.Item;
+import org.dspace.content.authority.AuthorityValue;
 import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.workflow.DryadWorkflowUtils;
@@ -13,10 +14,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,42 +42,92 @@ public class DryadJournalSubmissionUtils {
         , JOURNAL_NOT_INTEGRATED
     }
 
-    public static final java.util.Map<String, Map<String, String>> journalProperties = new HashMap<String, Map<String, String>>();
-    static{
-        String journalPropFile = ConfigurationManager.getProperty("submit.journal.config");
-        Properties properties = new Properties();
+    public static java.util.Map<String, Map<String, String>> getJournalProperties(){
+        java.util.Map<String, Map<String, String>> journalProperties = new HashMap<String, Map<String, String>>();
+        Context context = null;
         try {
-            properties.load(new InputStreamReader(new FileInputStream(journalPropFile), "UTF-8"));
-            String journalTypes = properties.getProperty("journal.order");
+            context = new Context();
+            Concept[] concepts = Concept.findAll(context, AuthorityObject.ID);
+            for(Concept concept : concepts){
 
-            for (int i = 0; i < journalTypes.split(",").length; i++) {
-                String journalType = journalTypes.split(",")[i].trim();
+                String journalType = concept.getIdentifier();
+                String key = concept.getIdentifier();
+                String fullName = concept.getLabel();
 
-                String str = "journal." + journalType + ".";
-                
                 log.debug("reading config for journal " + journalType);
-                log.debug("fullname " + properties.getProperty(str + FULLNAME));
-                log.debug("subscription? " + properties.getProperty(str + SUBSCRIPTION_PAID));
+                log.debug("fullname " + concept.getMetadata("internal","journal",FULLNAME,Item.ANY));
+                log.debug("subscription? " + concept.getMetadata("internal", "journal", SUBSCRIPTION_PAID, Item.ANY));
 
                 Map<String, String> map = new HashMap<String, String>();
-                map.put(FULLNAME, properties.getProperty(str + FULLNAME));
-                map.put(METADATADIR, properties.getProperty(str + METADATADIR));
-                map.put(INTEGRATED, properties.getProperty(str + INTEGRATED));
-                map.put(PUBLICATION_BLACKOUT, properties.getProperty(str + PUBLICATION_BLACKOUT, "false"));
-                map.put(NOTIFY_ON_REVIEW, properties.getProperty(str + NOTIFY_ON_REVIEW));
-                map.put(NOTIFY_ON_ARCHIVE, properties.getProperty(str + NOTIFY_ON_ARCHIVE));
-                map.put(JOURNAL_ID, journalType);
-                map.put(SUBSCRIPTION_PAID, properties.getProperty(str + SUBSCRIPTION_PAID));
+                if(fullName!=null&&fullName.length()>0)
+                {
+                    key = fullName;
+                    map.put(FULLNAME, key);
+                }
 
-                String key = properties.getProperty(str + FULLNAME);
+
+                if(concept.getMetadata("internal","journal",METADATADIR,Item.ANY)!=null&&concept.getMetadata("internal","journal",METADATADIR,Item.ANY).length>0)
+                map.put(METADATADIR, concept.getMetadata("internal","journal",METADATADIR,Item.ANY)[0].value);
+
+                if(concept.getMetadata("internal","journal",INTEGRATED,Item.ANY)!=null&&concept.getMetadata("internal","journal",INTEGRATED,Item.ANY).length>0)
+                map.put(INTEGRATED, concept.getMetadata("internal","journal",INTEGRATED,Item.ANY)[0].value);
+
+                if(concept.getMetadata("internal","journal",PUBLICATION_BLACKOUT,Item.ANY)!=null&&concept.getMetadata("internal","journal",PUBLICATION_BLACKOUT,Item.ANY).length>0)
+                map.put(PUBLICATION_BLACKOUT, concept.getMetadata("internal","journal",PUBLICATION_BLACKOUT,Item.ANY)[0].value);
+
+                AuthorityMetadataValue[] emailOnReview = concept.getMetadata("internal","journal",NOTIFY_ON_REVIEW,Item.ANY);
+                if(emailOnReview!=null&&emailOnReview.length>0)
+                {
+                    int i = 0;
+                    String[] emails = new String[emailOnReview.length];
+                    for (AuthorityMetadataValue authorityMetadataValue : emailOnReview)
+                    {
+                        emails[i]=(authorityMetadataValue.value);
+                        i++;
+                    }
+                    map.put(NOTIFY_ON_REVIEW, StringUtils.join(emails,','));
+                }
+
+                AuthorityMetadataValue[] emailOnArchive = concept.getMetadata("internal","journal",NOTIFY_ON_ARCHIVE,Item.ANY);
+                if(emailOnArchive!=null&&emailOnArchive.length>0)
+                {
+                    int i = 0;
+                    String[] emails = new String[emailOnArchive.length];
+                    for (AuthorityMetadataValue authorityMetadataValue : emailOnArchive)
+                    {
+                        emails[i]=(authorityMetadataValue.value);
+                        i++;
+                    }
+                    map.put(NOTIFY_ON_ARCHIVE, StringUtils.join(emails,','));
+                }
+
+                map.put(JOURNAL_ID, journalType);
+
+                if(concept.getMetadata("internal","journal",SUBSCRIPTION_PAID,Item.ANY)!=null&&concept.getMetadata("internal","journal",SUBSCRIPTION_PAID,Item.ANY).length>0)
+                map.put(SUBSCRIPTION_PAID, concept.getMetadata("internal","journal",SUBSCRIPTION_PAID,Item.ANY)[0].value);
+
                 if(key!=null&&key.length()>0){
                 journalProperties.put(key, map);
                 }
+
             }
 
-        }catch (IOException e) {
+        }catch (Exception e) {
             log.error("Error while loading journal properties", e);
         }
+        finally {
+            if(context!=null)
+            {
+                try{
+                    context.complete();
+                }catch (Exception e)
+                {
+                    context.abort();
+                }
+            }
+
+        }
+        return journalProperties;
     }
 
     public static Boolean shouldEnterBlackoutByDefault(Context context, Item item, Collection collection) throws SQLException {
@@ -99,7 +147,7 @@ public class DryadJournalSubmissionUtils {
             journalFullName=journalFullNames[0].value;
         }
 
-        Map<String, String> values = journalProperties.get(journalFullName);
+        Map<String, String> values = getJournalProperties().get(journalFullName);
         // Ignore blackout setting if journal is not (yet) integrated
 	// get journal's blackout setting
 	// journal is blacked out if its blackout setting is true or if it has no setting
@@ -129,7 +177,7 @@ public class DryadJournalSubmissionUtils {
 
 
     public static String findKeyByFullname(String fullname){
-        Map<String, String> props = journalProperties.get(fullname);
+        Map<String, String> props = getJournalProperties().get(fullname);
         if(props!=null)
             return props.get(DryadJournalSubmissionUtils.JOURNAL_ID);
 
@@ -138,7 +186,7 @@ public class DryadJournalSubmissionUtils {
 
 
     public static Map<String, String> getPropertiesByJournal(String key){
-        return journalProperties.get(key);
+        return getJournalProperties().get(key);
     }
     /**
      * Replaces invalid filename characters by percent-escaping.  Based on

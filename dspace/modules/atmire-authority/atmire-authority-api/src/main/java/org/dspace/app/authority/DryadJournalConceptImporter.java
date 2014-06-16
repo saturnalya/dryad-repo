@@ -216,7 +216,7 @@ public final class DryadJournalConceptImporter {
                                     }
                                 }
                                 aConcept.update();
-                                Term term = aConcept.createTerm(authorityValue.getValue(),1);
+                                Term term = aConcept.createTerm(authorityValue.getFullText(),1);
                                 term.update();
                                 context.commit();
                             }

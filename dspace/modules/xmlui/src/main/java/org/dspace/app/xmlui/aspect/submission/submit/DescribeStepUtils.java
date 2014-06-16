@@ -14,13 +14,10 @@ import org.dspace.content.authority.MetadataAuthorityManager;
 import org.dspace.content.authority.ChoiceAuthorityManager;
 import org.dspace.content.authority.Choices;
 import org.dspace.content.authority.Choice;
-import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
+import org.dspace.submit.utils.DryadJournalSubmissionUtils;
 import org.dspace.workflow.DryadWorkflowUtils;
 
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.*;
 import java.sql.SQLException;
 import java.io.UnsupportedEncodingException;
@@ -65,35 +62,8 @@ public class DescribeStepUtils extends AbstractDSpaceTransformer {
     private static final String NOTIFY_ON_ARCHIVE = "notifyOnArchive";
 
 
-    public static final java.util.Map<String, Map<String, String>> journalProperties = new HashMap<String, Map<String, String>>();
-    static{
-        String journalPropFile = ConfigurationManager.getProperty("submit.journal.config");
-        Properties properties = new Properties();
-        try {
-            properties.load(new InputStreamReader(new FileInputStream(journalPropFile), "UTF-8"));
-            String journalTypes = properties.getProperty("journal.order");
+    public static final java.util.Map<String, Map<String, String>> journalProperties = DryadJournalSubmissionUtils.getJournalProperties();
 
-            for (int i = 0; i < journalTypes.split(",").length; i++) {
-                String journalType = journalTypes.split(",")[i].trim();
-
-                String str = "journal." + journalType + ".";
-
-                Map<String, String> map = new HashMap<String, String>();
-                map.put(FULLNAME, properties.getProperty(str + FULLNAME));
-                map.put(METADATADIR, properties.getProperty(str + METADATADIR));
-                map.put(INTEGRATED, properties.getProperty(str + INTEGRATED));
-                map.put(PUBLICATION_BLACKOUT, properties.getProperty(str + PUBLICATION_BLACKOUT, "false"));
-                map.put(NOTIFY_ON_REVIEW, properties.getProperty(str + NOTIFY_ON_REVIEW));
-                map.put(NOTIFY_ON_ARCHIVE, properties.getProperty(str + NOTIFY_ON_ARCHIVE));
-
-                String key = properties.getProperty(str + FULLNAME);
-                journalProperties.put(key, map);
-            }
-
-        }catch (IOException e) {
-            log.error("Error while loading journal properties", e);
-        }
-    }
 
 
 

@@ -329,8 +329,7 @@ public class PaymentSystemImpl implements PaymentSystemService {
         if(journal!=null)
         {
             try{
-                DryadJournalSubmissionUtils util = new DryadJournalSubmissionUtils();
-                Map<String, String> properties = util.journalProperties.get(journal);
+                Map<String, String> properties = DryadJournalSubmissionUtils.getPropertiesByJournal(journal);
                 if(properties!=null){
                 String subscription = properties.get("integrated");
                 if(subscription==null || !subscription.equals(ShoppingCart.FREE))
@@ -435,7 +434,7 @@ public class PaymentSystemImpl implements PaymentSystemService {
         {
             if(journal!=null&&journal.length()>0) {
                 //update shoppingcart journal
-                Map<String, String> properties = DryadJournalSubmissionUtils.journalProperties.get(journal);
+                Map<String, String> properties = DryadJournalSubmissionUtils.getPropertiesByJournal(journal);
                 Boolean subscription = false;
                 if(properties!=null){
                     if(StringUtils.equals(properties.get("subscriptionPaid"), ShoppingCart.FREE))

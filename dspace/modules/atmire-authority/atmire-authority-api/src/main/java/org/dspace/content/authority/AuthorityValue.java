@@ -166,6 +166,7 @@ public class AuthorityValue {
         this.id = String.valueOf(document.getFieldValue("id"));
         this.field = String.valueOf(document.getFieldValue("field"));
         this.value = String.valueOf(document.getFieldValue("value"));
+        this.fullText = String.valueOf(document.getFieldValue("full-text"));
         if(document.getFieldValue("deleted")!=null)
         this.deleted = (Boolean) document.getFieldValue("deleted");
         this.creationDate = (Date) document.getFieldValue("creation_date");

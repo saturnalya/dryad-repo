@@ -11,11 +11,8 @@ import org.dspace.app.xmlui.wing.element.Item;
 import org.dspace.app.xmlui.wing.element.List;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.authorize.AuthorizeManager;
-import org.dspace.content.*;
 import org.dspace.content.Collection;
-import org.dspace.content.authority.Choice;
 import org.dspace.content.authority.ChoiceAuthorityManager;
-import org.dspace.content.authority.Choices;
 import org.dspace.content.authority.MetadataAuthorityManager;
 import org.dspace.handle.HandleManager;
 import org.dspace.core.ConfigurationManager;
@@ -33,7 +30,6 @@ import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.io.IOException;
-import java.util.*;
 
 /**
  * User: @author kevinvandevelde (kevin at atmire.com)

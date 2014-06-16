@@ -100,7 +100,7 @@ public abstract class AuthorityObject extends DSpaceObject{
     {
         try
         {
-            if(metadataValues==null){
+            if(metadataValues==null||metadataValues.size()==0){
 
                 metadataValues = new ArrayList<AuthorityMetadataValue>();
 
