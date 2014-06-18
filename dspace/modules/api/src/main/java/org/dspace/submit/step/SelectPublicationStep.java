@@ -95,23 +95,34 @@ public class SelectPublicationStep extends AbstractProcessingStep {
         journalEmbargo.add(false);
 
 	// initialize settings from journal properties file
-        String journalPropFile = ConfigurationManager.getProperty("submit.journal.config");
-	log.info("initializing journal settings from property file " + journalPropFile);
-        Properties properties = new Properties();
+        //String journalPropFile = ConfigurationManager.getProperty("submit.journal.config");
+	//log.info("initializing journal settings from property file " + journalPropFile);
+        Map<String,Map<String,String>> properties = DryadJournalSubmissionUtils.getJournalProperties();
 	
         try {
-            properties.load(new InputStreamReader(new FileInputStream(journalPropFile), "UTF-8"));
-            String journalTypes = properties.getProperty("journal.order");
-            for (int i = 0; i < journalTypes.split(",").length; i++) {
-                String journalType = journalTypes.split(",")[i].trim();
-                String journalDisplay = properties.getProperty("journal." + journalType + ".fullname");
-                String metadataDir = properties.getProperty("journal." + journalType + ".metadataDir");
-                String integrated = properties.getProperty("journal." + journalType + ".integrated");
-                String embargo = properties.getProperty("journal." + journalType + ".embargoAllowed", "true");
-                List<String> onReviewMails = Arrays.asList(properties.getProperty("journal." + journalType + ".notifyOnReview", "").replace(" ", "").split(","));
-                List<String> onArchiveMails = Arrays.asList(properties.getProperty("journal." + journalType + ".notifyOnArchive", "").replace(" ", "").split(","));
+           // properties.load(new InputStreamReader(new FileInputStream(journalPropFile), "UTF-8"));
+           // String journalTypes = properties.getProperty("journal.order");
 
-                String allowReviewWorkflow = properties.getProperty("journal." + journalType + ".allowReviewWorkflow");
+            for (String journalType:properties.keySet()) {
+                Map<String,String> property = properties.get(journalType);
+
+                String journalDisplay = property.get("fullname");
+                String metadataDir = property.get("metadataDir");
+                String integrated = property.get("integrated");
+                String embargo = property.get("embargoAllowed");
+                if(property.get("notifyOnReview")!=null)
+                {
+                    List<String> onReviewMails = Arrays.asList(property.get("notifyOnReview").replace(" ", "").split(","));
+                    journalNotifyOnReview.put(journalType, onReviewMails);
+                }
+                if(property.get("notifyOnArchive")!=null)
+                {
+                    List<String> onArchiveMails = Arrays.asList(property.get("notifyOnArchive").replace(" ","").split(","));
+
+                    journalNotifyOnArchive.put(journalType, onArchiveMails);
+                }
+
+                String allowReviewWorkflow = property.get( "allowReviewWorkflow");
 
 		//once we have read the properties from the file, make the journal's name case-insensitive
 		journalType = journalType.toLowerCase();
@@ -126,11 +137,10 @@ public class SelectPublicationStep extends AbstractProcessingStep {
                     allowReviewWorkflowJournals.add(journalType);
 
                 journalEmbargo.add(Boolean.valueOf(embargo));
-                journalNotifyOnReview.put(journalType, onReviewMails);
-                journalNotifyOnArchive.put(journalType, onArchiveMails);
+
 
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Error while loading journal properties", e);
         }
 
