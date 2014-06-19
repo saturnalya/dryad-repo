@@ -88,6 +88,27 @@ public class SelectPublicationStep extends AbstractProcessingStep {
     public final static int  UNKNOWN_DOI=5;
     public final static int  MANU_ACC=6;
 
+    public static final String FULLNAME = "fullname";
+    public static final String METADATADIR = "metadataDir";
+    public static final String INTEGRATED = "integrated";
+    public static final String PUBLICATION_BLACKOUT = "publicationBlackout";
+    public static final String NOTIFY_ON_REVIEW = "notifyOnReview";
+    public static final String NOTIFY_ON_ARCHIVE = "notifyOnArchive";
+    public static final String JOURNAL_ID = "journalID";
+    public static final String SUBSCRIPTION_PAID = "subscriptionPaid";
+
+    public static final String ALLOWREVIEWWORKFLOW = "allowReviewWorkflow";
+    public static final String PARSINGSCHEME = "parsingScheme";
+    public static final String EMBARGOALLOWED = "embargoAllowed";
+    public static final String SPONSORNAME = "sponsorName";
+    public static final String NOTIFYWEEKLY = "notifyWeekly";
+
+    public static final String[] properties = new String[]{"fullname", "metadataDir","integrated", "publicationBlackout","notifyOnArchive", "journalID","subscriptionPaid","allowReviewWorkflow", "parsingScheme","embargoAllowed","sponsorName","notifyWeekly"};
+
+
+
+
+
     static {
         journalVals.add("other");
         journalNames.add("(please select a journal)");
@@ -106,23 +127,23 @@ public class SelectPublicationStep extends AbstractProcessingStep {
             for (String journalType:properties.keySet()) {
                 Map<String,String> property = properties.get(journalType);
 
-                String journalDisplay = property.get("fullname");
-                String metadataDir = property.get("metadataDir");
-                String integrated = property.get("integrated");
-                String embargo = property.get("embargoAllowed");
-                if(property.get("notifyOnReview")!=null)
+                String journalDisplay = property.get(FULLNAME);
+                String metadataDir = property.get(METADATADIR);
+                String integrated = property.get(INTEGRATED);
+                String embargo = property.get(EMBARGOALLOWED);
+                if(property.get(NOTIFY_ON_REVIEW)!=null)
                 {
-                    List<String> onReviewMails = Arrays.asList(property.get("notifyOnReview").replace(" ", "").split(","));
+                    List<String> onReviewMails = Arrays.asList(property.get(NOTIFY_ON_REVIEW).replace(" ", "").split(","));
                     journalNotifyOnReview.put(journalType, onReviewMails);
                 }
-                if(property.get("notifyOnArchive")!=null)
+                if(property.get(NOTIFY_ON_ARCHIVE)!=null)
                 {
-                    List<String> onArchiveMails = Arrays.asList(property.get("notifyOnArchive").replace(" ","").split(","));
+                    List<String> onArchiveMails = Arrays.asList(property.get(NOTIFY_ON_ARCHIVE).replace(" ","").split(","));
 
                     journalNotifyOnArchive.put(journalType, onArchiveMails);
                 }
 
-                String allowReviewWorkflow = property.get( "allowReviewWorkflow");
+                String allowReviewWorkflow = property.get(ALLOWREVIEWWORKFLOW);
 
 		//once we have read the properties from the file, make the journal's name case-insensitive
 		journalType = journalType.toLowerCase();

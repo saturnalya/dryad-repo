@@ -36,6 +36,16 @@ public class DryadJournalSubmissionUtils {
     public static final String JOURNAL_ID = "journalID";
     public static final String SUBSCRIPTION_PAID = "subscriptionPaid";
 
+
+    public static final String ALLOWREVIEWWORKFLOW = "allowReviewWorkflow";
+    public static final String PARSINGSCHEME = "parsingScheme";
+    public static final String EMBARGOALLOWED = "embargoAllowed";
+    public static final String SPONSORNAME = "sponsorName";
+    public static final String NOTIFYWEEKLY = "notifyWeekly";
+
+   public static final String[] properties = new String[]{"fullname", "metadataDir","integrated", "publicationBlackout","notifyOnArchive", "journalID","subscriptionPaid","allowReviewWorkflow", "parsingScheme","embargoAllowed","sponsorName","notifyWeekly"};
+
+
     public enum RecommendedBlackoutAction {
           BLACKOUT_TRUE
         , BLACKOUT_FALSE
@@ -65,15 +75,20 @@ public class DryadJournalSubmissionUtils {
                     map.put(FULLNAME, key);
                 }
 
-
-                if(concept.getMetadata("internal","journal",METADATADIR,Item.ANY)!=null&&concept.getMetadata("internal","journal",METADATADIR,Item.ANY).length>0)
-                map.put(METADATADIR, concept.getMetadata("internal","journal",METADATADIR,Item.ANY)[0].value);
-
-                if(concept.getMetadata("internal","journal",INTEGRATED,Item.ANY)!=null&&concept.getMetadata("internal","journal",INTEGRATED,Item.ANY).length>0)
-                map.put(INTEGRATED, concept.getMetadata("internal","journal",INTEGRATED,Item.ANY)[0].value);
-
-                if(concept.getMetadata("internal","journal",PUBLICATION_BLACKOUT,Item.ANY)!=null&&concept.getMetadata("internal","journal",PUBLICATION_BLACKOUT,Item.ANY).length>0)
-                map.put(PUBLICATION_BLACKOUT, concept.getMetadata("internal","journal",PUBLICATION_BLACKOUT,Item.ANY)[0].value);
+                for(String property:properties)
+                {
+                    if(concept.getMetadata("internal","journal",property,Item.ANY)!=null&&concept.getMetadata("internal","journal",property,Item.ANY).length>0)
+                    {
+                        if(property.equals(NOTIFY_ON_ARCHIVE)||property.equals(NOTIFY_ON_REVIEW)||property.equals(NOTIFYWEEKLY))
+                        {
+                           //add emails later
+                        }
+                        else
+                        {
+                            map.put(property, concept.getMetadata("internal","journal",property,Item.ANY)[0].value);
+                        }
+                    }
+                }
 
                 AuthorityMetadataValue[] emailOnReview = concept.getMetadata("internal","journal",NOTIFY_ON_REVIEW,Item.ANY);
                 if(emailOnReview!=null&&emailOnReview.length>0)
@@ -101,10 +116,20 @@ public class DryadJournalSubmissionUtils {
                     map.put(NOTIFY_ON_ARCHIVE, StringUtils.join(emails,','));
                 }
 
-                map.put(JOURNAL_ID, journalType);
+                AuthorityMetadataValue[] emailWeekly = concept.getMetadata("internal","journal",NOTIFYWEEKLY,Item.ANY);
+                if(emailOnArchive!=null&&emailOnArchive.length>0)
+                {
+                    int i = 0;
+                    String[] emails = new String[emailWeekly.length];
+                    for (AuthorityMetadataValue authorityMetadataValue : emailWeekly)
+                    {
+                        emails[i]=(authorityMetadataValue.value);
+                        i++;
+                    }
+                    map.put(NOTIFYWEEKLY, StringUtils.join(emails,','));
+                }
 
-                if(concept.getMetadata("internal","journal",SUBSCRIPTION_PAID,Item.ANY)!=null&&concept.getMetadata("internal","journal",SUBSCRIPTION_PAID,Item.ANY).length>0)
-                map.put(SUBSCRIPTION_PAID, concept.getMetadata("internal","journal",SUBSCRIPTION_PAID,Item.ANY)[0].value);
+                map.put(JOURNAL_ID, journalType);
 
                 if(key!=null&&key.length()>0){
                 journalProperties.put(key, map);

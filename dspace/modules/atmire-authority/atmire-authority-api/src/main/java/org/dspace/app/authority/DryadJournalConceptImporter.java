@@ -48,6 +48,15 @@ public final class DryadJournalConceptImporter {
     public static final String JOURNAL_ID = "journalID";
     public static final String SUBSCRIPTION_PAID = "subscriptionPaid";
 
+
+    public static final String ALLOWREVIEWWORKFLOW = "allowReviewWorkflow";
+    public static final String PARSINGSCHEME = "parsingScheme";
+    public static final String EMBARGOALLOWED = "embargoAllowed";
+    public static final String SPONSORNAME = "sponsorName";
+    public static final String NOTIFYWEEKLY = "notifyWeekly";
+
+    public static final String[] properties = new String[]{"fullname", "metadataDir","integrated", "publicationBlackout","notifyOnArchive", "journalID","subscriptionPaid","allowReviewWorkflow", "parsingScheme","embargoAllowed","sponsorName","notifyWeekly"};
+
     /**
      * For invoking via the command line.  If called with no command line arguments,
      * it will negotiate with the user for the administrator details
@@ -155,63 +164,15 @@ public final class DryadJournalConceptImporter {
                                         Map<String,String> val = journalProperties.get(authorityValue.getValue());
                                         if(val!=null){
                                             journalProperties.remove(authorityValue.getValue());
-                                        if(val.get("fullname")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","fullname","",val.get("fullname"),authorityValue.getId(),0);
-                                        }
 
-                                        if(val.get("metadataDir")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","metadataDir","",val.get("metadataDir"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("parsingScheme")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","parsingScheme","",val.get("parsingScheme"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("integrated")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","integrated","",val.get("integrated"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("embargoAllowed")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","embargoAllowed","",val.get("embargoAllowed"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("allowReviewWorkflow")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","allowReviewWorkflow","",val.get("allowReviewWorkflow"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("publicationBlackout")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","publicationBlackout","",val.get("publicationBlackout"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("allowReviewWorkflow")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","allowReviewWorkflow","",val.get("allowReviewWorkflow"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("publicationBlackout")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","publicationBlackout","",val.get("publicationBlackout"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("subscriptionPaid")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","subscriptionPaid","",val.get("subscriptionPaid"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("sponsorName")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","sponsorName","",val.get("sponsorName"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("notifyOnReview")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","notifyOnReview","",val.get("notifyOnReview"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("notifyOnArchive")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","notifyOnArchive","",val.get("notifyOnArchive"),authorityValue.getId(),0);
-                                        }
-                                        if(val.get("notifyWeekly")!=null)
-                                        {
-                                            aConcept.addMetadata("internal","journal","notifyWeekly","",val.get("notifyWeekly"),authorityValue.getId(),0);
-                                        }
+                                            for(String key : properties)
+                                            {
+                                                if(val.get(key)!=null&&val.get(key).length()>0)
+                                                {
+                                                    aConcept.addMetadata("internal","journal",key,"",val.get(key),authorityValue.getId(),0);
+                                                }
+                                            }
+
                                         }
                                     }
                                 }
@@ -233,7 +194,7 @@ public final class DryadJournalConceptImporter {
                 Map<String,String> val = journalProperties.get(key);
 
                 // TODO: THIS SHOULD BE NARROWED BY SCHEME
-                Concept[] aConcepts = Concept.findByPreferredLabel(context,val.get("fullname"),authScheme.getID());
+                Concept[] aConcepts = Concept.findByPreferredLabel(context,val.get(FULLNAME),authScheme.getID());
                 if(aConcepts==null||aConcepts.length==0)  {
                     String id = AuthorityObject.createIdentifier();
 
@@ -241,65 +202,16 @@ public final class DryadJournalConceptImporter {
                     aConcept.setSource("LOCAL-DryadJournal");
                     aConcept.setStatus(Concept.Status.ACCEPTED);
 
-                    if(val.get("fullname")!=null)
+                    for(String property:properties)
                     {
-                        aConcept.addMetadata("internal","journal","fullname","",val.get("fullname"),id,0);
+                        if(val.get(key)!=null)
+                        {
+                            aConcept.addMetadata("internal","journal",property,"",val.get(property),id,0);
+                        }
                     }
 
-                    if(val.get("metadataDir")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","metadataDir","",val.get("metadataDir"),id,0);
-                    }
-                    if(val.get("parsingScheme")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","parsingScheme","",val.get("parsingScheme"),id,0);
-                    }
-                    if(val.get("integrated")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","integrated","",val.get("integrated"),id,0);
-                    }
-                    if(val.get("embargoAllowed")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","embargoAllowed","",val.get("embargoAllowed"),id,0);
-                    }
-                    if(val.get("allowReviewWorkflow")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","allowReviewWorkflow","",val.get("allowReviewWorkflow"),id,0);
-                    }
-                    if(val.get("publicationBlackout")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","publicationBlackout","",val.get("publicationBlackout"),id,0);
-                    }
-                    if(val.get("allowReviewWorkflow")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","allowReviewWorkflow","",val.get("allowReviewWorkflow"),id,0);
-                    }
-                    if(val.get("publicationBlackout")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","publicationBlackout","",val.get("publicationBlackout"),id,0);
-                    }
-                    if(val.get("subscriptionPaid")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","subscriptionPaid","",val.get("subscriptionPaid"),id,0);
-                    }
-                    if(val.get("sponsorName")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","sponsorName","",val.get("sponsorName"),id,0);
-                    }
-                    if(val.get("notifyOnReview")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","notifyOnReview","",val.get("notifyOnReview"),id,0);
-                    }
-                    if(val.get("notifyOnArchive")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","notifyOnArchive","",val.get("notifyOnArchive"),id,0);
-                    }
-                    if(val.get("notifyWeekly")!=null)
-                    {
-                        aConcept.addMetadata("internal","journal","notifyWeekly","",val.get("notifyWeekly"),id,0);
-                    }
                     aConcept.update();
-                    Term term = aConcept.createTerm(val.get("fullname"),1);
+                    Term term = aConcept.createTerm(val.get(FULLNAME),1);
                     term.update();
                     context.commit();
                 }
@@ -322,10 +234,10 @@ public final class DryadJournalConceptImporter {
         HashMap<String, Map<String, String>> journalProperties = new HashMap<String, Map<String, String>>();
 
         String journalPropFile = ConfigurationManager.getProperty("submit.journal.config");
-        Properties properties = new Properties();
+        Properties journalProfiles = new Properties();
         try {
-            properties.load(new InputStreamReader(new FileInputStream(journalPropFile), "UTF-8"));
-            String journalTypes = properties.getProperty("journal.order");
+            journalProfiles.load(new InputStreamReader(new FileInputStream(journalPropFile), "UTF-8"));
+            String journalTypes = journalProfiles.getProperty("journal.order");
 
             for (int i = 0; i < journalTypes.split(",").length; i++) {
                 String journalType = journalTypes.split(",")[i].trim();
@@ -333,16 +245,13 @@ public final class DryadJournalConceptImporter {
                 String str = "journal." + journalType + ".";
 
                 Map<String, String> map = new HashMap<String, String>();
-                map.put(FULLNAME, properties.getProperty(str + FULLNAME));
-                map.put(METADATADIR, properties.getProperty(str + METADATADIR));
-                map.put(INTEGRATED, properties.getProperty(str + INTEGRATED));
-                map.put(PUBLICATION_BLACKOUT, properties.getProperty(str + PUBLICATION_BLACKOUT, "false"));
-                map.put(NOTIFY_ON_REVIEW, properties.getProperty(str + NOTIFY_ON_REVIEW));
-                map.put(NOTIFY_ON_ARCHIVE, properties.getProperty(str + NOTIFY_ON_ARCHIVE));
-                map.put(JOURNAL_ID, journalType);
-                map.put(SUBSCRIPTION_PAID, properties.getProperty(str + SUBSCRIPTION_PAID));
+                for(String property: properties)
+                {
+                    map.put(property, journalProfiles.getProperty(str + property));
+                }
 
-                String key = properties.getProperty(str + FULLNAME);
+
+                String key = journalProfiles.getProperty(str + FULLNAME);
                 if(key!=null&&key.length()>0){
                     journalProperties.put(key, map);
                 }
