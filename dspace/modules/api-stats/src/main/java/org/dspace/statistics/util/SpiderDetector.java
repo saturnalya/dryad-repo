@@ -238,17 +238,17 @@ public class SpiderDetector {
                         {
                             for (String ip : readPatterns(file)) {
                                 log.debug("Loading {}"+ ip);
-                                //todo:this code is in 4.1 ,should we keep it?
-//                                if (!Character.isDigit(ip.charAt(0)))
-//                                {
-//                                    try {
-//                                        ip = DnsLookup.forward(ip);
-//                                        log.debug("Resolved to {}"+ip);
-//                                    } catch (IOException e) {
-//                                        log.warn("Not loading {}: {}"+ ip+ e.getMessage());
-//                                        continue;
-//                                    }
-//                                }
+                            
+                                if (!Character.isDigit(ip.charAt(0)))
+                                {
+                                //   try {
+                                //      ip = DnsLookup.forward(ip);
+                                //      log.debug("Resolved to {}"+ip);
+                                //  } catch (IOException e) {
+                                //     log.warn("Not loading {}: {}"+ ip+ e.getMessage());
+                                      continue;
+                                //  }
+                                } 
                                 table.add(ip);
                             }
                             log.info("Loaded Spider IP file: " + file);
@@ -336,7 +336,12 @@ public class SpiderDetector {
                     patterns.add(line);
                 }
             } else {
-                // ua.add(line.replaceFirst("#","").replaceFirst("UA","").trim());
+                try{
+                    //                patterns.add(line.replaceFirst("#","").replaceFirst("UA","").replaceAll("\"","").trim().replaceAll(" ","\\ "));
+                }catch (Exception e)
+                {
+                    log.error("error loading user agents" + line);
+                }
                 // ... add this functionality later
             }
         }
