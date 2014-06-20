@@ -23,6 +23,7 @@ import org.dspace.paymentsystem.ShoppingCart;
 import org.dspace.submit.AbstractProcessingStep;
 import org.dspace.submit.bean.PublicationBean;
 import org.dspace.submit.model.ModelPublication;
+import org.dspace.submit.utils.DryadJournalSubmissionUtils;
 import org.dspace.utils.DSpace;
 import org.dspace.workflow.WorkflowItem;
 import org.xml.sax.SAXException;
@@ -30,6 +31,7 @@ import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * User: @author kevinvandevelde (kevin at atmire.com)
@@ -144,9 +146,8 @@ public class SelectPublicationStep extends AbstractSubmissionStep {
         if(selectedJournalId!=null){
             String journalPath = "";
             try{
-                final java.util.List<String> journalVals = org.dspace.submit.step.SelectPublicationStep.journalVals;
-                final java.util.List<String> journalDirs = org.dspace.submit.step.SelectPublicationStep.journalDirs;
-                journalPath = org.dspace.submit.step.SelectPublicationStep.journalDirs.get(org.dspace.submit.step.SelectPublicationStep.journalVals.indexOf(selectedJournalId));
+                journalPath = DryadJournalSubmissionUtils.getJournalDirectory(context,selectedJournalId);
+
                 pBean = ModelPublication.getDataFromPublisherFile(manuscriptNumber, selectedJournalId, journalPath);
                 journalStatus = pBean.getStatus();
                 journalName = pBean.getJournalName();
@@ -326,13 +327,12 @@ public class SelectPublicationStep extends AbstractSubmissionStep {
     private void addJournalSelectStatusNotYetSubmitted(String selectedJournalId, Item newItem) throws WingException {
         Composite optionsList = newItem.addComposite("journalID_status_not_yet_submitted");
         Select journalID = optionsList.addSelect("journalIDStatusNotYetSubmitted");
-        java.util.List<String> journalVals = org.dspace.submit.step.SelectPublicationStep.journalVals;
-        java.util.List<String> journalNames = org.dspace.submit.step.SelectPublicationStep.journalNames;
+        java.util.List<String> journalVals = DryadJournalSubmissionUtils.getJournalVals(context);
 
         for (int i = 0; i < journalVals.size(); i++) {
             String val =  journalVals.get(i);
-            String name =  journalNames.get(i);
-            if(org.dspace.submit.step.SelectPublicationStep.integratedJournals.contains(val))
+            String name = DryadJournalSubmissionUtils.getJournalName(context,val);
+            if(DryadJournalSubmissionUtils.isIntegrated(context,val))
                 name += "*";
             journalID.addOption(val.equals(selectedJournalId), val, name);
         }
@@ -348,16 +348,12 @@ public class SelectPublicationStep extends AbstractSubmissionStep {
         Composite optionsList = newItem.addComposite("journalID_status_in_review");
         Select journalID = optionsList.addSelect("journalIDStatusInReview");
         journalID.addOption("", "Please Select a valid journal");
-        java.util.List<String> journalVals = org.dspace.submit.step.SelectPublicationStep.journalVals;
-        java.util.List<String> journalNames = org.dspace.submit.step.SelectPublicationStep.journalNames;
+        ArrayList<String> journalVals = DryadJournalSubmissionUtils.getJournalVals(context);
 
         for (int i = 0; i < journalVals.size(); i++){
             String val =  journalVals.get(i);
-            String name =  journalNames.get(i);
-
-            // add only journal with allowReviewWorkflow=true;
-            if(org.dspace.submit.step.SelectPublicationStep.allowReviewWorkflowJournals.contains(val))
-
+            String name = DryadJournalSubmissionUtils.getJournalName(context,val);
+            if(DryadJournalSubmissionUtils.allowReviewWorkflowJournals(context,val)){
                 // select journal only if status is "In Review"
                 if(pBean!=null && (journalStatus!=null && (journalStatus.equals(PublicationBean.STATUS_IN_REVIEW)
                                 || journalStatus.equals(PublicationBean.STATUS_SUBMITTED)
@@ -377,6 +373,7 @@ public class SelectPublicationStep extends AbstractSubmissionStep {
                 else{
                     journalID.addOption(val, name);
                 }
+            }
         }
 
         journalID.setLabel(T_SELECT_LABEL);
@@ -546,15 +543,16 @@ public class SelectPublicationStep extends AbstractSubmissionStep {
     private void addJournalSelectStatusIntegrated(String selectedJournalId, Item newItem, String journalStatus, PublicationBean pBean) throws WingException {
         Composite optionsList = newItem.addComposite("journalID_status_integrated");
         Select journalID = optionsList.addSelect("journalIDStatusIntegrated");
-        java.util.List<String> journalVals = org.dspace.submit.step.SelectPublicationStep.journalVals;
-        java.util.List<String> journalNames = org.dspace.submit.step.SelectPublicationStep.journalNames;
+        java.util.List<String> journalVals = DryadJournalSubmissionUtils.getJournalVals(context);
 
         for (int i = 0; i < journalVals.size(); i++){
             String val =  journalVals.get(i);
-            String name =  journalNames.get(i);
+            String name = DryadJournalSubmissionUtils.getJournalName(context,val);
             String no_asterisk = name;
-            if(org.dspace.submit.step.SelectPublicationStep.integratedJournals.contains(val))
+            if(DryadJournalSubmissionUtils.isIntegrated(context,val))
                 //name += "*";
+
+
                 journalID.addOption(val.equals(selectedJournalId), no_asterisk, name);
 
         }

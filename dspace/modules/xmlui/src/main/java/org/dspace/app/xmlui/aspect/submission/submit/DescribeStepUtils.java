@@ -61,14 +61,6 @@ public class DescribeStepUtils extends AbstractDSpaceTransformer {
     private static final String NOTIFY_ON_REVIEW = "notifyOnReview";
     private static final String NOTIFY_ON_ARCHIVE = "notifyOnArchive";
 
-
-    public static final java.util.Map<String, Map<String, String>> journalProperties = DryadJournalSubmissionUtils.getJournalProperties();
-
-
-
-
-
-
     /**
      * Return the inputs reader. Note, the reader must have been
      * initialized before the reader can be accessed.
@@ -381,12 +373,10 @@ public class DescribeStepUtils extends AbstractDSpaceTransformer {
         }
 
         // show "Publish immediately" only if publicationBlackout=false or not defined in DryadJournalSubmission.properties.
-        Map<String, String> values = journalProperties.get(journalFullName);
-        String isBlackedOut=null;
-        if(values!=null && values.size() > 0)
-            isBlackedOut = values.get(PUBLICATION_BLACKOUT);
+        Concept concept = DryadJournalSubmissionUtils.findKeyByFullname(context,journalFullName);
+        boolean isBlackedOut= DryadJournalSubmissionUtils.isBlackedOut(context,concept.getIdentifier());
 
-        if(isBlackedOut==null || isBlackedOut.equals("false"))
+        if (!isBlackedOut)
             select.addOption("none", "Publish immediately");
 
         select.addOption("oneyear", "1 year embargo");

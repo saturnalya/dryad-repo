@@ -12,10 +12,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import javax.mail.MessagingException;
 import org.apache.log4j.Logger;
-import org.dspace.content.Collection;
-import org.dspace.content.DCValue;
-import org.dspace.content.Item;
-import org.dspace.content.MetadataSchema;
+import org.dspace.content.*;
 import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.core.Email;
@@ -101,7 +98,7 @@ public class WorkflowEmailManager {
 
             email.addRecipient(ep.getEmail());
 
-            addJournalNotifyOnArchive(i, email);
+            addJournalNotifyOnArchive(c,i, email);
 
 
             email.addArgument(title);
@@ -133,21 +130,29 @@ public class WorkflowEmailManager {
         }
     }
 
-    private static void addJournalNotifyOnArchive(Item item, Email email)
+    private static void addJournalNotifyOnArchive(Context c,Item item, Email email)
     {
         DCValue[] values=item.getMetadata("prism.publicationName");
         if(values!=null && values.length> 0){
-            String journal = values[0].value;
-            if(journal!=null){
-                Map<String, String> properties = DryadJournalSubmissionUtils.getPropertiesByJournal(journal);
-                if(properties != null) {
-                    String emails = properties.get(DryadJournalSubmissionUtils.NOTIFY_ON_ARCHIVE);
-                    if(emails != null) {
-                        String[] emails_=emails.split(",");
-                        for(String emailAddr : emails_){
-                            email.addRecipient(emailAddr);
-                        }
+            String journal = values[0].authority;
+            if(journal==null)
+            {
+                String journalName = values[0].value;
+                if(journalName!=null&&journalName.length()>0){
+                    Concept concept = DryadJournalSubmissionUtils.findKeyByFullname(c,journalName);
+
+                    if(concept!=null)
+                    {
+                          journal = concept.getIdentifier();
                     }
+                }
+            }
+
+            if(journal!=null&&journal.length()>0)
+            {
+                String[] emails_=DryadJournalSubmissionUtils.getJournalNotifyOnArchive(c,journal);
+                for(String emailAddr : emails_){
+                    email.addRecipient(emailAddr);
                 }
             }
         }

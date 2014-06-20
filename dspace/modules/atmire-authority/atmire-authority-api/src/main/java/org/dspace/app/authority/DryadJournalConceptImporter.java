@@ -55,7 +55,7 @@ public final class DryadJournalConceptImporter {
     public static final String SPONSORNAME = "sponsorName";
     public static final String NOTIFYWEEKLY = "notifyWeekly";
 
-    public static final String[] properties = new String[]{"fullname", "metadataDir","integrated", "publicationBlackout","notifyOnArchive", "journalID","subscriptionPaid","allowReviewWorkflow", "parsingScheme","embargoAllowed","sponsorName","notifyWeekly"};
+    public static final String[] properties = new String[]{ "metadataDir","integrated", "publicationBlackout","notifyOnArchive","subscriptionPaid","allowReviewWorkflow", "parsingScheme","embargoAllowed","sponsorName","notifyWeekly"};
 
     /**
      * For invoking via the command line.  If called with no command line arguments,
@@ -171,8 +171,9 @@ public final class DryadJournalConceptImporter {
                                                 {
                                                     aConcept.addMetadata("internal","journal",key,"",val.get(key),authorityValue.getId(),0);
                                                 }
-                                            }
 
+                                            }
+                                            aConcept.addMetadata("internal","journal","journalID","",val.get("journalID"),authorityValue.getId(),0);
                                         }
                                     }
                                 }
@@ -209,6 +210,7 @@ public final class DryadJournalConceptImporter {
                             aConcept.addMetadata("internal","journal",property,"",val.get(property),id,0);
                         }
                     }
+                    aConcept.addMetadata("internal","journal","journalID","",val.get("journalID"),id,0);
 
                     aConcept.update();
                     Term term = aConcept.createTerm(val.get(FULLNAME),1);
@@ -250,7 +252,7 @@ public final class DryadJournalConceptImporter {
                     map.put(property, journalProfiles.getProperty(str + property));
                 }
 
-
+                map.put("journalID", journalType);
                 String key = journalProfiles.getProperty(str + FULLNAME);
                 if(key!=null&&key.length()>0){
                     journalProperties.put(key, map);

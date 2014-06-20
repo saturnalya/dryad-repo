@@ -2,6 +2,7 @@ package org.dspace.workflow.actions.processingaction;
 
 import org.apache.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
+import org.dspace.content.Concept;
 import org.dspace.content.DCValue;
 import org.dspace.content.Item;
 import org.dspace.content.MetadataSchema;
@@ -71,22 +72,31 @@ public class DryadReviewAction extends ProcessingAction {
     }
 
     private void sendEmailToJournalNotifyOnReview(Context c, WorkflowItem wf, List<String> mailsSent, UUID uuid) throws SQLException, IOException, WorkflowException {
+
+
+
         DCValue[] values=wf.getItem().getMetadata("prism.publicationName");
         if(values!=null && values.length> 0){
-            String journal = values[0].value;
-            if(journal!=null){
-                Map<String, String> properties = DryadJournalSubmissionUtils.getPropertiesByJournal(journal);
-                if(properties!=null){
-                    String emails = properties.get(DryadJournalSubmissionUtils.NOTIFY_ON_REVIEW);
-                    log.debug("reviewers for journal " + journal + " are " + emails);
-                    if(emails != null) {
-                        String[] emails_=emails.split(",");
-                        for(String email : emails_){
-                            if(!mailsSent.contains(email)){
-                                sendReviewerEmail(c, email, wf, uuid.toString());
-                                mailsSent.add(email);
-                            }
-                        }
+            String journal = values[0].authority;
+            if(journal==null)
+            {
+                String journalName = values[0].value;
+                if(journalName!=null&&journalName.length()>0){
+                    Concept concept = DryadJournalSubmissionUtils.findKeyByFullname(c,journalName);
+                    if(concept!=null)
+                    {
+                        journal = concept.getIdentifier();
+                    }
+                }
+            }
+
+            if(journal!=null&&journal.length()>0)
+            {
+                String[] emails_=DryadJournalSubmissionUtils.getJournalNotifyOnReview(c, journal);
+                for(String email : emails_){
+                    if(!mailsSent.contains(email)){
+                        sendReviewerEmail(c, email, wf, uuid.toString());
+                        mailsSent.add(email);
                     }
                 }
             }
