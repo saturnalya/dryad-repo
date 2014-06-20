@@ -3,6 +3,7 @@ package org.dspace.submit.step;
 import com.Ostermiller.util.CircularByteBuffer;
 import org.apache.log4j.Logger;
 import org.dspace.content.*;
+import org.dspace.content.authority.Choices;
 import org.dspace.content.crosswalk.IngestionCrosswalk;
 import org.dspace.core.LogManager;
 import org.dspace.core.PluginManager;
@@ -83,7 +84,9 @@ public class SelectPublicationStep extends AbstractProcessingStep {
                     journalName=journalName.replace("*", "");
 		            journalName=journalName.trim();
                     Concept concept = DryadJournalSubmissionUtils.findKeyByFullname(context,journalName);
-                    journalID = concept.getIdentifier();
+                    if(concept!=null){
+                        journalID = concept.getIdentifier();
+                    }
                     if(journalID==null) journalID=journalName;
                 }
                 else if(Integer.parseInt(articleStatus)==ARTICLE_STATUS_NOT_YET_SUBMITTED){
@@ -136,7 +139,9 @@ public class SelectPublicationStep extends AbstractProcessingStep {
                         journal=journal.replace("*", "");
                         journal=journal.trim();
                         Concept concept = DryadJournalSubmissionUtils.findKeyByFullname(context,journal);
-                        journalID = concept.getIdentifier();
+                        if(concept!=null){
+                            journalID = concept.getIdentifier();
+                        }
                         if(journalID==null) journalID=journal;
                         if(journalID==null||journalID.equals("")){
                             EventLogger.log(context, "submission-select-publication", "error=invalid_journal");
@@ -327,7 +332,7 @@ public class SelectPublicationStep extends AbstractProcessingStep {
                         item.addMetadata("internal", "submit", "showEmbargo", null, String.valueOf(embargoAllowed));
                     }
                 }
-                item.addMetadata("prism", "publicationName", null, null, title);
+                item.addMetadata("prism", "publicationName", null, null, title, journalID, Choices.CF_UNSET);
                 item.update();
 
 

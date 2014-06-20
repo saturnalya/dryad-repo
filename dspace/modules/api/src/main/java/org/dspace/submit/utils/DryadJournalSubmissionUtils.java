@@ -112,7 +112,9 @@ public class DryadJournalSubmissionUtils {
         }
         if(journalIdentifier==null || journalIdentifier.length()==0){
             Concept concept = findKeyByFullname(context,journalFullName);
-            journalIdentifier = concept.getIdentifier();
+            if(concept!=null){
+                journalIdentifier = concept.getIdentifier();
+            }
         }
         // Ignore blackout setting if journal is not (yet) integrated
 	// get journal's blackout setting

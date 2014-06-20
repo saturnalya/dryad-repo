@@ -374,8 +374,10 @@ public class DescribeStepUtils extends AbstractDSpaceTransformer {
 
         // show "Publish immediately" only if publicationBlackout=false or not defined in DryadJournalSubmission.properties.
         Concept concept = DryadJournalSubmissionUtils.findKeyByFullname(context,journalFullName);
-        boolean isBlackedOut= DryadJournalSubmissionUtils.isBlackedOut(context,concept.getIdentifier());
-
+        boolean isBlackedOut = true;
+        if(concept!=null){
+            isBlackedOut = DryadJournalSubmissionUtils.isBlackedOut(context,concept.getIdentifier());
+        }
         if (!isBlackedOut)
             select.addOption("none", "Publish immediately");
 
