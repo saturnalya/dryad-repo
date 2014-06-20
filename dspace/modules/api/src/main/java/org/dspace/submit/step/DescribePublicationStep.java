@@ -1112,7 +1112,7 @@ public class DescribePublicationStep extends AbstractProcessingStep {
 
         int i = 1;    //start index at the first of the previously entered values
         boolean foundLast = false;
-        String buttonPressed = Util.getSubmitButton(request, "");
+        String buttonPressed = Util.getSubmitButton(request, null);
 
         // Iterate through the values in the form.
         while (!foundLast)
@@ -1144,7 +1144,8 @@ public class DescribePublicationStep extends AbstractProcessingStep {
                 String[] selected = request.getParameterValues(metadataField
                         + "_selected");
 
-                if (selected != null && buttonPressed.equals("submit_" + metadataField + "_delete"))
+                if (   selected != null && buttonPressed != null 
+                    && buttonPressed.equals("submit_" + metadataField + "_delete"))
                 {
                     for (String aSelected : selected) {
                         if (aSelected.equals(metadataField + "_" + i)) {
