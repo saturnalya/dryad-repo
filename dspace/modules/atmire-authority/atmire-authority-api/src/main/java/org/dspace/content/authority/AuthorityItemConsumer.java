@@ -157,7 +157,7 @@ public class AuthorityItemConsumer implements Consumer {
             for(Concept concept : conceptsToUpdate)
             {
                 //indexer.indexContent(ctx,concept, true);
-                item.addMetadata("prism","publicationName",null,Item.ANY,concept.getLabel(),concept.getIdentifier(),Choices.CF_UNSET);
+                item.addMetadata("prism","publicationName",null,Item.ANY,concept.getLabel(),concept.getIdentifier(),Choices.CF_ACCEPTED);
             }
             //indexer.commit();
             item.update();
