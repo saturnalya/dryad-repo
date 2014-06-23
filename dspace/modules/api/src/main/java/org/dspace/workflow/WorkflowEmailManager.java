@@ -151,8 +151,10 @@ public class WorkflowEmailManager {
             if(journal!=null&&journal.length()>0)
             {
                 String[] emails_=DryadJournalSubmissionUtils.getJournalNotifyOnArchive(c,journal);
-                for(String emailAddr : emails_){
-                    email.addRecipient(emailAddr);
+                if(emails_!=null){
+                    for(String emailAddr : emails_){
+                        email.addRecipient(emailAddr);
+                    }
                 }
             }
         }

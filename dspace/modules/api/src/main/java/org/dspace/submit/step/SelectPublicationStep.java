@@ -376,11 +376,14 @@ public class SelectPublicationStep extends AbstractProcessingStep {
 
                         importJournalMetadata(context, item, pBean);
                         String[] reviewEmails = DryadJournalSubmissionUtils.getJournalNotifyOnReview(context,journalID);
-                        item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "review", "mailUsers", null, reviewEmails);
+                        if(reviewEmails!=null&&reviewEmails.length>0){
+                            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "review", "mailUsers", null, reviewEmails);
+                        }
 
                         String[] archiveEmails = DryadJournalSubmissionUtils.getJournalNotifyOnArchive(context,journalID);
-                        item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "archive", "mailUsers", null, archiveEmails);
-
+                        if(archiveEmails!=null&&archiveEmails.length>0){
+                            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "archive", "mailUsers", null, archiveEmails);
+                        }
                         boolean embargoAllowed = DryadJournalSubmissionUtils.getJournalEmbargoAllowed(context,journalID);
                         if(!embargoAllowed){
                             //We don't need to show the embargo option to any of our data files

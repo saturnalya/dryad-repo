@@ -93,10 +93,12 @@ public class DryadReviewAction extends ProcessingAction {
             if(journal!=null&&journal.length()>0)
             {
                 String[] emails_=DryadJournalSubmissionUtils.getJournalNotifyOnReview(c, journal);
-                for(String email : emails_){
-                    if(!mailsSent.contains(email)){
-                        sendReviewerEmail(c, email, wf, uuid.toString());
-                        mailsSent.add(email);
+                if(emails_!=null&&emails_.length>0){
+                    for(String email : emails_){
+                        if(!mailsSent.contains(email)){
+                            sendReviewerEmail(c, email, wf, uuid.toString());
+                            mailsSent.add(email);
+                        }
                     }
                 }
             }
