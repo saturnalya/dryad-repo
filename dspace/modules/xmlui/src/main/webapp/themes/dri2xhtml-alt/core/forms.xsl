@@ -421,8 +421,7 @@
             <xsl:if test="dri:instance or dri:field/dri:instance">
                 <xsl:call-template name="ds-previous-values">
                     <xsl:with-param name="field-iterator" select="'fieldIterator'"/>
-                    <xsl:with-param name="instance-data" select="xalan:nodeset(dri:field/dri:instance)"/>
-                </xsl:call-template>
+                </xsl:call-template>            
             </xsl:if>
         </div>
     </xsl:template>
@@ -466,8 +465,7 @@
         <xsl:if test="dri:instance">
             <xsl:call-template name="ds-previous-values">
                 <xsl:with-param name="field-iterator" select="'simpleFieldIterator'"/>
-                <xsl:with-param name="instance-data" select="xalan:nodeset(dri:instance)"/>
-            </xsl:call-template>
+            </xsl:call-template>            
         </xsl:if>
     </xsl:template>
 
@@ -477,7 +475,10 @@
     <xsl:template name="simpleFieldIterator">
         <xsl:param name="position"/>
         <xsl:if test="dri:instance[position()=$position]">
-            <input type="checkbox" value="{concat(@n,'_',$position)}" name="{concat(@n,'_selected')}"/>
+            
+            <!--<input type="checkbox" value="{concat(@n,'_',$position)}" name="{concat(@n,'_selected')}"/>-->
+            <input type="submit" value="Remove" name="{concat('submit_',@n,'_',$position,'_delete')}" class="ds-button-field ds-delete-button" />
+            
             <xsl:apply-templates select="dri:instance[position()=$position]" mode="interpreted"/>
 
             <!-- look for authority value in instance. -->
@@ -600,8 +601,7 @@
         <xsl:if test="dri:instance or dri:field/dri:instance">
             <xsl:call-template name="ds-previous-values">
                 <xsl:with-param name="field-iterator" select="'fieldIterator'"/>
-                <xsl:with-param name="instance-data" select="xalan:nodeset(dri:field/dri:instance)"/>
-            </xsl:call-template>
+            </xsl:call-template>            
         </xsl:if>
     </xsl:template>
 
@@ -626,7 +626,10 @@
             <!-- First check to see if the composite itself has a non-empty instance value in that
                 position. In that case there is no need to go into the individual fields. -->
             <xsl:when test="count(dri:instance[position()=$position]/dri:value[@type != 'authority'])">
-                <input type="checkbox" value="{concat(@n,'_',$position)}" name="{concat(@n,'_selected')}"/>
+                
+                <!--<input type="checkbox" value="{concat(@n,'_',$position)}" name="{concat(@n,'_selected')}"/>-->
+                <input type="submit" value="Remove" name="{concat('submit_',@n,'_',$position,'_delete')}" class="ds-button-field ds-delete-button" />
+                
                 <xsl:apply-templates select="dri:instance[position()=$position]" mode="interpreted"/>
                 <xsl:call-template name="authorityConfidenceIcon">
                   <xsl:with-param name="confidence" select="dri:instance[position()=$position]/dri:value[@type='authority']/@confidence"/>
@@ -638,7 +641,11 @@
             </xsl:when>
             <!-- Otherwise, build the string from the component fields -->
             <xsl:when test="dri:field/dri:instance[position()=$position]">
-                <input type="checkbox" value="{concat(@n,'_',$position)}" name="{concat(@n,'_selected')}"/>
+
+                <!--<input type="checkbox" value="{concat(@n,'_',$position)}" name="{concat(@n,'_selected')}"/>-->
+                <input type="submit" value="Remove" name="{concat('submit_',@n,'_',$position,'_delete')}" class="ds-button-field ds-delete-button" />
+                
+                
                 <xsl:apply-templates select="dri:field" mode="compositeField">
                     <xsl:with-param name="position" select="$position"/>
                 </xsl:apply-templates>
@@ -1191,24 +1198,21 @@
             </span>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template name="ds-previous-values">
-        <!-- string template name: 'fieldIterator' or 'simpleFieldIterator' -->
         <xsl:param name="field-iterator"/>
-        <!-- dri:instance element node-set as a xalan:nodeset -->
-        <xsl:param name="instance-data"/>
         <div class="ds-previous-values">
             <!-- Iterate over the dri:instance elements contained in this field. The instances contain
                     stored values as either "interpreted", "raw", or "default" values. -->
             <xsl:choose>
                 <xsl:when test="$field-iterator = 'fieldIterator'">
                     <xsl:call-template name="fieldIterator">
-                        <xsl:with-param name="position" select="1"/>
+                        <xsl:with-param name="position">1</xsl:with-param>
                     </xsl:call-template>
                 </xsl:when>
                 <xsl:when test="$field-iterator = 'simpleFieldIterator'">
                     <xsl:call-template name="simpleFieldIterator">
-                        <xsl:with-param name="position" select="1"/>
+                        <xsl:with-param name="position">1</xsl:with-param>
                     </xsl:call-template>
                 </xsl:when>
                 <xsl:otherwise>
@@ -1219,17 +1223,24 @@
                     removing one or more values stored for this field. -->
             <xsl:if test="contains(dri:params/@operations,'delete')">
                 <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
-                <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
+                <!-- NEW: added per-entry delete:
+                    <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />-->
             </xsl:if>
+            <!-- TODO: confirm that descendant::dri:instance is the right thing, per the XSD -->
+            <!--
+            <xsl:for-each select="dri:field">
+                <xsl:apply-templates select="dri:instance" mode="hiddenInterpreter"/>
+            </xsl:for-each>
+            -->
+            <!-- 
+            <xsl:apply-templates select="dri:instance" mode="hiddenInterpreter"/>
+            -->
             <!-- Behind the scenes, add hidden fields for every instance set. This is to make sure that
                     the form still submits the information in those instances, even though they are no
                     longer encoded as HTML fields. The DRI Reference should contain the exact attributes
                     the hidden fields should have in order for this to work properly. -->
-            <xsl:for-each select="$instance-data">
-                <!-- the context node in the loop is a dri:instance element -->
-                <xsl:apply-templates select="." mode="hiddenInterpreter"/>    
-            </xsl:for-each>            
+            <xsl:apply-templates select="descendant::dri:instance" mode="hiddenInterpreter"/>
         </div>
     </xsl:template>
-   
+
 </xsl:stylesheet>

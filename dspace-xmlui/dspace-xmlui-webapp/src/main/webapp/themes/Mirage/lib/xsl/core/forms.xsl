@@ -181,98 +181,12 @@
             <div class="spacer">&#160;</div>
             <xsl:apply-templates select="dri:field/dri:error" mode="compositeComponent"/>
             <xsl:apply-templates select="dri:error" mode="compositeComponent"/>
-            
-            <!-- handle previous entries -->
-            <xsl:choose>
-                <!-- handle author list as a special case to enable reordering/editing -->
-                <xsl:when test="@n = 'dc_contributor_author'">
-                    <xsl:if test="dri:field and dri:field/dri:instance">
-                        <xsl:call-template name="ds-previous-values-dc-contributor-author"/>
-                    </xsl:if>
-                </xsl:when>
-                <!-- handle non-author-list metadata -->
-                <xsl:otherwise>
-                    <xsl:if test="dri:instance or dri:field/dri:instance">
-                        <xsl:call-template name="ds-previous-values">
-                            <xsl:with-param name="field-iterator" select="'fieldIterator'"/>
-                            <xsl:with-param name="instance-data" select="xalan:nodeset(dri:field/dri:instance)"/>
-                        </xsl:call-template>
-                    </xsl:if>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:if test="dri:instance or dri:field/dri:instance">
+                <xsl:call-template name="ds-previous-values">
+                    <xsl:with-param name="field-iterator" select="'fieldIterator'"/>
+                </xsl:call-template>                
+            </xsl:if>
         </div>
-    </xsl:template>
-
-    <xsl:template name="ds-previous-values-dc-contributor-author">
-        <!-- dri:instance element node-set as a xalan:nodeset -->
-        <div class="ds-previous-values">
-            <table>
-                <tr>
-                    <th align="left"><i18n:text>xmlui.Submission.submit.DescribeStep.order</i18n:text></th>
-                    <th colspan="*" align="left"><i18n:text>xmlui.Submission.submit.DescribeStep.author</i18n:text></th>
-                </tr>
-                <!-- Iterate over the dri:instance elements contained in this field. The instances contain
-                        stored values as either "interpreted", "raw", or "default" values. -->
-                <xsl:call-template name="fieldIterator-dc-contributor-author">
-                    <xsl:with-param name="position" select="1"/>
-                </xsl:call-template>
-            </table>
-            <!-- UPDATE button -->
-            <input type="submit" disabled="disabled" i18n:attr="value" value="xmlui.Submission.submit.DescribeStep.update" name="{concat('submit_',@n,'_add')}" class="ds-button-field ds-update-button"/>
-        </div>
-    </xsl:template>
-
-    <!-- The iterator is a recursive function that creates a checkbox (to be used in deletion) for
-        each value instance and interprets the value inside. It also creates a hidden field from the
-        raw value contained in the instance.
-        
-         What makes it different from the simpleFieldIterator is that it works with a composite field's
-        components rather than a single field, which requires it to consider several sets of instances. -->
-    <xsl:template name="fieldIterator-dc-contributor-author">
-        <xsl:param name="position"/>
-        <xsl:if test="dri:field/dri:instance[position()=$position]">            
-            <tr class="ds-author-input-row">
-                <!-- ORDER -->
-                <td>
-                    <!--<span><xsl:value-of select="string($position)"/></span>-->
-                    <select disabled="disabled" class="ds-author-order-select">
-                        <xsl:for-each select="dri:instance">
-                            <option>
-                                <xsl:if test="$position = position()">
-                                    <xsl:attribute name="selected">selected</xsl:attribute>
-                                </xsl:if>
-                                <xsl:value-of select="count(preceding-sibling::dri:instance)+1"/>
-                            </option>
-                        </xsl:for-each>
-                    </select>
-                </td>
-                <!-- AUTHOR -->
-                <td class="ds-author-input-col">
-                    <!-- First check to see if the composite itself has a non-empty instance value in that
-                    position. In that case there is no need to go into the individual fields. -->
-                    <xsl:apply-templates select="dri:instance[position()=$position]" mode="interpreted"/>
-                    <xsl:apply-templates select="dri:field/dri:instance[position()=$position]" mode="hiddenInterpreter"/>
-                </td>
-                <!-- EDIT -->
-                <td>
-                    <xsl:if test="contains(dri:params/@operations,'add')">
-                        <input type="submit" i18n:attr="value" value="xmlui.Submission.submit.DescribeStep.edit" name="{concat('submit_',@n,'_',$position,'_edit')}" class="ds-button-field ds-edit-button" />
-                    </xsl:if>
-                </td>
-                <!-- REMOVE -->
-                <td>
-                    <xsl:if test="contains(dri:params/@operations,'delete')">
-                        <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
-                        <input type="submit" i18n:attr="value" value="xmlui.Submission.submit.DescribeStep.remove" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
-                        <input type="hidden"  value="{concat('dc_contributor_author_',$position)}" name="dc_contributor_author_selected" disabled="disabled"/>
-                    </xsl:if>
-                </td>
-            </tr>
-            <!-- recurse to handle subsequent authors -->
-            <xsl:call-template name="fieldIterator-dc-contributor-author">
-                <xsl:with-param name="position" select="$position + 1"/>
-            </xsl:call-template>
-        </xsl:if>
     </xsl:template>
 
     <!-- The handling of the field element is more complex. At the moment, the handling of input fields in the
@@ -313,8 +227,7 @@
         <xsl:if test="dri:instance">
             <xsl:call-template name="ds-previous-values">
                 <xsl:with-param name="field-iterator" select="'simpleFieldIterator'"/>
-                <xsl:with-param name="instance-data" select="xalan:nodeset(dri:instance)"/>
-            </xsl:call-template>
+            </xsl:call-template>                
         </xsl:if>
     </xsl:template>
 
@@ -375,8 +288,7 @@
         <xsl:if test="dri:instance">
             <xsl:call-template name="ds-previous-values">
                 <xsl:with-param name="field-iterator" select="'simpleFieldIterator'"/>
-                <xsl:with-param name="instance-data" select="xalan:nodeset(dri:instance)"/>
-            </xsl:call-template>
+            </xsl:call-template>            
         </xsl:if>
     </xsl:template>
 
