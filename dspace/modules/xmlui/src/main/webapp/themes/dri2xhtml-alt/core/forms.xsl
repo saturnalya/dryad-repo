@@ -419,24 +419,13 @@
             <xsl:apply-templates select="dri:error" mode="compositeComponent"/>
             <xsl:apply-templates select="dri:help" mode="compositeComponent"/>
             <xsl:if test="dri:instance or dri:field/dri:instance">
-                <div class="ds-previous-values">
-                    <xsl:call-template name="fieldIterator">
-                        <xsl:with-param name="position">1</xsl:with-param>
-                    </xsl:call-template>
-                    <xsl:if test="contains(dri:params/@operations,'delete') and (dri:instance or dri:field/dri:instance)">
-                        <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
-                        <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
-                    </xsl:if>
-                    <xsl:for-each select="dri:field">
-                        <xsl:apply-templates select="dri:instance" mode="hiddenInterpreter"/>
-                    </xsl:for-each>
-                </div>
+                <xsl:call-template name="ds-previous-values">
+                    <xsl:with-param name="field-iterator" select="'fieldIterator'"/>
+                    <xsl:with-param name="instance-data" select="xalan:nodeset(dri:field/dri:instance)"/>
+                </xsl:call-template>
             </xsl:if>
         </div>
     </xsl:template>
-
-
-
 
     <!-- TODO: The field section works but needs a lot of scrubbing. I would say a third of the
         templates involved are either bloated or superfluous. -->
@@ -475,24 +464,10 @@
         <xsl:apply-templates select="dri:help" mode="help"/>
         <xsl:apply-templates select="dri:error" mode="error"/>
         <xsl:if test="dri:instance">
-            <div class="ds-previous-values">
-                <!-- Iterate over the dri:instance elements contained in this field. The instances contain
-                    stored values as either "interpreted", "raw", or "default" values. -->
-                <xsl:call-template name="simpleFieldIterator">
-                    <xsl:with-param name="position">1</xsl:with-param>
-                </xsl:call-template>
-                <!-- Conclude with a DELETE button if the delete operation is specified. This allows
-                    removing one or more values stored for this field. -->
-                <xsl:if test="contains(dri:params/@operations,'delete') and dri:instance">
-                    <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
-                    <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
-                </xsl:if>
-                <!-- Behind the scenes, add hidden fields for every instance set. This is to make sure that
-                    the form still submits the information in those instances, even though they are no
-                    longer encoded as HTML fields. The DRI Reference should contain the exact attributes
-                    the hidden fields should have in order for this to work properly. -->
-                <xsl:apply-templates select="dri:instance" mode="hiddenInterpreter"/>
-            </div>
+            <xsl:call-template name="ds-previous-values">
+                <xsl:with-param name="field-iterator" select="'simpleFieldIterator'"/>
+                <xsl:with-param name="instance-data" select="xalan:nodeset(dri:instance)"/>
+            </xsl:call-template>
         </xsl:if>
     </xsl:template>
 
@@ -623,20 +598,10 @@
         </xsl:choose>
         <br/>
         <xsl:if test="dri:instance or dri:field/dri:instance">
-            <div class="ds-previous-values">
-                <xsl:call-template name="fieldIterator">
-                    <xsl:with-param name="position">1</xsl:with-param>
-                </xsl:call-template>
-                <!-- Conclude with a DELETE button if the delete operation is specified. This allows
-                    removing one or more values stored for this field. -->
-                <xsl:if test="contains(dri:params/@operations,'delete') and (dri:instance or dri:field/dri:instance)">
-                    <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
-                    <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
-                </xsl:if>
-                <xsl:for-each select="dri:field">
-                    <xsl:apply-templates select="dri:instance" mode="hiddenInterpreter"/>
-                </xsl:for-each>
-            </div>
+            <xsl:call-template name="ds-previous-values">
+                <xsl:with-param name="field-iterator" select="'fieldIterator'"/>
+                <xsl:with-param name="instance-data" select="xalan:nodeset(dri:field/dri:instance)"/>
+            </xsl:call-template>
         </xsl:if>
     </xsl:template>
 
@@ -1227,4 +1192,44 @@
         </xsl:if>
     </xsl:template>
     
+    <xsl:template name="ds-previous-values">
+        <!-- string template name: 'fieldIterator' or 'simpleFieldIterator' -->
+        <xsl:param name="field-iterator"/>
+        <!-- dri:instance element node-set as a xalan:nodeset -->
+        <xsl:param name="instance-data"/>
+        <div class="ds-previous-values">
+            <!-- Iterate over the dri:instance elements contained in this field. The instances contain
+                    stored values as either "interpreted", "raw", or "default" values. -->
+            <xsl:choose>
+                <xsl:when test="$field-iterator = 'fieldIterator'">
+                    <xsl:call-template name="fieldIterator">
+                        <xsl:with-param name="position" select="1"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:when test="$field-iterator = 'simpleFieldIterator'">
+                    <xsl:call-template name="simpleFieldIterator">
+                        <xsl:with-param name="position" select="1"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:message terminate="yes">Unsupported field iterator: <xsl:value-of select="$field-iterator"/></xsl:message>
+                </xsl:otherwise>
+            </xsl:choose>
+            <!-- Conclude with a DELETE button if the delete operation is specified. This allows
+                    removing one or more values stored for this field. -->
+            <xsl:if test="contains(dri:params/@operations,'delete')">
+                <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
+                <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
+            </xsl:if>
+            <!-- Behind the scenes, add hidden fields for every instance set. This is to make sure that
+                    the form still submits the information in those instances, even though they are no
+                    longer encoded as HTML fields. The DRI Reference should contain the exact attributes
+                    the hidden fields should have in order for this to work properly. -->
+            <xsl:for-each select="$instance-data">
+                <!-- the context node in the loop is a dri:instance element -->
+                <xsl:apply-templates select="." mode="hiddenInterpreter"/>    
+            </xsl:for-each>            
+        </div>
+    </xsl:template>
+   
 </xsl:stylesheet>
