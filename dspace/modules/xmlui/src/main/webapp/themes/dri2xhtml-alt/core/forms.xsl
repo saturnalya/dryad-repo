@@ -967,7 +967,6 @@
                 </xsl:when>
               </xsl:choose>
             </xsl:when>
-
             <!-- This is changing drammatically -->
             <xsl:when test="@type= 'checkbox' or @type= 'radio'">
                 <fieldset>
