@@ -231,6 +231,9 @@ INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7
 INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','notifyOnReview');
 INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','notifyOnArchive');
 INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','notifyWeekly');
+INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','paymentPlanType');
+INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','customerId');
+
 
 
 
