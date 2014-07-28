@@ -40,6 +40,7 @@
 
 package org.dspace.app.xmlui.aspect.submission;
 
+import com.atmire.authority.util.LoadCustomerCredit;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.http.HttpEnvironment;
@@ -883,24 +884,24 @@ public class FlowUtils {
     }
 
     public static boolean processReAuthorization(Context context, String id,WorkflowActionConfig action,Request request) throws SQLException, UIException, ServletException, AuthorizeException, IOException
-	{
+    {
         try{
 //		WorkflowItem workflowItem = findWorkflow(context, id);
-        WorkflowItem wfi = WorkflowItem.find(context, Integer.parseInt(id));
-        Workflow workflow = WorkflowFactory.getWorkflow(wfi.getCollection());
-        WorkflowActionConfig actionConfig = action;//workflow.getStep(id).getActionConfig(actionId);
-        WorkflowActionConfig wfPublication = WorkflowManager.doState(context, context.getCurrentUser(), request, Integer.parseInt(id), workflow, actionConfig);
+            WorkflowItem wfi = WorkflowItem.find(context, Integer.parseInt(id));
+            Workflow workflow = WorkflowFactory.getWorkflow(wfi.getCollection());
+            WorkflowActionConfig actionConfig = action;//workflow.getStep(id).getActionConfig(actionId);
+            WorkflowActionConfig wfPublication = WorkflowManager.doState(context, context.getCurrentUser(), request, Integer.parseInt(id), workflow, actionConfig);
 
 
-        context.commit();
-        if(wfPublication!=null&&wfPublication.getName().contains("reAuthorizationPayment"))
-            return false;
+            context.commit();
+            if(wfPublication!=null&&wfPublication.getName().contains("eAuthorizationPayment"))
+                return false;
         }catch (Exception e)
         {
             log.error("error when reauthorize payment:"+e.getMessage());
         }
         return true;
-	}
+    }
     public static String processDepositConfirmedStep(Context context, Request request, HttpServletResponse response, String workItemID)
             throws SQLException, AuthorizeException, IOException, ServletException, TransformerException, WorkflowException, SAXException, WorkflowConfigurationException, MessagingException, ParserConfigurationException {
         return request.getContextPath() + "/submissions";
