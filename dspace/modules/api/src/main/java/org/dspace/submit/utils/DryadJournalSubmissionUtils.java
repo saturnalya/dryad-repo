@@ -51,7 +51,7 @@ public class DryadJournalSubmissionUtils {
         Properties properties = new Properties();
         try {
             context = new Context();
-            Scheme scheme = Scheme.findByIdentifier(context,ConfigurationManager.getProperty("submit.journal.config"));
+            Scheme scheme = Scheme.findByIdentifier(context,ConfigurationManager.getProperty("solrauthority.searchscheme.prism_publicationName"));
             Concept[] concepts = scheme.getConcepts();
             //todo:add the journal order
             //String journalTypes = properties.getProperty("journal.order");
