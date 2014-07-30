@@ -1192,44 +1192,21 @@
         </xsl:if>
     </xsl:template>
     
-    <xsl:template name="ds-previous-values">
-        <!-- string template name: 'fieldIterator' or 'simpleFieldIterator' -->
-        <xsl:param name="field-iterator"/>
-        <!-- dri:instance element node-set as a xalan:nodeset -->
-        <xsl:param name="instance-data"/>
-        <div class="ds-previous-values">
-            <!-- Iterate over the dri:instance elements contained in this field. The instances contain
-                    stored values as either "interpreted", "raw", or "default" values. -->
-            <xsl:choose>
-                <xsl:when test="$field-iterator = 'fieldIterator'">
-                    <xsl:call-template name="fieldIterator">
-                        <xsl:with-param name="position" select="1"/>
-                    </xsl:call-template>
-                </xsl:when>
-                <xsl:when test="$field-iterator = 'simpleFieldIterator'">
-                    <xsl:call-template name="simpleFieldIterator">
-                        <xsl:with-param name="position" select="1"/>
-                    </xsl:call-template>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:message terminate="yes">Unsupported field iterator: <xsl:value-of select="$field-iterator"/></xsl:message>
-                </xsl:otherwise>
-            </xsl:choose>
-            <!-- Conclude with a DELETE button if the delete operation is specified. This allows
-                    removing one or more values stored for this field. -->
-            <xsl:if test="contains(dri:params/@operations,'delete')">
-                <!-- Delete buttons should be named "submit_[field]_delete" so that we can ignore errors from required fields when simply removing values-->
-                <input type="submit" value="Remove selected" name="{concat('submit_',@n,'_delete')}" class="ds-button-field ds-delete-button" />
-            </xsl:if>
-            <!-- Behind the scenes, add hidden fields for every instance set. This is to make sure that
-                    the form still submits the information in those instances, even though they are no
-                    longer encoded as HTML fields. The DRI Reference should contain the exact attributes
-                    the hidden fields should have in order for this to work properly. -->
-            <xsl:for-each select="$instance-data">
-                <!-- the context node in the loop is a dri:instance element -->
-                <xsl:apply-templates select="." mode="hiddenInterpreter"/>    
-            </xsl:for-each>            
-        </div>
+    <xsl:template name="addPropagateButton">
+      <xsl:param name="packageDoi"/>
+      <xsl:param name="metadataFieldName"/>
+      <br/>
+      <input type="button" name="{concat('lookup_',@n)}" class="ds-button-field ds-add-button" >
+        <xsl:attribute name="value">
+          <xsl:text>Propagate</xsl:text>
+        </xsl:attribute>
+        <xsl:attribute name="onClick">
+          <xsl:text>javascript:DryadEditMetadataAndPropagate('</xsl:text>
+          <!-- Metadata Field -->
+          <xsl:value-of select="$metadataFieldName"/>
+          <xsl:text>');</xsl:text>
+        </xsl:attribute>
+      </input>
     </xsl:template>
-   
+
 </xsl:stylesheet>
