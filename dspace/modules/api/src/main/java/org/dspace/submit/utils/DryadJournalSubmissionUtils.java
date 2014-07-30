@@ -47,7 +47,7 @@ public class DryadJournalSubmissionUtils {
     public static final java.util.Map<String, Map<String, String>> journalProperties = new HashMap<String, Map<String, String>>();
     static{
         Context context = null;
-        String journalPropFile = ConfigurationManager.getProperty("submit.journal.config");
+        String journalPropFile = ConfigurationManager.getProperty("solrauthority.searchscheme.prism_publicationName");
         Properties properties = new Properties();
         try {
             context = new Context();

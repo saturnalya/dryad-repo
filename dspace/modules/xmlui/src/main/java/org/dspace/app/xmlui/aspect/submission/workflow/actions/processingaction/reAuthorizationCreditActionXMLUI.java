@@ -57,7 +57,7 @@ public class ReAuthorizationCreditActionXMLUI extends AbstractXMLUIAction {
             }
             else
             {
-                mainDiv.addList("submit-next").addItem().addButton("submit-credit-next").setValue("Skip credit");
+                mainDiv.addList("submit-next").addItem().addButton("submit-credit-next").setValue("Skip resubmit credit");
                 mainDiv.addPara().addContent("NOTE : credit already deducted ,click next button to submit the item.");
             }
 
