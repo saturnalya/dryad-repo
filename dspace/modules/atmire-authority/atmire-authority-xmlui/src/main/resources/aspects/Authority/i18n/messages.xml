@@ -566,4 +566,8 @@
     <message key="xmlui.administrative.FlowConceptUtils.delete_Concept_success_notice">Concept Successfully deleted</message>
 
     <message key="xmlui.administrative.FlowSchemeUtils.delete_Scheme_success_notice">Scheme Successfully deleted</message>
+
+    <message key="xmlui.ChoiceLookupTransformer.field.prism_publicationName.title">Look up journal</message>
+    <message key="xmlui.ChoiceLookupTransformer.field.prism_publicationName.help">Enter the key word of the journal name</message>
+
 </catalogue>
