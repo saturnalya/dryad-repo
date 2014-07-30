@@ -209,11 +209,12 @@ public class LoadCustomerCredit {
 
                         if( get.getStatusCode() <= 299 )
                         {
-                            System.out.println("Response Code : "
+                            log.debug("Response Code : "
                                     + get.getStatusLine().getStatusCode());
                             String result = get.getResponseBodyAsString();
-                            System.out.println("Response body : "+result);
-                            status = getXmlElement(result,"status");
+                            log.debug("Response body : "+result);
+                            status = getXmlElement(result,"credit-update-status");
+                            status = getXmlElement(status,"status");
                         }
                     }
 
