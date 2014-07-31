@@ -103,7 +103,7 @@ public abstract class AuthorityObject extends DSpaceObject {
     {
         try
         {
-            if(metadataValues==null||metadataValues.size()==0){
+            if(metadataValues==null){
 
                 metadataValues = new ArrayList<AuthorityMetadataValue>();
 
@@ -264,7 +264,8 @@ public abstract class AuthorityObject extends DSpaceObject {
         ArrayList<AuthorityMetadataValue> values = new ArrayList<AuthorityMetadataValue>();
         for (AuthorityMetadataValue dcv : getMetadata())
         {
-            if (!match(schema, element, qualifier, lang, dcv))
+            boolean match = match(schema, element, qualifier, lang, dcv);
+            if (!match)
             {
                 values.add(dcv);
             }
