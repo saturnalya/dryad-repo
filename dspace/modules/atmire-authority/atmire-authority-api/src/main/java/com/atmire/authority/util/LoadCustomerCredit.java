@@ -189,7 +189,7 @@ public class LoadCustomerCredit {
 
 
 
-    public static boolean updateCredit(String customerId)
+    public static String updateCredit(String customerId)
                 throws Exception
         {
             // Of course we aren't an administrator yet so we need to
@@ -224,14 +224,7 @@ public class LoadCustomerCredit {
                 System.out.print(e.getStackTrace());
             }
 
-            if(status!=null&&status.equals("SUCCESS"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return status;
         }
 
 
