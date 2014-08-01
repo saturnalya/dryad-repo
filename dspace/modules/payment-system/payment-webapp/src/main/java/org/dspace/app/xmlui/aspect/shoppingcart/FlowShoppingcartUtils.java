@@ -156,10 +156,10 @@ public class FlowShoppingcartUtils {
                         }
                     }
 
-                if(status!=null&&status.length()>0)
-                {
-                    shoppingCart.setStatus(status);
-                }
+//                if(status!=null&&status.length()>0)
+//                {
+//                    shoppingCart.setStatus(status);
+//                }
                 
                 paymentSystemService.updateTotal(context,shoppingCart,null);
                 context.commit();
