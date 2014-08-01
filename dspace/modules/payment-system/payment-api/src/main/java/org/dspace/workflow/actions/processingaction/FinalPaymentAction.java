@@ -84,7 +84,7 @@ public class FinalPaymentAction extends ProcessingAction {
 	    if(shoppingCart.getJournalSub()) {
 		log.info("processed journal subscription for Item " + itemID + ", journal = " + shoppingCart.getJournal());
         log.debug("deduct credit from journal = "+shoppingCart.getJournal());
-        boolean success = false;
+        String success = "";
         Scheme scheme = Scheme.findByIdentifier(c,ConfigurationManager.getProperty("solrauthority.searchscheme.prism_publicationName"));
         Concept[] concepts = Concept.findByPreferredLabel(c,shoppingCart.getJournal(),scheme.getID());
         if(concepts!=null&&concepts.length!=0){
@@ -94,7 +94,7 @@ public class FinalPaymentAction extends ProcessingAction {
             }
         }
 
-        if(!success){
+        if(!success.equals("SUCCESS")){
             sendPaymentErrorEmail(c, wfi, shoppingCart, "problem: credit not deducted successfully");
             return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, 2);
         }else{
