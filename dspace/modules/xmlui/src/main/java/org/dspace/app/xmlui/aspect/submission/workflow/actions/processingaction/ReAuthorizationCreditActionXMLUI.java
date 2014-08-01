@@ -108,20 +108,17 @@ public class ReAuthorizationCreditActionXMLUI extends AbstractXMLUIAction {
             if(concepts!=null&&concepts.length!=0){
                 AuthorityMetadataValue[] metadataValues = concepts[0].getMetadata("internal", "journal", "customerId", Item.ANY);
                 if(metadataValues!=null&&metadataValues.length>0){
-                    success = LoadCustomerCredit.updateCredit(metadataValues[0].value);
-                    if(success.equals("SUCCESS"))
-                    {
+                    try{
+                        success = LoadCustomerCredit.updateCredit(metadataValues[0].value);
                         shoppingCart.setStatus(ShoppingCart.STATUS_COMPLETED);
                         Date date= new Date();
                         shoppingCart.setPaymentDate(date);
                         shoppingCart.update();
                         sendPaymentApprovedEmail(context, workflowItem, shoppingCart);
 
-                    }
-                    else
+                    }catch (Exception e)
                     {
-                        sendPaymentErrorEmail(context, workflowItem, shoppingCart, "problem: credit not deducted successfully");
-
+                        sendPaymentErrorEmail(context, workflowItem, shoppingCart,"problem: credit not deducted successfully. \\n \\n " + e.getMessage());
                     }
                 }
             }

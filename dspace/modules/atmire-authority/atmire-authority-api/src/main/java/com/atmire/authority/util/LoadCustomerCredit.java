@@ -8,6 +8,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.httpclient.HttpClient;
 
 
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import org.apache.log4j.Logger;
@@ -19,6 +20,8 @@ import org.dspace.content.authority.Concept;
 import org.dspace.content.authority.Scheme;
 import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
+
+import java.io.IOException;
 
 
 /**
@@ -187,45 +190,51 @@ public class LoadCustomerCredit {
     }
 
 
+    public static String updateCredit(String customerId) throws LoadCustomerCreditException {
+        // Of course we aren't an administrator yet so we need to
+        // circumvent authorisation
+        if (ConfigurationManager.getBooleanProperty("credit.test.mode")) {
+            throw new LoadCustomerCreditException("testing failure");
+        }
 
+        String status = null;
 
-    public static String updateCredit(String customerId)
-                throws Exception
-        {
-            // Of course we aren't an administrator yet so we need to
-            // circumvent authorisation
+        String requestUrl = ConfigurationManager.getProperty("association.anywhere.update-link");
 
-            String status=null;
+        try {
+            String url = requestUrl.replace("customerId", customerId);
+            HttpClient client = new HttpClient();
 
-                String requestUrl = ConfigurationManager.getProperty("association.anywhere.update-link");
+            GetMethod get = new GetMethod(url);
 
-                try {
-                        String url = requestUrl.replace("customerId",customerId);
-                        HttpClient client = new HttpClient();
+            client.executeMethod(get);
 
-                        GetMethod get = new GetMethod(url);
-
-                        client.executeMethod(get);
-
-                        if( get.getStatusCode() <= 299 )
-                        {
-                            log.debug("Response Code : "
-                                    + get.getStatusLine().getStatusCode());
-                            String result = get.getResponseBodyAsString();
-                            log.debug("Response body : "+result);
-                            status = getXmlElement(result,"credit-update-status");
-                            status = getXmlElement(status,"status");
-                        }
-                    }
-
-            catch (Exception e)
-            {
-                System.out.print(e);
-                System.out.print(e.getStackTrace());
+            if (get.getStatusCode() <= 299) {
+                log.debug("Response Code : "
+                        + get.getStatusLine().getStatusCode());
+                String result = get.getResponseBodyAsString();
+                log.debug("Response body : " + result);
+                status = getXmlElement(result, "credit-update-status");
+                status = getXmlElement(status, "status");
+                if("FAILURE".equals(status))
+                {
+                    throw new LoadCustomerCreditException(result);
+                }
             }
 
             return status;
+        } catch (HttpException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new LoadCustomerCreditException(e.getMessage(),e);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new LoadCustomerCreditException(e.getMessage(),e);
+        } catch (Exception e)
+        {
+            throw new LoadCustomerCreditException(e.getMessage());
         }
+
+    }
 
 
     public void importCredit(String customerId)
