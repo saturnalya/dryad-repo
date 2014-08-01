@@ -907,57 +907,6 @@ public class FlowUtils {
         return request.getContextPath() + "/submissions";
     }
 
-    private static void checkJournalSubscriptionCredit(Request request, Context context, Item publication) throws SQLException, AuthorizeException, IOException, TransformerException, WorkflowException, SAXException, WorkflowConfigurationException, MessagingException, ParserConfigurationException {
-        //handle the journal integeration check
-        ArrayList<ShoppingCart> shoppingCarts = ShoppingCart.findAllByItem(context, publication.getID());
-
-        Scheme scheme = Scheme.findByIdentifier(context,"prism.publicationName");
-        for(ShoppingCart shoppingCart:shoppingCarts)
-        {
-            if(shoppingCart.getJournalSub() )
-            {
-
-                Concept[] journals = Concept.findByPreferredLabel(context, shoppingCart.getJournal(),scheme.getID() );
-                if(journals!=null&&journals.length>0)  {
-                    Concept journal = journals[0];
-                    if(journal!=null&&journal.getMetadata("internal","journal","subscriptionPaid",Item.ANY)!=null&&journal.getMetadata("internal","journal","subscriptionPaid",Item.ANY)[0].equals("true")){
-                    try{
-                        //We have completed everything time to start our dataset
-
-                        //check credit
-                        LoadCustomerCredit loadCustomerCredit = new LoadCustomerCredit();
-                        String credit = loadCustomerCredit.loadCredit(shoppingCart.getJournal());
-                        if(credit!=null)
-                        {
-                            Integer creditLeft = Integer.parseInt(credit);
-                            if(creditLeft>0)
-                            {
-                                creditLeft = creditLeft-1;
-                                //update credit in asscociation anywhere
-                                 loadCustomerCredit.updateCredit(shoppingCart.getJournal());
-
-                            }
-                            else {
-                                //no enough credit left
-                                setShoppingCartStatus(context,shoppingCart);
-                            }
-                        }
-                        else
-                        {
-                             setShoppingCartStatus(context,shoppingCart);
-                        }
-
-                    }catch (Exception e){
-                        //if any errors happened in journal integration credit check, then set the shopping cart journal integeration to be null and recaculate the total
-                        setShoppingCartStatus(context,shoppingCart);
-                        log.error("Exception during CompleteSubmissionStep: ", e);
-                        throw new RuntimeException(e);
-                    }
-                }
-                }
-            }
-        }
-    }
     private static void setShoppingCartStatus(Context context,ShoppingCart shoppingCart)throws SQLException{
         shoppingCart.setStatus(ShoppingCart.STATUS_DENIlED);
         shoppingCart.setJournalSub(false);

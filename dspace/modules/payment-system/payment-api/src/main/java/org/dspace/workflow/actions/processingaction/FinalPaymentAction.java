@@ -90,20 +90,21 @@ public class FinalPaymentAction extends ProcessingAction {
         if(concepts!=null&&concepts.length!=0){
             AuthorityMetadataValue[] metadataValues = concepts[0].getMetadata("internal", "journal", "customerId", Item.ANY);
             if(metadataValues!=null&&metadataValues.length>0){
-                success = LoadCustomerCredit.updateCredit(metadataValues[0].value);
+                try{
+                    success = LoadCustomerCredit.updateCredit(metadataValues[0].value);
+                    shoppingCart.setStatus(ShoppingCart.STATUS_COMPLETED);
+                    Date date= new Date();
+                    shoppingCart.setPaymentDate(date);
+                    shoppingCart.update();
+                    sendPaymentApprovedEmail(c,wfi,shoppingCart);
+                    return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, ActionResult.OUTCOME_COMPLETE);
+                }catch (Exception e)
+                {
+                    log.error(e.getMessage());
+                    sendPaymentErrorEmail(c, wfi, shoppingCart,"problem: credit not deducted successfully. \\n \\n " + e.getMessage());
+                    return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, 2);
+                }
             }
-        }
-
-        if(!success.equals("SUCCESS")){
-            sendPaymentErrorEmail(c, wfi, shoppingCart, "problem: credit not deducted successfully");
-            return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, 2);
-        }else{
-            shoppingCart.setStatus(ShoppingCart.STATUS_COMPLETED);
-            Date date= new Date();
-            shoppingCart.setPaymentDate(date);
-            shoppingCart.update();
-            sendPaymentApprovedEmail(c,wfi,shoppingCart);
-            return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, ActionResult.OUTCOME_COMPLETE);
         }
 	    }
 
