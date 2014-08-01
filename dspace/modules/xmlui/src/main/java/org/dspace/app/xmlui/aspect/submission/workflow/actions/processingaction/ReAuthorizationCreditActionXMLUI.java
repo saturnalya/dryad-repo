@@ -62,10 +62,7 @@ public class ReAuthorizationCreditActionXMLUI extends AbstractXMLUIAction {
             PaymentSystemService payementSystemService = new DSpace().getSingletonService(PaymentSystemService.class);
             ShoppingCart shoppingCart = payementSystemService.getShoppingCartByItemId(context,item.getID());
             mainDiv.setHead("Re-submit Credit");
-            if(success!=null&&success.length()>0)
-            {
-                mainDiv.addPara(success);
-            }
+
             if(!success.equals("SUCCESS")&&shoppingCart!=null&&!shoppingCart.getStatus().equals(ShoppingCart.STATUS_COMPLETED))
             {
                 mainDiv.addPara().addContent("NOTE : click the credit button will deduct your credit.");
@@ -119,6 +116,8 @@ public class ReAuthorizationCreditActionXMLUI extends AbstractXMLUIAction {
                     }catch (Exception e)
                     {
                         sendPaymentErrorEmail(context, workflowItem, shoppingCart,"problem: credit not deducted successfully. \\n \\n " + e.getMessage());
+                        log.error(e.getMessage());
+                        return e.getMessage();
                     }
                 }
             }
