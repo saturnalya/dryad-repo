@@ -250,10 +250,17 @@ public class PaymentSystemImpl implements PaymentSystemService {
         double nonIntegratedFee = getNoIntegrateFee(context, shoppingcart, journal);
         double price = calculateTotal(discount, fileSizeSurcharge, basicFee, nonIntegratedFee);
         return price;
+
     }
     public Double calculateShoppingCartTotalWithoutJournal(Context context,ShoppingCart shoppingcart) throws SQLException{
-        log.debug("recalculating shopping cart total withour journal");
-
+        log.debug("recalculating shopping cart total without journal");
+        boolean discount = hasDiscount(context,shoppingcart, null);
+        double fileSizeSurcharge = getSurchargeLargeFileFee(context, shoppingcart);
+        double basicFee = shoppingcart.getBasicFee();
+        double nonIntegratedFee = getNoIntegrateFee(context, shoppingcart, null);
+        double price = calculateTotal(discount, fileSizeSurcharge, basicFee, nonIntegratedFee);
+        return price;
+    }
     /**
      * Calculate the surcharge for a data package, based on its size in bytes
      * @param allowedSize the maximum size allowed before large file surcharge
