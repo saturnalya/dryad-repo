@@ -290,8 +290,8 @@ jQuery(document).ready(function() {
             return false;
         });
 
-        // add 'Open/Close all answers' trigger
-        questionBlock.prepend('<a id="all-faq-toggle" href="#" style="float: right;">Open all answers</a>');
+        // add 'Open/Close All Answers' trigger
+        questionBlock.prepend('<a id="all-faq-toggle" href="#" style="float: right;">Open All Answers</a>');
         jQuery('#all-faq-toggle').unbind('click').click(function() {
             var toggle = jQuery(this);
             if (toggle.text().indexOf('Open') > -1) {
@@ -301,7 +301,7 @@ jQuery(document).ready(function() {
                         jQuery(this).click();
                     }
                 });
-                toggle.text('Close all answers');
+                toggle.text('Close All Answers');
             } else {
                 // close all answers and update label
                 questionBlock.find('li > a').each(function() {
@@ -309,7 +309,7 @@ jQuery(document).ready(function() {
                         jQuery(this).click();
                     }
                 });
-                toggle.text('Open all answers');
+                toggle.text('Open All Answers');
             }
         });
 
