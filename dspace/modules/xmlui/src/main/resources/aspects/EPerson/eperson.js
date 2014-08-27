@@ -96,7 +96,7 @@ function doRegister()
 
         do {
         	if (accountExists) {
-            cocoon.sendPage("register/exist", {"email":email});
+				cocoon.sendPage("forgot/verify", {"email":email});
                 return;
             }
         
