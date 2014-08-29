@@ -3,39 +3,51 @@
     <map:components>
         <map:matchers default="wildcard"/>
         <map:actions>
+            <map:action name="WidgetDisplayDataFile" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetDisplayDataFile"/>
+        </map:actions>
+<!--        
+        <map:actions>
             <map:action name="WidgetBannerAction" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetBannerAction"/>
         </map:actions>
-        <map:selectors>
-            <map:selector name="WidgetBannerSelector" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetBannerSelector"/>
-        </map:selectors>
+-->
         <map:generators>
             <map:generator name="exception" src="org.apache.cocoon.generation.ExceptionGenerator"/>
         </map:generators>
     </map:components>
+    
     <map:pipelines>
         <map:pipeline>
+            <!-- return content to display data file contents -->
+            <map:match pattern="file">
+                <map:select type="WidgetDisplayFileAction">
+                    <map:parameter name="referrer" value="{request-param:referrer}"/>
+                    <map:parameter name="height" value="{request-param:height}"/>
+                    <map:parameter name="width" value="{request-param:width}"/>
+                    <map:parameter name="pubId" value="{request-param:pubId}"/>
+                </map:select>
+            </map:match>
+            
+<!--
             <map:match pattern="bannerForPub">
                 <map:select type="WidgetBannerSelector"> 
                     <map:parameter name="referrer" value="{request-param:referrer}"/>
                     <map:when test="{request-param:pubId}">
-                        <!-- Return the Dryad banner image -->
+                        <!- - Return the Dryad banner image - ->
                         <map:read type="image" src="../static/Dryad_web_banner_small_v4e.jpg" mime-type="image/jpeg"/>
                     </map:when>
                     <map:otherwise>
-                        <!-- Return 1px transparent gif -->
+                        <!- - Return 1px transparent gif - ->
                         <map:read type="image" src="../static/Transparent.gif" mime-type="image/gif"/>
                     </map:otherwise>
                 </map:select>
             </map:match>
-            <map:match pattern="dataPackageForPub">
-                <!-- this should redirect the user to the resource specified by the identifier -->
-                <map:act type="WidgetBannerAction">
-                    <map:parameter name="referrer" value="{request-param:referrer}"/>
-                    <map:parameter name="pubId" value="{request-param:pubId}"/>
-                    <!-- select may not be necessary -->
-                    <map:redirect-to uri="/resource/{package}"/>
-                </map:act>
+-->
+            
+            <!-- return content to display/enumerate data package contents -->
+            <map:match pattern="package">
+                <map:read type="image" src="../../static/Dryad_web_banner_small_v4e.jpg" mime-type="image/jpeg"/>
             </map:match>
+            
         </map:pipeline>
         <map:handle-errors>
             <map:select type="exception">
