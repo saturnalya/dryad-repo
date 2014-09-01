@@ -31,3 +31,5 @@ notes.txt
 ## Ignore all vim working files
 *.swp
 
+## Ignore OSX files
+.DS_Store
