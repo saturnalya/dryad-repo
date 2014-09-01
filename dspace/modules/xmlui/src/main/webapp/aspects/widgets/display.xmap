@@ -2,46 +2,54 @@
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
     <map:components>
         <map:matchers default="wildcard"/>
-        <map:actions>
-            <map:action name="WidgetDisplayDataFile" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetDisplayDataFile"/>
-        </map:actions>
-<!--        
-        <map:actions>
-            <map:action name="WidgetBannerAction" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetBannerAction"/>
-        </map:actions>
--->
+        <map:selectors>
+            <map:selector name="WidgetBannerSelector" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetBannerSelector"/>
+        </map:selectors>
         <map:generators>
             <map:generator name="exception" src="org.apache.cocoon.generation.ExceptionGenerator"/>
         </map:generators>
     </map:components>
-    
+
     <map:pipelines>
         <map:pipeline>
-            <!-- return content to display data file contents -->
-            <map:match pattern="file">
-                <map:select type="WidgetDisplayFileAction">
+            
+            <!-- do not cache this file request, as it is a dynamic JS resource -->
+            <map:parameter name="expires" value="now"/>
+
+            <!-- return javascript file used to inject data display widget -->
+            <map:match pattern="dataFileFrame.js">
+                <map:select type="WidgetBannerSelector">
                     <map:parameter name="referrer" value="{request-param:referrer}"/>
-                    <map:parameter name="height" value="{request-param:height}"/>
-                    <map:parameter name="width" value="{request-param:width}"/>
+                    <map:when test="{request-param:pubId}">
+                        <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFile.xsl">
+
+                            <!-- cocoon-mapped values: url's for resources -->
+                            <map:parameter name="ddwcss"        value="{request:contextPath}/large_widget.css"/>
+                            <map:parameter name="jqlib"         value="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
+                            <map:parameter name="lblib"         value="http://rnathanday.github.io/dryad-data-display-widget/jquery.magnific-popup.js"/>
+
+                            <!-- request parameters -->
+                            <map:parameter name="embedded-url"  value="{request:contextPath}/dataFileContents?file={request-param:file}"/>
+                            <map:parameter name="wrapper-id"    value="{request-param:wrapper}"/>
+                            <map:parameter name="frame-height"  value="{request-param:height}"/>
+                            <map:parameter name="frame-width"   value="{request-param:width}"/>
+                        </map:transform>
+                        <map:serialize type="js"/>
+                    </map:when>
+                    
+                    <!-- no available data-file resource  -->
+                    <map:otherwise>
+                        <map:read type="image" src="../static/Transparent.gif" mime-type="text/javascript"/>
+                    </map:otherwise>
+
+                </map:select>
+            </map:match>
+
+            <map:match pattern="dataFileContents">
+                <map:select type="WidgetDisplayFileAction">
                     <map:parameter name="pubId" value="{request-param:pubId}"/>
                 </map:select>
             </map:match>
-            
-<!--
-            <map:match pattern="bannerForPub">
-                <map:select type="WidgetBannerSelector"> 
-                    <map:parameter name="referrer" value="{request-param:referrer}"/>
-                    <map:when test="{request-param:pubId}">
-                        <!- - Return the Dryad banner image - ->
-                        <map:read type="image" src="../static/Dryad_web_banner_small_v4e.jpg" mime-type="image/jpeg"/>
-                    </map:when>
-                    <map:otherwise>
-                        <!- - Return 1px transparent gif - ->
-                        <map:read type="image" src="../static/Transparent.gif" mime-type="image/gif"/>
-                    </map:otherwise>
-                </map:select>
-            </map:match>
--->
             
             <!-- return content to display/enumerate data package contents -->
             <map:match pattern="package">
@@ -49,6 +57,8 @@
             </map:match>
             
         </map:pipeline>
+
+        <!-- TODO: needed? -->
         <map:handle-errors>
             <map:select type="exception">
                 <map:when test="not-found">

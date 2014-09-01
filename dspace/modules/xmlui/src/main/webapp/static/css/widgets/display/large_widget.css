@@ -1,0 +1,635 @@
+@import "less/magnific-popup.css";
+/*
+TODO:
+     - browser extensions for box shadow, etc.  
+*/
+/* line 7, /Users/rnathanday/Developer/dryad-data-display-widget/script/large_widget.less */
+.dryad-ddw-outer {
+  /* ------------------------------------------------- 
+    reset.css settings => need to subclass to the widget
+                       => need to re-review removed elements    
+*/
+  /* HTML5 display-role reset for older browsers */
+  /* 
+    reset.css
+------------------------------------------------- */
+  width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+/* line 7, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer div,
+.dryad-ddw-outer span,
+.dryad-ddw-outer object,
+.dryad-ddw-outer iframe,
+.dryad-ddw-outer h1,
+.dryad-ddw-outer h2,
+.dryad-ddw-outer h3,
+.dryad-ddw-outer h4,
+.dryad-ddw-outer h5,
+.dryad-ddw-outer h6,
+.dryad-ddw-outer p,
+.dryad-ddw-outer pre,
+.dryad-ddw-outer a,
+.dryad-ddw-outer code,
+.dryad-ddw-outer em,
+.dryad-ddw-outer img,
+.dryad-ddw-outer small,
+.dryad-ddw-outer strike,
+.dryad-ddw-outer strong,
+.dryad-ddw-outer sub,
+.dryad-ddw-outer sup,
+.dryad-ddw-outer tt,
+.dryad-ddw-outer b,
+.dryad-ddw-outer u,
+.dryad-ddw-outer i,
+.dryad-ddw-outer center,
+.dryad-ddw-outer ol,
+.dryad-ddw-outer ul,
+.dryad-ddw-outer li,
+.dryad-ddw-outer label,
+.dryad-ddw-outer legend,
+.dryad-ddw-outer table,
+.dryad-ddw-outer caption,
+.dryad-ddw-outer tbody,
+.dryad-ddw-outer tfoot,
+.dryad-ddw-outer thead,
+.dryad-ddw-outer tr,
+.dryad-ddw-outer th,
+.dryad-ddw-outer td,
+.dryad-ddw-outer figure,
+.dryad-ddw-outer figcaption,
+.dryad-ddw-outer footer,
+.dryad-ddw-outer header,
+.dryad-ddw-outer menu,
+.dryad-ddw-outer nav,
+.dryad-ddw-outer section,
+.dryad-ddw-outer summary,
+.dryad-ddw-outer time,
+.dryad-ddw-outer mark,
+.dryad-ddw-outer audio,
+.dryad-ddw-outer video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* line 27, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer article,
+.dryad-ddw-outer aside,
+.dryad-ddw-outer details,
+.dryad-ddw-outer figcaption,
+.dryad-ddw-outer figure,
+.dryad-ddw-outer footer,
+.dryad-ddw-outer header,
+.dryad-ddw-outer hgroup,
+.dryad-ddw-outer menu,
+.dryad-ddw-outer nav,
+.dryad-ddw-outer section {
+  display: block;
+}
+/* line 31, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer body {
+  line-height: 1;
+}
+/* line 34, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer ol,
+.dryad-ddw-outer ul {
+  list-style: none;
+}
+/* line 37, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer blockquote,
+.dryad-ddw-outer q {
+  quotes: none;
+}
+/* line 40, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer blockquote:before,
+.dryad-ddw-outer blockquote:after,
+.dryad-ddw-outer q:before,
+.dryad-ddw-outer q:after {
+  content: '';
+  content: none;
+}
+/* line 45, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/reset.less */
+.dryad-ddw-outer table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/* line 16, /Users/rnathanday/Developer/dryad-data-display-widget/script/large_widget.less */
+.dryad-ddw {
+  background-color: #e0e7d5;
+  margin-left: auto;
+  margin-right: auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: lighter;
+}
+/* line 14, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw div.dryad-ddw-hide div.dryad-ddw-hide * {
+  display: none !important;
+}
+/* line 19, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw iframe {
+  border: 0;
+}
+/* line 23, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-header {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: #657362;
+}
+/* line 31, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-header .dryad-ddw-title h1 {
+  margin: 0;
+}
+/* line 34, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-header .dryad-ddw-title ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+/* line 41, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-header .dryad-ddw-banner {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+/* line 45, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-header .dryad-ddw-banner ul {
+  list-style-type: none;
+  margin: 0;
+}
+/* line 49, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-header .dryad-ddw-banner ul img {
+  width: 340px;
+  height: 48px;
+  box-shadow: -5px 5px 5px #888888;
+}
+/* line 58, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-body {
+  border-left: 3px #e0e7d5 solid;
+  border-right: 3px #e0e7d5 solid;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+/* line 64, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-body .dryad-ddw-frame {
+  background-color: #ffffff;
+}
+/* line 67, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-body .dryad-ddw-frame-full {
+  height: 100%;
+}
+/* line 72, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-footer {
+  background-color: #ffffff;
+  border-right: 3px #e0e7d5 solid;
+  border-left: 3px #e0e7d5 solid;
+  border-bottom: 3px #e0e7d5 solid;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-top: 5px #e0e7d5 solid;
+}
+/* line 82, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-footer .dryad-ddw-control ul {
+  background-color: #ffffff;
+}
+/* line 86, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-footer p {
+  background-color: #ffffff;
+}
+/* line 92, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-control ul {
+  list-style-type: none;
+}
+/* line 95, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-control ul li {
+  background-color: #4a9a41;
+  box-shadow: -5px 5px 5px #888888;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  text-align: center;
+}
+/* line 104, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-control ul li a {
+  background-color: #4a9a41;
+  position: relative;
+  top: 25%;
+}
+/* line 108, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-control ul li a i {
+  background-color: #4a9a41;
+}
+/* line 111, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw .dryad-ddw-control ul li a i:before {
+  color: #ffffff;
+}
+/* line 119, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw a {
+  cursor: pointer;
+}
+/* line 125, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw div.dryad-ddw-share iframe,
+.dryad-ddw div.dryad-ddw-citation iframe {
+  height: 20px;
+  max-height: 20px;
+  width: 20px;
+  overflow: hidden;
+}
+/* line 131, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw div.dryad-ddw-share .shade,
+.dryad-ddw div.dryad-ddw-citation .shade {
+  background-color: #e0e7d5;
+}
+/* line 134, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw div.dryad-ddw-share ul.dryad-ddw-citation,
+.dryad-ddw div.dryad-ddw-citation ul.dryad-ddw-citation {
+  list-style-type: none;
+  margin: 0;
+}
+/* line 138, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw div.dryad-ddw-share ul.dryad-ddw-share,
+.dryad-ddw div.dryad-ddw-citation ul.dryad-ddw-share {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+/* line 142, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/brand.less */
+.dryad-ddw div.dryad-ddw-share ul.dryad-ddw-share li,
+.dryad-ddw div.dryad-ddw-citation ul.dryad-ddw-share li {
+  display: inline;
+}
+/* line 5, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+.dryad-ddw .fa {
+  font-family: FontAwesome;
+}
+/* line 9, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+.dryad-ddw h1 {
+  font-size: 29px;
+  font-weight: 200;
+  font-style: normal;
+}
+@media (max-width: 425px - 1) {
+  /* line 16, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+  .dryad-ddw h1 {
+    font-size: 20px;
+    font-weight: 200;
+    font-style: normal;
+  }
+}
+/* line 23, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+.dryad-ddw b {
+  font-weight: bold;
+}
+/* line 28, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+.dryad-ddw .dryad-ddw-footer p {
+  font-weight: normal;
+}
+@media (min-width: 850px) {
+  /* line 35, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+  .dryad-ddw .dryad-ddw-control ul li a i:before {
+    font-size: 24pt;
+  }
+}
+@media (max-width: 850px) {
+  /* line 43, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/type.less */
+  .dryad-ddw .dryad-ddw-control ul li a i:before {
+    font-size: 20pt;
+  }
+}
+/* line 2, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw {
+  position: relative;
+  background: #ffffff;
+  padding: 20px;
+  margin: 20px auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-right: 3px #e0e7d5 solid;
+  border-left: 3px #e0e7d5 solid;
+  border-bottom: 3px #e0e7d5 solid;
+  border-top: 5px #e0e7d5 solid;
+}
+/* line 18, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in {
+  /* start state */
+  /* animate in */
+  /* animate out */
+}
+/* line 21, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in .mfp-with-anim {
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+  transform: scale(0.8);
+}
+/* line 27, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in.mfp-bg {
+  opacity: 0;
+  transition: all 0.3s ease-out;
+}
+/* line 34, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in.mfp-ready .mfp-with-anim {
+  opacity: 1;
+  transform: scale(1);
+}
+/* line 38, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in.mfp-ready.mfp-bg {
+  opacity: 0.8;
+}
+/* line 46, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in.mfp-removing .mfp-with-anim {
+  transform: scale(0.8);
+  opacity: 0;
+}
+/* line 50, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/lightbox.less */
+.dryad-ddw.dryad-popup.dryad-ddw .mfp-zoom-in.mfp-removing.mfp-bg {
+  opacity: 0;
+}
+/* line 2, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw .dryad-ddw-header {
+  padding-top: 6px;
+  padding-right: 12px;
+  padding-bottom: 0px;
+  padding-left: 12px;
+}
+/* line 10, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw .dryad-ddw-frame-full {
+  overflow: scroll;
+  width: 100% !important;
+}
+@media (min-width: 1000px) {
+  /* line 16, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw {
+    max-width: 1000px;
+    width: 1000px;
+  }
+  /* line 23, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header {
+    min-height: 80px;
+  }
+  /* line 24, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body {
+    min-height: 300px;
+    max-height: 400px;
+  }
+  /* line 25, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer {
+    min-height: 80px;
+  }
+  /* line 28, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-banner {
+    float: right;
+  }
+  /* line 30, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-banner li {
+    text-align: right;
+  }
+  /* line 33, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-banner img {
+    position: relative;
+    top: -8px;
+    right: -18px;
+  }
+  /* line 40, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul {
+    position: relative;
+    bottom: 0;
+  }
+  /* line 44, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul li {
+    padding-right: 2em;
+    float: left;
+  }
+  /* line 51, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body {
+    position: relative;
+  }
+  /* line 54, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body .dryad-ddw-frame {
+    overflow: scroll;
+    width: 922px;
+  }
+  /* line 57, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body .dryad-ddw-frame iframe.dryad-ddw-data {
+    overflow: scroll;
+    min-height: 300px;
+    max-height: 400px;
+  }
+  /* line 64, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body .dryad-ddw-control ul {
+    margin-left: 78px;
+    position: absolute;
+    top: 38px;
+    right: -6px;
+  }
+  /* line 70, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body .dryad-ddw-control ul li {
+    margin-left: auto;
+    height: 60px;
+    width: 60px;
+    margin-bottom: 1em;
+  }
+  /* line 80, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer p {
+    margin-left: 3em;
+    margin-right: 3em;
+  }
+  /* line 84, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer .dryad-ddw-control {
+    display: none;
+  }
+}
+@media (max-width: 850px) and (min-width: 425px) {
+  /* line 92, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header {
+    min-height: 80px;
+  }
+  /* line 93, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body {
+    max-height: 350px;
+  }
+  /* line 94, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer {
+    max-height: 70px;
+  }
+  /* line 98, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-banner ul {
+    padding: 0;
+  }
+  /* line 102, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title {
+    position: relative;
+  }
+  /* line 104, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  /* line 112, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw div.dryad-ddw-body .dryad-ddw-frame {
+    left: 0;
+    top: 0;
+  }
+  /* line 116, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw div.dryad-ddw-body .dryad-ddw-control {
+    display: none !important;
+  }
+  /* line 121, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer p {
+    display: none;
+  }
+  /* line 125, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer .dryad-ddw-control ul {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+  }
+  /* line 131, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer .dryad-ddw-control ul li {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    margin-left: 3%;
+    margin-right: 3%;
+    margin-top: 8px;
+  }
+}
+@media (max-width: 425px) {
+  /* line 145, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw {
+    max-width: 425px;
+    width: 425px;
+  }
+  /* line 150, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header {
+    min-height: 80px;
+  }
+  /* line 151, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body {
+    min-height: 300px;
+  }
+  /* line 152, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer {
+    min-height: 70px;
+  }
+  /* line 155, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-banner {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* line 161, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul {
+    position: relative;
+    bottom: 0;
+  }
+  /* line 165, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul li {
+    padding-right: 2em;
+    float: left;
+  }
+  /* line 173, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body .dryad-ddw-frame {
+    left: 0;
+    top: 0;
+  }
+  /* line 178, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-body .dryad-ddw-control ul {
+    display: none;
+  }
+  /* line 184, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer p {
+    display: none;
+  }
+  /* line 188, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer .dryad-ddw-control ul {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* line 193, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer .dryad-ddw-control ul li {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    margin-left: 3%;
+    margin-right: 3%;
+    margin-top: 8px;
+  }
+}
+@media (max-width: 300px) {
+  /* line 206, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw {
+    max-width: 300px;
+    width: 300px;
+  }
+  /* line 211, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header {
+    min-height: 30px;
+  }
+  /* line 215, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul {
+    position: relative;
+    bottom: 0;
+  }
+  /* line 219, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-header .dryad-ddw-title ul li {
+    padding-right: 2em;
+    float: left;
+  }
+  /* line 226, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+  .dryad-ddw .dryad-ddw-footer,
+  .dryad-ddw .dryad-ddw-control,
+  .dryad-ddw .dryad-ddw-banner {
+    display: none;
+  }
+}
+/* line 231, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw.dryad-popup.dryad-ddw-citation {
+  width: auto;
+  max-width: 500px;
+}
+/* line 235, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw.dryad-popup.dryad-ddw-share {
+  width: auto;
+  max-width: 300px;
+}
+/* line 238, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw.dryad-popup.dryad-ddw-share div {
+  margin-left: 0;
+  margin-right: 0;
+}
+/* line 244, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw div.dryad-ddw-share {
+  width: auto;
+  max-width: 300px;
+}
+/* line 247, /Users/rnathanday/Developer/dryad-data-display-widget/script/less/layout.less */
+.dryad-ddw div.dryad-ddw-share iframe {
+  height: 20px;
+  max-height: 20px;
+  width: 20px;
+}
+/* line 25, /Users/rnathanday/Developer/dryad-data-display-widget/script/large_widget.less */
+#dryad-ddw-body {
+  margin: 0;
+  background-color: #FFFFFF;
+}
+/* line 30, /Users/rnathanday/Developer/dryad-data-display-widget/script/large_widget.less */
+iframe.dryad-ddw {
+  max-width: 100%;
+}
