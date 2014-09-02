@@ -39,6 +39,7 @@
                     
                     <!-- no available data-file resource  -->
                     <map:otherwise>
+                        <!-- TODO: no-op JS file? -->
                         <map:read type="image" src="../static/Transparent.gif" mime-type="text/javascript"/>
                     </map:otherwise>
 
