@@ -21,7 +21,7 @@
                 <map:select type="WidgetBannerSelector">
                     <map:parameter name="referrer" value="{request-param:referrer}"/>
                     <map:when test="{request-param:pubId}">
-                        <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFile.xsl">
+                        <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFileFrame.xsl">
 
                             <!-- cocoon-mapped values: url's for resources -->
                             <map:parameter name="ddwcss"        value="{request:contextPath}/large_widget.css"/>
