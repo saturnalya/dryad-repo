@@ -2,54 +2,76 @@
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
     <map:components>
         <map:matchers default="wildcard"/>
-        <map:selectors>
-            <map:selector name="WidgetBannerSelector" src="org.dspace.app.xmlui.aspect.dryadwidgets.WidgetBannerSelector"/>
-        </map:selectors>
         <map:generators>
             <map:generator name="exception" src="org.apache.cocoon.generation.ExceptionGenerator"/>
         </map:generators>
     </map:components>
 
     <map:pipelines>
-        <map:pipeline>
-            
+        <map:pipeline type="caching">
+
             <!-- do not cache this file request, as it is a dynamic JS resource -->
             <map:parameter name="expires" value="now"/>
 
             <!-- return javascript file used to inject data display widget -->
             <map:match pattern="dataFileFrame.js">
-                <map:select type="WidgetBannerSelector">
-                    <map:parameter name="referrer" value="{request-param:referrer}"/>
-                    <map:when test="{request-param:pubId}">
-                        <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFileFrame.xsl">
+                <!-- note: this stylesheet is a JS file templace and does not read the input xml file -->
 
-                            <!-- cocoon-mapped values: url's for resources -->
-                            <map:parameter name="ddwcss"        value="{request:contextPath}/large_widget.css"/>
-                            <map:parameter name="jqlib"         value="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
-                            <map:parameter name="lblib"         value="http://rnathanday.github.io/dryad-data-display-widget/jquery.magnific-popup.js"/>
-
-                            <!-- request parameters -->
-                            <map:parameter name="embedded-url"  value="{request:contextPath}/dataFileContents?file={request-param:file}"/>
-                            <map:parameter name="wrapper-id"    value="{request-param:wrapper}"/>
-                            <map:parameter name="frame-height"  value="{request-param:height}"/>
-                            <map:parameter name="frame-width"   value="{request-param:width}"/>
-                        </map:transform>
-                        <map:serialize type="js"/>
-                    </map:when>
+                <!--  
+                    for request parts, see http://wiki.apache.org/cocoon/InputModules#RequestModule__.28JXPath.29
+                -->
+                <map:generate type="file" src="http://localhost/mn/object/{request-param:doi}"/>
+                
+                <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFileFrame.xsl">
+                    <use-request-parameters>false</use-request-parameters>
+                    <use-browser-capabilities-db>false</use-browser-capabilities-db>
                     
-                    <!-- no available data-file resource  -->
-                    <map:otherwise>
-                        <!-- TODO: no-op JS file? -->
-                        <map:read type="image" src="../static/Transparent.gif" mime-type="text/javascript"/>
-                    </map:otherwise>
-
-                </map:select>
+                    <!-- cocoon-mapped values: url's for resources -->                    
+                    <map:parameter name="ddwcss"        value="{request:scheme}://{request:serverName}:{request:serverPort}/static/css/widgets/displaylarge_widget.css"/> <!--  -->
+                    <map:parameter name="jqlib"         value="{request:scheme}://{request:serverName}:{request:serverPort}/static/js/widgets/display/jquery.min.js"/>
+                    <map:parameter name="lblib"         value="{request:scheme}://{request:serverName}:{request:serverPort}/static/js/widgets/display/jquery.magnific-popup.js"/>
+                    <map:parameter name="frame-url"     value="{request:scheme}://{request:serverName}:{request:serverPort}/api/v1/widgets/display/dataFileContents?file={url-encode:{request-param:doi}}"/>
+                
+                    <!-- request parameters -->
+                    <map:parameter name="doi"           value="{url-encode:{request-param:doi}}"/>                    
+                    <map:parameter name="wrapper-id"    value="{request-param:wrapper}"/>
+                    <map:parameter name="frame-height"  value="{request-param:height}"/>
+                    <map:parameter name="frame-width"   value="{request-param:width}"/>
+                </map:transform>
+                <map:serialize type="text" mime-type="application/javascript"/>
             </map:match>
+            <map:handle-errors>
+                <!-- TODO: double-check status code -->
+                <map:select type="exception">
+                    <map:when test="not-found">
+                        <map:generate type="exception"/>
+                        <map:transform src="../../static/xsl/widgets/display/dataFileFrame.xsl"/> 
+                        <!-- TODO: localize messages
+                        <map:act type="locale">
+                            <map:transform type="i18n">
+                                    <map:parameter name="locale" value="{locale}"/>
+                            </map:transform>
+                        </map:act>
+                        -->
+                        <map:serialize type="text" mime-type="application/javascript" status-code="404"/>
+                    </map:when>
+                </map:select>
+            </map:handle-errors>
+        </map:pipeline>
+        
+        <!-- data-file content handler -->
+        <map:pipeline>
 
             <map:match pattern="dataFileContents">
-                <map:select type="WidgetDisplayFileAction">
-                    <map:parameter name="pubId" value="{request-param:pubId}"/>
-                </map:select>
+                <map:aggregate element="parts">
+                    <map:part src="http://localhost/mn/meta/{request-param:doi}"              element="meta"/>
+                    <map:part src="http://localhost/mn/meta/{request-param:doi}/bitstream"    element="meta-bitstream"/>
+                    <map:part src="http://localhost/mn/object/{request-param:doi}"            element="object"/>
+                </map:aggregate>
+                <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFileContent.xsl">
+                    <map:parameter name="bitstream-url" value="http://localhost/mn/object/{request-param:doi}/bitstream"/>
+                </map:transform>
+                <map:serialize type="html"/>
             </map:match>
             
             <!-- return content to display/enumerate data package contents -->
@@ -59,23 +81,5 @@
             
         </map:pipeline>
 
-        <!-- TODO: needed? -->
-        <map:handle-errors>
-            <map:select type="exception">
-                <map:when test="not-found">
-                    <map:generate type="exception"/>
-                    <map:transform src="exception2html.xslt">
-                            <map:parameter name="contextPath" value="{request:contextPath}"/>
-                            <map:parameter name="pageTitle" value="Resource not found"/>
-                    </map:transform>
-                    <map:act type="locale">
-                        <map:transform type="i18n">
-                                <map:parameter name="locale" value="{locale}"/>
-                        </map:transform>
-                    </map:act>
-                    <map:serialize type="xhtml" status-code="404"/>
-                </map:when>
-            </map:select>
-        </map:handle-errors>
     </map:pipelines>
 </map:sitemap>
