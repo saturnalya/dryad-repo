@@ -1,21 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:ddf="http://purl.org/dryad/schema/terms/v3.1"
+    xmlns:dwc="http://rs.tdwg.org/dwc/terms/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:bibo="http://purl.org/dryad/schema/dryad-bibo/v3.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ex="http://apache.org/cocoon/exception/1.0"
     version="1.0">
     
     <xsl:output method="text"/>
     
-    <xsl:param name="ddwcss"        select="'http://rnathanday.github.io/dryad-data-display-widget/script/large_widget.css'"/>
-    <xsl:param name="jqlib"         select="'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'"/>
-    <xsl:param name="lblib"         select="'http://rnathanday.github.io/dryad-data-display-widget/jquery.magnific-popup.js'"/>
-    <xsl:param name="file-bitsream" select="'http://localhost/~rnathanday/Developer/dryad-data-display-widget/examples/dryad.87ht85rs/widget_content.html'"/>
-    <xsl:param name="wrapper-id"    select="'#dryad-ddw-frame1'"/>
-    <xsl:param name="frame-height"  select="'550px'"/>
-    <xsl:param name="frame-width"   select="'1000px'"/>
-    
+    <xsl:param name="ddwcss"/>          <!-- large_widget.css -->
+    <xsl:param name="jqlib"/>           <!-- jquery.min.js -->
+    <xsl:param name="lblib"/>           <!-- jquery.magnific-popup.js -->
+    <xsl:param name="frame-url"/>       <!-- url for file contents request -->
+    <xsl:param name="wrapper-id"/>      <!-- @id of element wrapping JS call -->
+    <xsl:param name="frame-height"/>    <!-- -->
+    <xsl:param name="frame-width"/>     <!-- -->
+    <xsl:param name="doi"/>             <!-- data file Dryad DOI value -->
+
     <xsl:template match="/">
-        <xsl:call-template name="js"/>
+        <xsl:choose>
+            <!-- DataOne-MN responded with an <error> document -->
+            <xsl:when test="error">
+                <xsl:call-template name="d1-error"/>
+            </xsl:when>
+            <!-- Cocoon not-found exception XML -->
+            <xsl:when test="ex:exception-report">
+                <xsl:call-template name="cocoon-exception"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="js"/>
+            </xsl:otherwise>
+        </xsl:choose>        
     </xsl:template>
+    
+    <xsl:template name="js-error-logger">
+        <xsl:param name="message" select="''"/>
+        <![CDATA[
+        (function(w){
+            if (w.hasOwnProperty('console') && w.console.hasOwnProperty('log')) {
+                console.log(']]><xsl:value-of select="$message"/><![CDATA[');
+            }
+        })(window);
+        ]]>
+    </xsl:template>
+
+    <xsl:template name="d1-error">
+        <xsl:call-template name="js-error-logger">
+            <xsl:with-param name="message" select="concat('Dryad request error: no resource available for resource with DOI ', $doi)"/>
+        </xsl:call-template>
+    </xsl:template>
+            
+    <xsl:template name="cocoon-exception">
+        <xsl:call-template name="js-error-logger">
+            <xsl:with-param name="message" select="concat('Dryad request error: service retuned to content for DOI ', $doi)"/>
+        </xsl:call-template>        
+    </xsl:template>
+    
 
     <xsl:template name="js">
         <![CDATA[
@@ -26,10 +69,9 @@ var ddwcss = '<xsl:value-of select="$ddwcss"/>'
 , jqlib    = '<xsl:value-of select="$jqlib"/>'
 , lblib    = '<xsl:value-of select="$lblib"/>'
 , wid      = '<xsl:value-of select="$wrapper-id"/>'
-, bssrc    = '<xsl:value-of select="$file-bitsream"/>
+, bssrc    = '<xsl:value-of select="$frame-url"/>'
 , height   = '<xsl:value-of select="$frame-height"/>'
-, width    = '<xsl:value-of select="$frame-width"/>'
-<![CDATA[
+, width    = '<xsl:value-of select="$frame-width"/>'<![CDATA[
 , minJQ = ['1.7.2',1,7,2] // jQuery 1.7.2+ required for lightbox library
 , pudel = 150  // lightbox close delay, ms.
 , pucls = 'mfp-zoom-in' // css class for lightbox
@@ -37,7 +79,7 @@ var ddwcss = '<xsl:value-of select="$ddwcss"/>'
 , jQuery;
 if (wid === undefined || wid === '') return;
 if (w.jQuery === undefined || !testJQversion(w.jQuery.fn.jquery)) {
-    load_js(jblib, function(script) { 
+    load_js(jqlib, function(script) { 
         if (script.readyState) {        // IE
             script.readystatechange = function() {
                 if (this.readyState === 'complete' || this.readyState == 'loaded') {
@@ -114,7 +156,7 @@ function load_css(url) {
     var link = d.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('type', 'text/css');
-    link.setAttribute('href', 'url');
+    link.setAttribute('href', url);
     (d.getElementsByTagName('script')[0]).insertBefore(link, null);
 }
 function dryadJQLoaded() {

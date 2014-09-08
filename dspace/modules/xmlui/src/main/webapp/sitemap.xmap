@@ -388,7 +388,7 @@
 
                         <!-- Dryad widget API v1 -->
                         <map:match pattern="api/v1/widgets/display/**">
-                            <map:mount check-reload="no" src="aspects/widgets/display.xmap" uri-prefix="api/v1/widgets/"/>
+                            <map:mount check-reload="no" src="aspects/widgets/display.xmap" uri-prefix="api/v1/widgets/display"/>
                         </map:match>
 
                         <!-- Dryad widgets -->
