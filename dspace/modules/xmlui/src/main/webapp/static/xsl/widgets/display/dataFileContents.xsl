@@ -6,27 +6,44 @@
     xmlns:d1="http://ns.dataone.org/service/types/v1"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:ddf="http://purl.org/dryad/schema/terms/v3.1"
+    xmlns:dri="http://di.tamu.edu/DRI/1.0/"
     xmlns:dwc="http://rs.tdwg.org/dwc/terms/" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:java="http://xml.apache.org/xalan/java"
+    exclude-result-prefixes="bibo d1 dcterms ddf dri dwc xsi java"
     version="1.0">
 
-    <xsl:output method="html"/>
+    <xsl:output method="html" indent="yes"/>
+    <xsl:preserve-space elements="*"/>
     
     <xsl:param name="ddwcss"/>
     <xsl:param name="link1"/>
     <xsl:param name="link2"/>
     
-    <xsl:param name="view-count"     select=""/>
-    <xsl:param name="download-count" select="/parts/dri/"/>
+    <xsl:param name="view-count"     select="/parts/dri/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='dryad'][@qualifier='pageviews']"/>
+    <xsl:param name="download-count" select="/parts/dri/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='dryad'][@qualifier='downloads']"/>
 
     <xsl:variable name="publication-doi-url" select="/parts/object/ddf:DryadDataFile/ddf:isPartOf"/>
     <xsl:variable name="publication-doi-doi" select="substring-after($publication-doi-url,'http://dx.doi.org/')"/>
     
     <!-- -->
     <xsl:param name="bitstream-url"/>
-    <xsl:variable name="bitstream-type" select="/parts/meta-bitstream/d1:systemMetadata/formatId"/>
+    <xsl:variable name="format-id" select="/parts/meta-bitstream/d1:systemMetadata/formatId"/>
 
     <xsl:param name="download-link"/>
+    
+    <xsl:variable name="article-citation" select="/parts/dri/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='citation'][@qualifier='article']"/>
+    <xsl:variable name="article-doi">
+        <xsl:choose>
+            <xsl:when test="starts-with(/parts/dri/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='identifier'][@qualifier='article'],'doi:')">
+                <xsl:value-of select="substring-after(/parts/dri/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='identifier'][@qualifier='article'], 'doi')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text></xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>        
+    </xsl:variable>
+    <xsl:variable name="article-doi-url" select="concat('http://dx.doi.org/', $article-doi)"/>
     
     <xsl:variable name="banner-img-url"/>
     
@@ -114,13 +131,16 @@
                     <img src="{$datapackage-img}" alt="Data in Dryad"></img>
                     <i18n:text>xmlui.DryadItemSummary.whenUsing</i18n:text>
                     <p class="shade">
-                        Bradshaw WE, Emerson KJ, Holzapfel CM (2012) Genetic correlations and the evolution of photoperiodic time measurement within a local population of the pitcher-plant mosquito, Wyeomyia smithii. Heredity 108: 473–479. <a href="http://dx.doi.org/10.1038/hdy.2011.108">http://dx.doi.org/10.1038/hdy.2011.108</a>
+                        <xsl:value-of select="$article-citation"/>
+                        <a href="{$article-doi-url}">
+                            <xsl:value-of select="$article-doi-url"/>
+                        </a>
                     </p>
                     <i18n:text>xmlui.DryadItemSummary.pleaseCite</i18n:text>
                     <p class="shade">
                         Bradshaw WE, Emerson KJ, Holzapfel CM (2011) Data from: Genetic correlations and the evolution of photoperiodic time measurement within a local population of the pitcher-plant mosquito, Wyeomyia smithii. Dryad Digital Repository. <a href="http://dx.doi.org/10.5061/dryad.87ht85rs">http://dx.doi.org/10.5061/dryad.87ht85rs</a>                        
                     </p>
-                    <p>Download the Dryad data package citation in the following formats:</p>
+                    <p><i18n:text>xmlui.DryadItemSummary.downloadFormats</i18n:text></p>
                     <ul class="dryad-ddw-citation">
                         <li><a href="http://datadryad.org/resource/doi:10.5061/dryad.87ht85rs/citation/ris">RIS</a> 
                             <span><i18n:text>xmlui.DryadItemSummary.risCompatible</i18n:text></span>
@@ -167,7 +187,7 @@
         <script type="text/javascript"><![CDATA[
 (function(w,d) {
 'use strict';]]>
-var origin = '<xsl:value-of select="$request-origin"/>'
+var origin = '<xsl:value-of select="$request-origin"/>'            
 <![CDATA[
   , downloads = d.getElementsByClassName('dryad-ddw-download')
   , cites = d.getElementsByClassName('dryad-ddw-cite')
@@ -194,9 +214,17 @@ set_onclick(zooms, {"action" : "zoom", "data" : zoomc.outerHTML} );
 })(window,document);
 ]]></script>
     </xsl:template>
-    
+
     <xsl:template name="data-content">
-        
+        <html>
+            <head></head>
+            <body>
+                <!--
+                    <pre></pre>
+                    <xsl:value-of select="java:"/>
+                -->
+            </body>
+        </html>
     </xsl:template>
 
 </xsl:stylesheet>

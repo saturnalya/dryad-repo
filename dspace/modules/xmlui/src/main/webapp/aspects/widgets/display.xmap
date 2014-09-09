@@ -41,29 +41,37 @@
                     <map:when test="400">
                         <map:generate type="exception"/>
                         <map:transform src="../../static/xsl/widgets/display/dataFileFrame.xsl"/> 
-                        <!-- TODO: localize messages
-                        <map:act type="locale">
-                            <map:transform type="i18n">
-                                    <map:parameter name="locale" value="{locale}"/>
-                            </map:transform>
-                        </map:act>
-                        -->
+                        <map:transform type="i18n">
+                            <map:parameter name="locale" value="{locale}"/>
+                        </map:transform>
                         <map:serialize type="text" mime-type="application/javascript" status-code="200"/>
                     </map:when>
                 </map:select>
             </map:handle-errors>
         </map:pipeline>
-        
+
+        <map:pipeline>
+            <map:match pattern="debug/dataFileContents">
+                <map:aggregate element="parts">
+                    <map:part src="http://localhost:{request:serverPort}/mn/meta/{request-param:doi}"              element="meta"/>
+                    <map:part src="http://localhost:{request:serverPort}/mn/meta/{request-param:doi}/bitstream"    element="meta-bitstream"/>
+                    <map:part src="http://localhost:{request:serverPort}/mn/object/{request-param:doi}"            element="object"/>
+                    <map:part src="http://localhost:{request:serverPort}/resource/{request-param:doi}/DRI"         element="dri"/>
+                </map:aggregate>
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+                
+                                
         <!-- data-file content handler -->
         <map:pipeline>
 
             <map:match pattern="dataFileContents">
-                <!-- debugging: /dataFileContents?...&cocoon-view=aggregate -->
-                <map:aggregate element="parts" label="aggregate">
-                    <map:part src="http://localhost/mn/meta/{url-encode:{request-param:doi}}"              element="meta"/>
-                    <map:part src="http://localhost/mn/meta/{url-encode:{request-param:doi}}/bitstream"    element="meta-bitstream"/>
-                    <map:part src="http://localhost/mn/object/{url-encode:{request-param:doi}}"            element="object"/>
-                    <map:part src="http://localhost/resource/{url-encode:{request-param:doi}}/DRI"         element="dri"/>
+                <map:aggregate element="parts">
+                    <map:part src="http://localhost:{request:serverPort}/mn/meta/{request-param:doi}"              element="meta"/>
+                    <map:part src="http://localhost:{request:serverPort}/mn/meta/{request-param:doi}/bitstream"    element="meta-bitstream"/>
+                    <map:part src="http://localhost:{request:serverPort}/mn/object/{request-param:doi}"            element="object"/>
+                    <map:part src="http://localhost:{request:serverPort}/resource/{request-param:doi}/DRI"         element="dri"/>
                 </map:aggregate>
                 <!-- -->
                 <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFileContents.xsl">
@@ -73,9 +81,14 @@
                     <map:parameter name="ddwcss"            value="{request:scheme}://{request:serverName}:{request:serverPort}/static/css/widgets/display/dryad-ddw.css"/>
                     <map:parameter name="datapackage-url"   value="{request:scheme}://{request:serverName}:{request:serverPort}/widgets/dataPackageForPub?referrer={request-param:referrer}&amp;pubId={url-encode:{request-param:doi}}"/>
                     <map:parameter name="datapackage-img"   value="{request:scheme}://{request:serverName}:{request:serverPort}/static/img/"/>
-                    <map:parameter name="request-origin"    value="{request:scheme}://{request:serverName}:{request:serverPort}"/>
                     <map:parameter name="referrer"          value="{request-param:referrer}"/>
                     <map:parameter name="doi"               value="{request-param:doi}"/>
+                    
+                    <map:parameter name="request-origin"    value="{request-param:origin}"/>
+                    
+                </map:transform>
+                <map:transform type="i18n">
+                    <map:parameter name="locale" value="{locale}"/>
                 </map:transform>
                 <map:serialize type="html"/>
             </map:match>
