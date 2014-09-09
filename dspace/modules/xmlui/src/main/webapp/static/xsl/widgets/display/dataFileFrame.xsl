@@ -5,6 +5,7 @@
     xmlns:dwc="http://rs.tdwg.org/dwc/terms/"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:bibo="http://purl.org/dryad/schema/dryad-bibo/v3.1"
+    xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ex="http://apache.org/cocoon/exception/1.0"
     version="1.0">
@@ -85,6 +86,7 @@ var ddwcss = '<xsl:value-of select="$ddwcss"/>'
 , frcls = 'dryad-ddw'
 , jQuery;
 if (wid === undefined || wid === '') return;
+bssrc = bssrc.concat('&origin=').concat(encodeURIComponent(document.location.origin));
 if (w.jQuery === undefined || !testJQversion(w.jQuery.fn.jquery)) {
     load_js(jqlib, function(script) { 
         if (script.readyState) {        // IE
