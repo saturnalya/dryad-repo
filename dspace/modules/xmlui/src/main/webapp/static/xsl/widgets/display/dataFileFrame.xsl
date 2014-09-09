@@ -18,53 +18,60 @@
     <xsl:param name="wrapper-id"/>      <!-- @id of element wrapping JS call -->
     <xsl:param name="frame-height"/>    <!-- -->
     <xsl:param name="frame-width"/>     <!-- -->
-    <xsl:param name="doi"/>             <!-- data file Dryad DOI value -->
+    <xsl:param name="doi"/>             <!-- data file Dryad DOI value; not URL encoded -->
+
+    <xsl:variable name="quote">"</xsl:variable>
 
     <xsl:template match="/">
+        <!-- returned JS depends on the resource, if any, returned by 
+            1) the DataOne-MN service (data-file descriptor, data-package, descriptor, error message), or
+            2) Cocoon (exception message, esp. when DataOne-MN returns no response)
+        -->
         <xsl:choose>
+            <!-- DataOne MN returned a data-file description from /mn/object request -->
+            <xsl:when test="ddf:DryadDataFile">
+                <xsl:call-template name="js"/>
+            </xsl:when>
+            <!-- DataOne MN returned a data-file description from /mn/object request -->
+            <xsl:when test="ddf:DryadDataPackage">
+                <xsl:call-template name="js-error-logger">
+                    <xsl:with-param name="message" select="concat('Dryad request error: resource available with DOI ', $quote, $doi, $quote, ' is a Dryad data package')"/>
+                </xsl:call-template>
+            </xsl:when>
             <!-- DataOne-MN responded with an <error> document -->
             <xsl:when test="error">
-                <xsl:call-template name="d1-error"/>
+                <xsl:call-template name="js-error-logger">
+                    <xsl:with-param name="message" select="concat('Dryad request error: no resource available for resource with DOI ', $quote, $doi, $quote)"/>
+                </xsl:call-template>
             </xsl:when>
-            <!-- Cocoon not-found exception XML -->
+            <!-- Cocoon not-found exception XML provided to XSLT, esp. due to DataOne-MN not providing a response document -->
             <xsl:when test="ex:exception-report">
-                <xsl:call-template name="cocoon-exception"/>
+                <xsl:call-template name="js-error-logger">
+                    <xsl:with-param name="message" select="concat('Dryad request error: service retuned to content for DOI ', $quote, $doi, $quote)"/>
+                </xsl:call-template>        
             </xsl:when>
+            <!-- esp., DataOne-MN not returning a  -->
             <xsl:otherwise>
-                <xsl:call-template name="js"/>
+                <xsl:call-template name="js-error-logger">
+                    <xsl:with-param name="message" select="concat('Dryad request error: resource at DOI ', $quote, $doi, $quote, ' is not a Dryad data file')"/>
+                </xsl:call-template>        
             </xsl:otherwise>
         </xsl:choose>        
     </xsl:template>
     
     <xsl:template name="js-error-logger">
-        <xsl:param name="message" select="''"/>
-        <![CDATA[
-        (function(w){
-            if (w.hasOwnProperty('console') && w.console.hasOwnProperty('log')) {
-                console.log(']]><xsl:value-of select="$message"/><![CDATA[');
-            }
-        })(window);
-        ]]>
+        <xsl:param name="message" select="''"/><![CDATA[
+;(function(w){
+    if (w.hasOwnProperty('console') && w.console.hasOwnProperty('log')) {
+        w.console.log(']]><xsl:value-of select="$message"/><![CDATA[');
+    }
+})(window);]]>
     </xsl:template>
-
-    <xsl:template name="d1-error">
-        <xsl:call-template name="js-error-logger">
-            <xsl:with-param name="message" select="concat('Dryad request error: no resource available for resource with DOI ', $doi)"/>
-        </xsl:call-template>
-    </xsl:template>
-            
-    <xsl:template name="cocoon-exception">
-        <xsl:call-template name="js-error-logger">
-            <xsl:with-param name="message" select="concat('Dryad request error: service retuned to content for DOI ', $doi)"/>
-        </xsl:call-template>        
-    </xsl:template>
-    
 
     <xsl:template name="js">
         <![CDATA[
 (function(w, d) {
-'use strict';
-]]>
+'use strict';]]>
 var ddwcss = '<xsl:value-of select="$ddwcss"/>'
 , jqlib    = '<xsl:value-of select="$jqlib"/>'
 , lblib    = '<xsl:value-of select="$lblib"/>'

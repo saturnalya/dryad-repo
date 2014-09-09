@@ -1,27 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
+    xmlns:bibo="http://purl.org/dryad/schema/dryad-bibo/v3.1"    
+    xmlns:d1="http://ns.dataone.org/service/types/v1"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:ddf="http://purl.org/dryad/schema/terms/v3.1"
+    xmlns:dwc="http://rs.tdwg.org/dwc/terms/" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     version="1.0">
 
     <xsl:output method="html"/>
     
-    <xsl:param name="widget-stylesheet"/>
-    <xsl:param name="view-count"/>
-    <xsl:param name="download-count"/>
+    <xsl:param name="ddwcss"/>
+    <xsl:param name="link1"/>
+    <xsl:param name="link2"/>
     
-    <xsl:param name="dryad-file-doi"/>
+    <xsl:param name="view-count"     select=""/>
+    <xsl:param name="download-count" select="/parts/dri/"/>
+
+    <xsl:variable name="publication-doi-url" select="/parts/object/ddf:DryadDataFile/ddf:isPartOf"/>
+    <xsl:variable name="publication-doi-doi" select="substring-after($publication-doi-url,'http://dx.doi.org/')"/>
     
-    <xsl:param name="publication-doi-doi"/>
-    <xsl:param name="publication-doi-url"/>
-    
-    <xsl:param name="request-origin"/>
-    
-    <!-- was: http://datadryad.org/bitstream/handle/10255/dryad.35374/SuppTable10.csv?sequence=1 
-        to be: cocoon:
-    -->
+    <!-- -->
+    <xsl:param name="bitstream-url"/>
+    <xsl:variable name="bitstream-type" select="/parts/meta-bitstream/d1:systemMetadata/formatId"/>
+
     <xsl:param name="download-link"/>
     
     <xsl:variable name="banner-img-url"/>
+    
+    <xsl:variable name="title"       select="/parts/object/ddf:DryadDataFile/dcterms:title"/>
+    <xsl:variable name="description" select="/parts/object/ddf:DryadDataFile/dcterms:description"/>
+    
+    <xsl:param name="datapackage-url"/>
+    <xsl:param name="datapackage-img"/>
+    
+    <xsl:param name="request-origin"/>
 
     <xsl:template match="/">
         <html>
@@ -36,10 +51,10 @@
         </html>
     </xsl:template>
 
-    <xsl:template name="make-head">
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"></link>
-        <link href="//fonts.googleapis.com/css?family=Source+Sans Pro:200,300italic,300,400italic,400,600italic,600,700italic,700,900italic,900" rel="stylesheet" type="text/css"></link>
-        <link type="text/css" rel="stylesheet" href="{$widget-stylesheet}"></link>
+    <xsl:template name="head-content">
+        <link href="{$link1}"  rel="stylesheet" type="text/css"></link>
+        <link href="{$link2}"  rel="stylesheet" type="text/css"></link>
+        <link href="{$ddwcss}" rel="stylesheet" type="text/css" ></link>
     </xsl:template>
 
     <xsl:template name="body-content">
@@ -48,15 +63,15 @@
                 <div class="dryad-ddw-banner">
                     <ul>
                         <li>
-                            <a target="_blank" href="http://datadryad.org/widgets/dataPackageForPub?referrer=BMC&amp;pubId=doi%3A10.1038%2Fhdy.2011.108">
-                                <img src="http://rnathanday.github.io/dryad-data-display-widget/script/bannerForPub.png" alt="Data in Dryad"></img>
+                            <a target="_blank" href="{$datapackage-url}">
+                                <img src="{$datapackage-img}" alt="Data in Dryad"></img>
                             </a>
                         </li>
-                        <li><b>doi:10.1038/hdy.2011.108</b></li>
+                        <li><b><xsl:value-of select="$publication-doi-doi"/></b></li>
                     </ul>
                 </div>
                 <div class="dryad-ddw-title">
-                    <h1>SuppTable10</h1>
+                    <h1><xsl:value-of select="$title"/></h1>
                     <ul>
                         <li><b><xsl:value-of select="$view-count"/></b> views</li>
                         <li><b><xsl:value-of select="$download-count"/></b> downloads</li>
@@ -87,7 +102,7 @@
                         <li><a class="dryad-ddw-cite" title="Cite"><i class="fa fa-quote-left"></i></a></li>
                     </ul>
                 </div>
-                <p>Summary of the most likely informative SNPs from the Son’s exome data as judged by their observed frequency in HapMap.</p>
+                <p><xsl:value-of select="$description"/></p>
             </div>
         </div>
     </xsl:template>
@@ -96,12 +111,12 @@
         <div id="dryad-ddw-meta" class="dryad-ddw-hide" style="display:none !important;">
             <div id="dryad-ddw-citation" class="dryad-popup dryad-ddw dryad-ddw-citation">
                 <div class="dryad-ddw-citation">
-                    <img src="http://rnathanday.github.io/dryad-data-display-widget/script/bannerForPub.png" alt="Data in Dryad"></img>
-                    <p>When using this data, please cite the original publication:</p>
+                    <img src="{$datapackage-img}" alt="Data in Dryad"></img>
+                    <i18n:text>xmlui.DryadItemSummary.whenUsing</i18n:text>
                     <p class="shade">
                         Bradshaw WE, Emerson KJ, Holzapfel CM (2012) Genetic correlations and the evolution of photoperiodic time measurement within a local population of the pitcher-plant mosquito, Wyeomyia smithii. Heredity 108: 473–479. <a href="http://dx.doi.org/10.1038/hdy.2011.108">http://dx.doi.org/10.1038/hdy.2011.108</a>
                     </p>
-                    <p>Additionally, please cite the Dryad data package:</p>
+                    <i18n:text>xmlui.DryadItemSummary.pleaseCite</i18n:text>
                     <p class="shade">
                         Bradshaw WE, Emerson KJ, Holzapfel CM (2011) Data from: Genetic correlations and the evolution of photoperiodic time measurement within a local population of the pitcher-plant mosquito, Wyeomyia smithii. Dryad Digital Repository. <a href="http://dx.doi.org/10.5061/dryad.87ht85rs">http://dx.doi.org/10.5061/dryad.87ht85rs</a>                        
                     </p>
@@ -150,35 +165,34 @@
     
     <xsl:template name="script-content">
         <script type="text/javascript"><![CDATA[
-            (function() {
-            'use strict';
-            ]]>
-            var origin = '<xsl:value-of select="$request-origin"/>'
-            <![CDATA[
-              , downloads = document.getElementsByClassName('dryad-ddw-download')
-              , cites = document.getElementsByClassName('dryad-ddw-cite')
-              , shares = document.getElementsByClassName('dryad-ddw-share')
-              , zooms = document.getElementsByClassName('dryad-ddw-zoom')
-              , elt, i;
-            function set_onclick(elts, data) {
-                for (i = 0; i < elts.length; i++) {
-                    elts[i].onclick = function(evt) {
-                        window.parent.postMessage(data, origin);
-                        evt.preventDefault();
-                    };
-                }
-            };
-            set_onclick(cites,  {"action" : "cite",  "data" : document.getElementById("dryad-ddw-citation").cloneNode(true).outerHTML });
-            set_onclick(shares, {"action" : "share", "data" : document.getElementById("dryad-ddw-share").cloneNode(true).outerHTML });
-            var zoomc = document.getElementsByClassName("dryad-ddw")[0].cloneNode(true);
-            var controls = zoomc.getElementsByClassName('dryad-ddw-control');
-            for (i = 0; i < controls.length; i++) {
-                controls[i].parentNode.removeChild(controls[i]);
-            }
-            zoomc.getElementsByClassName('dryad-ddw-frame')[0].classList.add('dryad-ddw-frame-full');
-            set_onclick(zooms, {"action" : "zoom", "data" : zoomc.outerHTML} );
-            })();
-        ]]></script>
+(function(w,d) {
+'use strict';]]>
+var origin = '<xsl:value-of select="$request-origin"/>'
+<![CDATA[
+  , downloads = d.getElementsByClassName('dryad-ddw-download')
+  , cites = d.getElementsByClassName('dryad-ddw-cite')
+  , shares = d.getElementsByClassName('dryad-ddw-share')
+  , zooms = d.getElementsByClassName('dryad-ddw-zoom')
+  , elt, i;
+function set_onclick(elts, data) {
+    for (i = 0; i < elts.length; i++) {
+        elts[i].onclick = function(evt) {
+            w.parent.postMessage(data, origin);
+            evt.preventDefault();
+        };
+    }
+};
+set_onclick(cites,  {"action" : "cite",  "data" : d.getElementById("dryad-ddw-citation").cloneNode(true).outerHTML });
+set_onclick(shares, {"action" : "share", "data" : d.getElementById("dryad-ddw-share").cloneNode(true).outerHTML });
+var zoomc = d.getElementsByClassName("dryad-ddw")[0].cloneNode(true);
+var controls = zoomc.getElementsByClassName('dryad-ddw-control');
+for (i = 0; i < controls.length; i++) {
+    controls[i].parentNode.removeChild(controls[i]);
+}
+zoomc.getElementsByClassName('dryad-ddw-frame')[0].classList.add('dryad-ddw-frame-full');
+set_onclick(zooms, {"action" : "zoom", "data" : zoomc.outerHTML} );
+})(window,document);
+]]></script>
     </xsl:template>
     
     <xsl:template name="data-content">
