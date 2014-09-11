@@ -20,6 +20,6 @@ public class DefaultBitstreamHandler extends BaseBitstreamHandler {
         super(bufferedReader, contentHandler, lexicalHandler, format);
     }
     public void generate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // do nothing
     }
 }
