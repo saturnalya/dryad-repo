@@ -37,12 +37,19 @@ public class WidgetDisplayBitstreamGenerator extends AbstractGenerator {
     private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(WidgetDisplayBitstreamGenerator.class);
 
     private static final String DOFid = "DataONE-formatId";
-
-    private static HashMap<String, Class> formatHandlers;
-    static {
-        formatHandlers = new HashMap<String, Class>();
-        formatHandlers.put("text/plain", org.dspace.app.xmlui.aspect.dryadwidgets.display.bitstreamHandler.Text_Plain); 
-    }
+    
+    /*
+    @Override 
+    public void setup(SourceResolver resolver,
+                  Map objectModel,
+                  String src,
+                  Parameters par)
+           throws ProcessingException,
+                  SAXException,
+                  IOException;
+    @Override
+    public void recycle()
+    */
     
     @Override
     public void generate() throws IOException, SAXException, ProcessingException {
@@ -79,11 +86,9 @@ public class WidgetDisplayBitstreamGenerator extends AbstractGenerator {
 
         // check for content-specific handler
         BaseBitstreamHandler handler = null;
-        if (WidgetDisplayBitstreamGenerator.formatHandlers.containsKey(dataOneFormat)) {
+        if (dataOneFormat.equals("text/plain")) {
             try {
-                Constructor ctor = WidgetDisplayBitstreamGenerator.formatHandlers.get(dataOneFormat)
-                                  .getConstructor(BufferedReader.class, ContentHandler.class, LexicalHandler.class, String.class);
-                handler = (BaseBitstreamHandler) ctor.newInstance(bufferedReader, contentHandler, lexicalHandler, dataOneFormat);
+                handler = new Text_Plain(bufferedReader, contentHandler, lexicalHandler, dataOneFormat);
             } catch (Exception e) {
                 log.error("Failed to instantiate default bitstream handler for format '" + dataOneFormat + "':  " + e.toString());
                 throw new ProcessingException("Bitstream handler error for doi: " + doi);            

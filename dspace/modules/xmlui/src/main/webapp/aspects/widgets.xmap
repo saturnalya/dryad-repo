@@ -15,7 +15,7 @@
     <map:pipelines>
         <map:pipeline>
             <map:match pattern="bannerForPub">
-                <map:select type="WidgetBannerSelector"> 
+                <map:select type="WidgetBannerSelector">
                     <map:parameter name="referrer" value="{request-param:referrer}"/>
                     <map:when test="{request-param:pubId}">
                         <!-- Return the Dryad banner image -->
