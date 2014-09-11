@@ -15,7 +15,7 @@ import org.xml.sax.ext.LexicalHandler;
 
 /**
  *
- * @author rnathanday
+ * @author Nathan Day
  */
 public abstract class BaseBitstreamHandler {
     
@@ -26,9 +26,13 @@ public abstract class BaseBitstreamHandler {
             <type></type>
             <data></data>
         </document>
+    
+        The generated XML document will be handled by an XSLT transformer,
+        so it must be well-formed. Lexically risky content shuld be 
+        escaped in a <!CDATA[]]> declaration.
     */
-    private final String NSURI = "";
-    private final String NSNAME = "";
+    private final String NSURI = "http://datadryad.org/api/v1/widgets/display";
+    private final String NSNAME = "ddw";
     private final String docEltName = "document";
     private final String typeEltName = "type";
     private final String dataEltName = "data";
@@ -40,16 +44,17 @@ public abstract class BaseBitstreamHandler {
         this.bufferedReader = bufferedReader;
         this.contentHandler = contentHandler;
         this.lexicalHandler = lexicalHandler;
+        contentHandler.startPrefixMapping(NSNAME, NSURI);
         contentHandler.startDocument();
-        contentHandler.startElement(NSURI, NSNAME, docEltName, null);
-        contentHandler.startElement(NSURI, NSNAME, typeEltName, null);
+        contentHandler.startElement(NSURI, docEltName, NSNAME + ":" + docEltName, null);
+        contentHandler.startElement(NSURI, typeEltName, NSNAME + ":" + typeEltName, null);
         contentHandler.characters(format.toCharArray(), 0, format.length());
-        contentHandler.endElement(NSURI, NSNAME, typeEltName);
-        contentHandler.startElement(NSURI, NSNAME, dataEltName, null);
+        contentHandler.endElement(NSURI, typeEltName, NSNAME + ":" + typeEltName);
+        contentHandler.startElement(NSURI, dataEltName, NSNAME + ":" + dataEltName, null);
     }
     public void finalize() throws SAXException {
-        contentHandler.endElement(NSURI, NSNAME, dataEltName);
-        contentHandler.endElement(NSURI, NSNAME, docEltName);
+        contentHandler.endElement(NSURI, dataEltName, NSNAME + ":" + dataEltName);
+        contentHandler.endElement(NSURI, docEltName, NSNAME + ":" + docEltName);
         contentHandler.endDocument();
     }
     public abstract void generate() throws SAXException, IOException;
