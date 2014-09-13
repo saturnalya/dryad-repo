@@ -8,9 +8,8 @@ package org.dspace.app.xmlui.aspect.dryadwidgets.display.bitstreamHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.ext.LexicalHandler;
 
 /**

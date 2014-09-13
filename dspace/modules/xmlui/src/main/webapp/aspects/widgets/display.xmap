@@ -109,33 +109,37 @@
                                                             
         </map:pipeline>
 
-
         <map:pipeline>
-            <map:match pattern="debug/dataFileBitstream"/>
+            <map:match pattern="debug/dataFileBitstream">
                 <map:generate type="WidgetDisplayBitstreamGenerator">
                     <map:parameter name="referrer"   value="{request-param:referrer}"/>
                     <map:parameter name="doi"        value="{request-param:doi}"/>
                     <map:parameter name="object-url" value="http://localhost:{request:serverPort}/mn/object/{request-param:doi}/bitstream"/>
                 </map:generate>
-                <map:serialize type="xml"/>
+            </map:match>
         </map:pipeline>
 
-
         <!-- data-file content handler -->
-        <map:pipeline type="caching">
-
+        <map:pipeline type="noncaching">
+            <map:parameter name="expires" value="now"/>
             <map:match pattern="dataFileBitstream">
+
                 <map:generate type="WidgetDisplayBitstreamGenerator">
                     <map:parameter name="referrer"   value="{request-param:referrer}"/>
                     <map:parameter name="doi"        value="{request-param:doi}"/>
                     <map:parameter name="object-url" value="http://localhost:{request:serverPort}/mn/object/{request-param:doi}/bitstream"/>
                 </map:generate>
+                
                 <map:transform type="xslt" src="../../static/xsl/widgets/display/dataFileBitstream.xsl">
+                    <map:parameter name="use-request-parameters" value="false"/>
                     <map:parameter name="doi" value="{request-param:doi}"/>
                 </map:transform>
+
+                <!--
                 <map:transform type="i18n">
                     <map:parameter name="locale" value="{locale}"/>
                 </map:transform>
+                -->
                 <map:serialize type="html"/>
             </map:match>
 
