@@ -708,6 +708,35 @@
 
         </profile>
 
+	    <!--
+        	Builds Dryad Widget WAR for DSpace
+    	-->
+	    <profile>
+	        <id>dryad-widgets-webapp</id>
+	        <activation>
+	            <file>
+	                <exists>../dryad-widgets-webapp/pom.xml</exists>
+	            </file>
+	        </activation>
+	        <modules>
+	            <module>../dryad-widgets-webapp</module>
+	        </modules>
+	    </profile>
+	
+	    <!--
+    		Builds Dryad Widget WAR for DSpace
+    	-->
+	    <profile>
+	        <id>dryad-widgets</id>
+	        <activation>
+	            <file>
+	                <exists>../dryad-widgets/pom.xml</exists>
+	            </file>
+	        </activation>
+	        <modules>
+	            <module>../dryad-widgets</module>
+	        </modules>
+	    </profile>
 
 	</profiles>
 
