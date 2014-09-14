@@ -331,6 +331,25 @@
 
        <dependency>
            <groupId>org.dspace.modules</groupId>
+           <artifactId>dryad-widgets-webapp</artifactId>
+           <type>war</type>
+       </dependency>
+
+       <dependency>
+           <groupId>org.dspace.modules</groupId>
+           <artifactId>dryad-widgets-webapp</artifactId>
+           <type>jar</type>
+           <classifier>classes</classifier>
+           <exclusions>
+               <exclusion>
+                   <artifactId>ehcache</artifactId>
+                   <groupId>net.sf.ehcache</groupId>
+               </exclusion>
+           </exclusions>
+       </dependency>
+       
+       <dependency>
+           <groupId>org.dspace.modules</groupId>
            <artifactId>payment-webapp</artifactId>
            <type>war</type>
        </dependency>
