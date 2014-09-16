@@ -355,8 +355,8 @@
                         <map:match pattern="retrieve/**">
                                 <map:redirect-to uri="{request:contextPath}/bitstream/id/{1}/" permanent="yes"/>
                         </map:match>
-      <!--Redirect /handle/[handleprefix]/[handlePostfix]/ to the same path but without a trailing slash-->
-      <map:match pattern="handle/*/*/">
+                        <!--Redirect /handle/[handleprefix]/[handlePostfix]/ to the same path but without a trailing slash-->
+                        <map:match pattern="handle/*/*/">
                                 <map:redirect-to uri="{request:contextPath}/handle/{1}/{2}" permanent="yes"/>
                         </map:match>
                         <!--
@@ -386,10 +386,16 @@
                             <map:mount check-reload="no" src="aspects/ame.xmap" uri-prefix="JSON/ame/"/>
                         </map:match>
 
+                        <!-- Dryad widget API v1 -->
+                        <map:match pattern="api/v1/widgets/display/**">
+                            <map:mount check-reload="no" src="aspects/widgets/display.xmap" uri-prefix="api/v1/widgets/display"/>
+                        </map:match>
+
                         <!-- Dryad widgets -->
                         <map:match pattern="widgets/**">
                             <map:mount check-reload="no" src="aspects/widgets.xmap" uri-prefix="widgets/"/>
                         </map:match>
+
                 </map:pipeline>
                 
                 <!-- new AJAX menu (choices) responses for metadata authority control -->

@@ -38,8 +38,8 @@
         <module>journal-submit</module>
         <module>versioning</module>
         <module>payment-system</module>
-
         <module>atmire-authority</module>
+        <module>dryad-widgets</module>
         <!--module>solr-load-tester</module-->
 	</modules>
 
@@ -147,8 +147,21 @@
                    <type>war</type>
                </dependency>
 
+               <!-- dryad-widgets -->
+               <dependency>
+                   <groupId>org.dspace.modules</groupId>
+                   <artifactId>dryad-widgets-webapp</artifactId>
+                   <type>jar</type>
+                   <classifier>classes</classifier>
+                   <version>${pom.version}</version>
+               </dependency>
 
-
+               <dependency>
+                   <groupId>org.dspace.modules</groupId>
+                   <artifactId>dryad-widgets-webapp</artifactId>
+                   <version>${pom.version}</version>
+                   <type>war</type>
+               </dependency>
 
            </dependencies>
        </dependencyManagement>
