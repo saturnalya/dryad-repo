@@ -10,5 +10,5 @@ before_install:
 install:
   - ./test/bin/travis-install-missing-poms.sh
   - ./test/bin/travis-install-dryad-dir.sh
-script: mvn package -Dmaven.test.skip=false -Ddefault.dspace.dir=/opt/dryad-test
+script: mvn package -DskipTests=false -Ddefault.dspace.dir=/opt/dryad-test
 
