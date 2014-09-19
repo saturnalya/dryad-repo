@@ -284,39 +284,36 @@
             bf.style.height = '100%';//]]></script>
 
         <!-- click handlers for buttons -->
-        <script type="text/javascript"><![CDATA[
-            (function (w, d) {
-                'use strict';//]]>
+<script type="text/javascript"><![CDATA[
+(function (w, d) {
+'use strict';//]]>
 var origin = '<xsl:value-of select="$request-origin"/>'            
 <![CDATA[
-, downloads = d.getElementsByClassName('dryad-ddw-download'), cites = d.getElementsByClassName('dryad-ddw-cite'), shares = d.getElementsByClassName('dryad-ddw-share'), zooms = d.getElementsByClassName('dryad-ddw-zoom'), elt, i;
-            function set_onclick(elts, data) {
-                for (i = 0; i < elts.length; i++) {
-                    elts[i].onclick = function (evt) {
-                        w.parent.postMessage(data, origin);
-                        evt.preventDefault();
-                    };
-                }
-            };
-            set_onclick(cites, {
-                "action": "cite", "data": d.getElementById("dryad-ddw-citation").cloneNode(true).outerHTML
-            });
-            set_onclick(shares, {
-                "action": "share", "data": d.getElementById("dryad-ddw-share").cloneNode(true).outerHTML
-            });
-            set_onclick(downloads, {
-                "action": "download", "data": downloads[0].getAttribute('href')
-            });
-            var zoomc = d.getElementsByClassName("dryad-ddw")[0].cloneNode(true);
-            var controls = zoomc.getElementsByClassName('dryad-ddw-control');
-            for (i = 0; i < controls.length; i++) {
-                controls[i].parentNode.removeChild(controls[i]);
-            }
-            zoomc.getElementsByClassName('dryad-ddw-frame')[0].classList.add('dryad-ddw-frame-full');
-            set_onclick(zooms, {
-                "action": "zoom", "data": zoomc.outerHTML
-            });
-        })(window, document);//]]></script>
+, downloads = d.getElementsByClassName('dryad-ddw-download')
+, cites = d.getElementsByClassName('dryad-ddw-cite')
+, shares = d.getElementsByClassName('dryad-ddw-share')
+, zooms = d.getElementsByClassName('dryad-ddw-zoom'), elt, i;
+function set_onclick(elts, data) {
+    for (i = 0; i < elts.length; i++) {
+        elts[i].onclick = function (evt) {
+            w.parent.postMessage(data, origin);
+            evt.preventDefault();
+        };
+    }
+};
+set_onclick(cites,     { "action": "cite",     "data": d.getElementById("dryad-ddw-citation").cloneNode(true).outerHTML});
+set_onclick(shares,    { "action": "share",    "data": d.getElementById("dryad-ddw-share").cloneNode(true).outerHTML});
+set_onclick(downloads, { "action": "download", "data": downloads[0].getAttribute('href')});
+var zoomc = d.getElementsByClassName("dryad-ddw")[0].cloneNode(true);
+var controls = zoomc.getElementsByClassName('dryad-ddw-control');
+for (i = 0; i < controls.length; i++) {
+    controls[i].parentNode.removeChild(controls[i]);
+}
+zoomc.getElementsByClassName('dryad-ddw-frame')[0].classList.add('dryad-ddw-frame-full');
+set_onclick(zooms, {
+    "action": "zoom", "data": zoomc.outerHTML
+});
+})(window, document);//]]></script>
     </xsl:template>
 
     <xsl:template name="data-content">
