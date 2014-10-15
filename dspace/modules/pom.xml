@@ -109,6 +109,20 @@
                    <version>${pom.version}</version>
                </dependency>
 
+               <dependency>
+                   <groupId>com.atmire</groupId>
+                   <artifactId>atmire-authority</artifactId>
+                   <version>${pom.version}</version>
+               </dependency>
+
+               <!--
+               <dependency>
+                   <groupId>com.atmire</groupId>
+                   <artifactId>authority</artifactId>
+                   <version>${pom.version}</version>
+               </dependency>
+               -->
+
 
                <dependency>
                    <groupId>org.dspace.modules</groupId>

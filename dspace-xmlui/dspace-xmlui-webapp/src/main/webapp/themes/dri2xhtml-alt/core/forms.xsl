@@ -547,11 +547,6 @@
                   <xsl:text>display:none;</xsl:text>
                 </xsl:attribute>
         </xsl:if>
-               <xsl:if test="dri:params/@choicesPresentation = 'authorLookup'">
-                   <xsl:attribute name="style">
-                       <xsl:text>display:none;</xsl:text>
-                   </xsl:attribute>
-               </xsl:if>
            </input>
         </xsl:if>
 
