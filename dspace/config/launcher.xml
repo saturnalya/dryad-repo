@@ -391,10 +391,20 @@
     </command>
 
     <command>
-        <name>import-authority</name>
-        <description>Import authority from solr to database</description>
+        <name>journal-stats</name>
+        <description>Generate statistics by journal</description>
         <step>
-            <class>com.atmire.authority.util.ImportJournal2Authority</class>
+            <class>org.datadryad.journalstatistics.main.RunStatistics</class>
         </step>
     </command>
+
+    <command>
+        <name>index-authority</name>
+        <description>Indexes all metadata fields that use solr authority</description>
+        <step>
+            <class>org.dspace.authority.indexer.AuthorityIndexClient</class>
+        </step>
+    </command>
+
+
 </commands>

@@ -165,7 +165,8 @@ CREATE TABLE Concept2ConceptRole
   id             INTEGER PRIMARY KEY DEFAULT NEXTVAL('concept2conceptrole_seq'),
   role           VARCHAR(64),
   label          VARCHAR(64),
-  scope_note     TEXT
+  scope_note     TEXT,
+  CONSTRAINT Concept2ConceptRoleName UNIQUE(label)
 );
 
 CREATE TABLE Concept2Concept
@@ -186,7 +187,8 @@ CREATE TABLE Concept2TermRole
   id             INTEGER PRIMARY KEY DEFAULT NEXTVAL('concept2termrole_seq'),
   role           VARCHAR(64),
   label          VARCHAR(64),
-  scope_note     TEXT
+  scope_note     TEXT,
+  CONSTRAINT Concept2TermRoleName UNIQUE(label)
 );
 CREATE TABLE Concept2Term
 (
@@ -217,22 +219,6 @@ INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'hire
 INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'associate','Associate');
 INSERT INTO Concept2ConceptRole VALUES (nextval('concept2conceptrole_seq'),'associate','Equal');
 
-
-
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','fullname');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','metadataDir');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','parsingScheme');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','integrated');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','embargoAllowed');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','allowReviewWorkflow');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','publicationBlackout');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','subscriptionPaid');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','sponsorName');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','notifyOnReview');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','notifyOnArchive');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','notifyWeekly');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','paymentPlanType');
-INSERT INTO metadatafieldregistry VALUES (nextval('metadatafieldregistry_seq'),7,'journal','customerId');
 
 
 
