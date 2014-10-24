@@ -20,7 +20,6 @@ import org.dspace.content.Item;
 import org.dspace.identifier.DOIIdentifierProvider;
 import org.dspace.identifier.IdentifierNotFoundException;
 import org.dspace.identifier.IdentifierNotResolvableException;
-import org.dspace.identifier.IdentifierService;
 import org.dspace.utils.DSpace;
 import org.dspace.workflow.DryadWorkflowUtils;
 import org.dspace.workflow.WorkflowItem;
@@ -66,17 +65,30 @@ public class DryadReviewTransformer extends AbstractDSpaceTransformer {
 
         Request request = ObjectModelHelper.getRequest(objectModel);
 
-        int wfItemId;
+        // Reviewers may access with either
+        // 1. wfID + token
+        // 2. provisional DOI (since it is not yet public)
 
-        if ( (wfItem=getWFItem(request)) == null) return;
-
-
-        String token = request.getParameter("token");
-        if (token != null) {
+        wfItem = getWFItem(request); // Looks up by wfID or doi params in request
+        if(wfItem == null) {
+            return;
+        }
+        String requestDoi = request.getParameter("doi");
+        if(requestDoi != null) {
+            // DOI is present. Set authorized and the reviewerToken for downloads
+            authorized = true;
             String reviewerKey = getItemToken();
-            authorized = token.equals(reviewerKey);
-            if (authorized)
-                request.getSession().setAttribute("reviewerToken", token);
+            request.getSession().setAttribute("reviewerToken", reviewerKey);
+        } else {
+            // DOI not present, require token
+            String token = request.getParameter("token");
+            if (token != null) {
+                String reviewerKey = getItemToken();
+                authorized = token.equals(reviewerKey);
+                if (authorized) {
+                    request.getSession().setAttribute("reviewerToken", token);
+                }
+            }
         }
     }
 
