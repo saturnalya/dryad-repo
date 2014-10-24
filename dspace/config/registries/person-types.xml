@@ -60,16 +60,4 @@
         <element>biography</element>
     </dc-type>
 
-
-    <dc-type>
-        <schema>person</schema>
-        <element>email</element>
-    </dc-type>
-
-
-    <dc-type>
-        <schema>person</schema>
-        <element>institution</element>
-    </dc-type>
-
 </dspace-dc-types>

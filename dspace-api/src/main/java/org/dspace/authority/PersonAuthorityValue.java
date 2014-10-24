@@ -150,26 +150,17 @@ public class PersonAuthorityValue extends AuthorityValue {
     @Override
     public void setValues(SolrDocument document) {
         super.setValues(document);
-        try{
-            ArrayList<String>firstNames= (ArrayList<String>)document.getFieldValue(FIRSTNAME);
-            ArrayList<String>lastNames = (ArrayList<String>)document.getFieldValue(LASTNAME);
-            if(firstNames!=null&&firstNames.size()>0)
-            this.firstName= firstNames.get(0);
-            if(lastNames!=null&&lastNames.size()>0)
-            this.lastName = lastNames.get(0);
-        }catch (Exception e)
-        {
-            this.firstName= (String)document.getFieldValue(FIRSTNAME);
-            this.lastName = (String)document.getFieldValue(LASTNAME);
-        }
+        this.firstName = ObjectUtils.toString(document.getFieldValue(FIRSTNAME));
+        this.lastName = ObjectUtils.toString(document.getFieldValue(LASTNAME));
+
         if (document.getFieldValue(INSTITUTION) != null) {
-            this.institution = (String)document.getFieldValue(INSTITUTION);
+            this.institution = String.valueOf(document.getFieldValue(INSTITUTION));
         }
 
-        Collection<Object> emails =document.getFieldValues(EMAIL);
+        Collection<Object> emails = document.getFieldValues(EMAIL);
         if (emails != null) {
             for (Object email : emails) {
-                addEmail(email.toString());
+                addEmail(String.valueOf(email));
             }
         }
     }
