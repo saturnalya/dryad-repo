@@ -480,26 +480,26 @@ public class EditProfile extends AbstractDSpaceTransformer
                passwordConfirm.addError(T_error_unconfirmed_password);
            }
        }
-       List orcid = form.addList("orcid",List.TYPE_FORM);
-       Item orcidDiv = orcid.addItem("orcid-error","orcid-error");
 
+       List orcid = form.addList("orcid",List.TYPE_FORM);
        if(request.getParameter("exist_orcid")!=null){
+
+           Item orcidDiv = orcid.addItem("orcid-error","orcid-error");
            orcidDiv.addContent("There is already a eperson linked to this orcid id:");
            orcidDiv.addContent(request.getParameter("exist_orcid"));
        }
        if(request.getParameter("exist_email")!=null){
+
+           Item orcidDiv = orcid.addItem("orcid-error","orcid-error");
            orcidDiv.addContent("There is already a eperson has a same email address as the orcid record:");
            orcidDiv.addContent(request.getParameter("exist_email"));
        }
        if(request.getParameter("set_orcid")!=null){
+
+           Item orcidDiv = orcid.addItem("orcid-error","orcid-error");
            orcidDiv.addContent("Please change your orcid setup for privacy level to allow us get the email information:");
            orcidDiv.addContent(request.getParameter("set_orcid"));
        }
-       if(request.getParameter("create_eperson")!=null){
-           orcidDiv.addContent("There is no such eperson exist, please create a new eperson with this email address and then link it to orcid:");
-           orcidDiv.addContent(request.getParameter("create_eperson"));
-       }
-
 
 
        orcid.setHead("Associate Account with ORCID");

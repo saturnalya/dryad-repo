@@ -182,9 +182,41 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod{
                     }
                     else
                     {
+                        context.turnOffAuthorisationSystem();
+                        String fname = "";
+                        if (bio != null)
+                        {
+                            // try to grab name from the orcid profile
+                            fname = bio.getName().getGivenNames();
+
+                        }
+                        String lname = "";
+                        if (bio != null)
+                        {
+                            // try to grab name from the orcid profile
+                            lname = bio.getName().getFamilyName();
+                        }
                         //create new eperson with the email address
-                        request.getSession().setAttribute("create_eperson",email);
-                        return AuthenticationMethod.BAD_CREDENTIALS;
+                        EPerson newEPerson = EPerson.create(context);
+                        newEPerson.setEmail(email);
+                        if (fname != null)
+                        {
+                            newEPerson.setFirstName(fname);
+                        }
+                        if (lname != null)
+                        {
+                            newEPerson.setLastName(lname);
+                        }
+                        newEPerson.setCanLogIn(true);
+                        AuthenticationManager.initEPerson(context, request, newEPerson);
+                        newEPerson.setMetadata("orcid",orcid);
+                        newEPerson.setMetadata("access_token",token);
+                        newEPerson.update();
+                        context.commit();
+                        context.setCurrentUser(newEPerson);
+                        context.restoreAuthSystemState();
+
+                        return AuthenticationMethod.SUCCESS;
                     }
                 }catch (Exception ex)
                 {

@@ -184,14 +184,10 @@ public class OAuthAuthenticateAction extends AbstractAction
                 orcidStatue="?set_orcid="+request.getSession().getAttribute("set_orcid");
             }
 
-            if(request.getSession().getAttribute("create_eperson")!=null)
-            {
-                orcidStatue="?create_eperson="+request.getSession().getAttribute("create_eperson");
-            }
 
             if(orcidStatue.length()>0)
             {
-                String redirectLink = "/login";
+                String redirectLink = "/password-login";
                 if(eperson!=null)
                 {
                     redirectLink = "/profile";
@@ -201,7 +197,7 @@ public class OAuthAuthenticateAction extends AbstractAction
 
                 httpResponse.sendRedirect(redirectLink+orcidStatue);
 
-                return new HashMap();
+                return null;
             }
             else {
                 if (eperson != null)

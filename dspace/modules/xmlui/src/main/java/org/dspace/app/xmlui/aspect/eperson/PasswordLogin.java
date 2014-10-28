@@ -59,14 +59,7 @@ import org.dspace.app.xmlui.cocoon.AbstractDSpaceTransformer;
 import org.dspace.app.xmlui.utils.AuthenticationUtil;
 import org.dspace.app.xmlui.wing.Message;
 import org.dspace.app.xmlui.wing.WingException;
-import org.dspace.app.xmlui.wing.element.Body;
-import org.dspace.app.xmlui.wing.element.Button;
-import org.dspace.app.xmlui.wing.element.Division;
-import org.dspace.app.xmlui.wing.element.Item;
-import org.dspace.app.xmlui.wing.element.List;
-import org.dspace.app.xmlui.wing.element.PageMeta;
-import org.dspace.app.xmlui.wing.element.Password;
-import org.dspace.app.xmlui.wing.element.Text;
+import org.dspace.app.xmlui.wing.element.*;
 import org.dspace.usagelogging.EventLogger;
 import org.xml.sax.SAXException;
 
@@ -303,30 +296,32 @@ public class PasswordLogin extends AbstractDSpaceTransformer implements
                 Button loginSubmitButton = loginSubmitItem.addButton("submit");
                 loginSubmitButton.setValue(T_submit_login);
 
-		login.addPara().addXref("/forgot", T_forgot_link);
+        Para p = login.addPara();
+                p.addXref("/forgot", T_forgot_link);
                 EventLogger.log(context, "login-form", "previous-email=" + (previousEmail != null ? previousEmail : ""));
 
+        p.addXref("/oauth-login","Oauth login");
 
-        Division orcidDiv = body.addDivision("orcid");
+
+
 
         if(request.getParameter("exist_orcid")!=null){
+            Division orcidDiv = body.addDivision("orcid");
             orcidDiv.addPara().addContent("There is already a eperson linked to this orcid id:");
             orcidDiv.addPara().addContent(request.getParameter("exist_orcid"));
         }
         if(request.getParameter("exist_email")!=null){
+            Division orcidDiv = body.addDivision("orcid");
             orcidDiv.addPara().addContent("There is already a eperson has a same email address as the orcid record:");
             orcidDiv.addPara().addContent(request.getParameter("exist_email"));
         }
         if(request.getParameter("set_orcid")!=null){
+            Division orcidDiv = body.addDivision("orcid");
             orcidDiv.addPara().addContent("Please change your orcid setup for privacy level to allow us get the email information:");
             orcidDiv.addPara().addContent(request.getParameter("set_orcid"));
         }
-        if(request.getParameter("create_eperson")!=null){
-            orcidDiv.addPara().addContent("There is no such eperson exist, please create a new eperson with this email address and then link it to orcid:");
-            orcidDiv.addPara().addContent(request.getParameter("create_eperson"));
-        }
 
-        orcidDiv.addPara().addXref("/oauth-login","Oauth login");
+
 	}
 
 	// HttpServletRequest  httpRequest  = (HttpServletRequest)  objectModel.get(HttpEnvironment.HTTP_REQUEST_OBJECT);
