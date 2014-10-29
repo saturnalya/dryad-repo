@@ -432,7 +432,23 @@ public class EditProfile extends AbstractDSpaceTransformer
                passwordConfirm.addError(T_error_unconfirmed_password);
            }
        }
+       /* temporarily disable ORCID linking
+          
+       List orcid = form.addList("orcid",List.TYPE_FORM);
+       orcid.setHead("Associate Account with ORCID");
+       if(defaultOrcidId!=null&&defaultOrcidId.length()>0){
+           orcid.addItem().addContent("Your account is now associated with the following ORCID ID. You may now authenticate with this DSpace exclusively with your ORCID login. If this ORCID account is incorrect, it may be disconnected by selecting the \"Disconnect from ORCID\" button.\n");
+           orcid.addLabel("Orcid Id");
+           orcid.addItem().addContent(defaultOrcidId);
+           orcid.addItem().addButton("remove-link").setValue("Disconnect from ORCID");
 
+       }
+       else
+       {
+           orcid.addItem().addContent("Select the following button to connect to ORCID and associate this profile with your ORCID account.");
+           orcid.addItem().addButton("link").setValue("Link to Orcid");
+       }
+       */
        List tl = form.addList("terms",List.TYPE_FORM);
        tl.setHead(T_terms);
        tl.addItem(T_terms_help);
