@@ -351,25 +351,23 @@ public class SelectPublicationStep extends AbstractProcessingStep {
         return true;
     }
 
-    /*
-    private void addEmailsAndEmbargoSettings(String journalID, Item item) {
-        List<String> reviewEmails = journalNotifyOnReview.get(journalID);
+    private void addEmailsAndEmbargoSettings(Concept journalConcept, Item item) {
+        String[] reviewEmails = JournalUtils.getListNotifyOnReview(journalConcept);
         if(reviewEmails != null) {
-            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "review", "mailUsers", null, reviewEmails.toArray(new String[reviewEmails.size()]));
+            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "review", "mailUsers", null, reviewEmails);
         }
 
-        List<String> archiveEmails = journalNotifyOnArchive.get(journalID);
+        String[] archiveEmails = JournalUtils.getListNotifyOnArchive(journalConcept);
         if(archiveEmails != null) {
-            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "archive", "mailUsers", null, archiveEmails.toArray(new String[archiveEmails.size()]));
+            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "archive", "mailUsers", null, archiveEmails);
         }
 
-        Boolean embargoAllowed = Boolean.valueOf(journalEmbargo.get(journalVals.indexOf(journalID)));
+        Boolean embargoAllowed = JournalUtils.getBooleanEmbargoAllowed(journalConcept);
         if(!embargoAllowed){
             //We don't need to show the embargo option to any of our data files
             item.addMetadata("internal", "submit", "showEmbargo", null, String.valueOf(embargoAllowed));
         }
     }
-    */
     
     private boolean processJournal(String journalID, String manuscriptNumber, Item item, Context context,
                                    HttpServletRequest request, String articleStatus) throws AuthorizeException, SQLException {
@@ -392,12 +390,7 @@ public class SelectPublicationStep extends AbstractProcessingStep {
                     if(title.endsWith("*")) {
                         title = title.substring(0, title.length() - 1);
                     }
-
-                    Boolean embargoAllowed = JournalUtils.getBooleanEmbargoAllowed(journalConcept);
-                    if(!embargoAllowed){
-                        //We don't need to show the embargo option to any of our data files
-                        item.addMetadata("internal", "submit", "showEmbargo", null, String.valueOf(embargoAllowed));
-                    }
+                    addEmailsAndEmbargoSettings(journalConcept, item);
                     item.addMetadata("prism", "publicationName", null, null, title);
                     item.update();
 
@@ -443,17 +436,7 @@ public class SelectPublicationStep extends AbstractProcessingStep {
                         }
 
                         importJournalMetadata(context, item, pBean);
-                        String[] reviewEmails = JournalUtils.getListNotifyOnReview(journalConcept);
-                        item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "review", "mailUsers", null, reviewEmails);
-
-                        String[] archiveEmails = JournalUtils.getListNotifyOnArchive(journalConcept);
-                        item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "archive", "mailUsers", null,archiveEmails);
-
-                        boolean embargoAllowed = JournalUtils.getBooleanEmbargoAllowed(journalConcept);
-                        if(!embargoAllowed){
-                            //We don't need to show the embargo option to any of our data files
-                            item.addMetadata("internal", "submit", "showEmbargo", null, String.valueOf(embargoAllowed));
-                        }
+                        addEmailsAndEmbargoSettings(journalConcept, item);
                         item.update();
                     }else{
                         request.getSession().setAttribute("submit_error", pBean.getMessage());
