@@ -351,7 +351,26 @@ public class SelectPublicationStep extends AbstractProcessingStep {
         return true;
     }
 
+    /*
+    private void addEmailsAndEmbargoSettings(String journalID, Item item) {
+        List<String> reviewEmails = journalNotifyOnReview.get(journalID);
+        if(reviewEmails != null) {
+            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "review", "mailUsers", null, reviewEmails.toArray(new String[reviewEmails.size()]));
+        }
 
+        List<String> archiveEmails = journalNotifyOnArchive.get(journalID);
+        if(archiveEmails != null) {
+            item.addMetadata(WorkflowRequirementsManager.WORKFLOW_SCHEMA, "archive", "mailUsers", null, archiveEmails.toArray(new String[archiveEmails.size()]));
+        }
+
+        Boolean embargoAllowed = Boolean.valueOf(journalEmbargo.get(journalVals.indexOf(journalID)));
+        if(!embargoAllowed){
+            //We don't need to show the embargo option to any of our data files
+            item.addMetadata("internal", "submit", "showEmbargo", null, String.valueOf(embargoAllowed));
+        }
+    }
+    */
+    
     private boolean processJournal(String journalID, String manuscriptNumber, Item item, Context context,
                                    HttpServletRequest request, String articleStatus) throws AuthorizeException, SQLException {
         String title = journalID; // Preserve the case of the original entry
@@ -370,8 +389,9 @@ public class SelectPublicationStep extends AbstractProcessingStep {
 
                     title = journalConcept.getPreferredLabel();
                     //Should it end with a *, remove it.
-                    if(title.endsWith("*"))
+                    if(title.endsWith("*")) {
                         title = title.substring(0, title.length() - 1);
+                    }
 
                     Boolean embargoAllowed = JournalUtils.getBooleanEmbargoAllowed(journalConcept);
                     if(!embargoAllowed){
