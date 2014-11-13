@@ -113,6 +113,7 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod{
                else if(currentUser==null)
                {
                    //the orcid id exists and already linked to the user ,login successful
+                   currentUser = e;
                    request.getSession().setAttribute("oauth.authenticated",
                            Boolean.TRUE);
                    context.setCurrentUser(e);
@@ -124,27 +125,14 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod{
                    request.getSession().setAttribute("exist_orcid",e.getEmail());
                    return BAD_CREDENTIALS;
                }
-
-
             }
+            else{
 
 
 
             //Step 2, check the current login user
             if (currentUser != null)
             {
-                if(email!=null)
-                {
-                    if(!email.equals(currentUser.getEmail() ))
-                    {
-                        //current user has a different email address than the orcid user
-                        request.getSession().setAttribute("exist_email",email);
-                        return BAD_CREDENTIALS;
-                    }
-                }
-                else {
-                    email = currentUser.getEmail();
-                }
                 //link the orcid id to the current login user
                 currentUser.setMetadata("orcid",orcid);
                 currentUser.setMetadata("access_token",token);
@@ -160,78 +148,15 @@ public class OAuthAuthenticationMethod implements AuthenticationMethod{
                         Boolean.TRUE);
                 return AuthenticationMethod.SUCCESS;
             }
+            else{
 
-            //step 3, check the email
-            if(email!=null)
-            {
-                email = email.toLowerCase();
-                try{
-                    EPerson ePerson = EPerson.findByEmail(context,email);
-                    if(ePerson!=null)
-                    {
-                        //found the eperson by email. link it with orcid
-                        context.setCurrentUser(ePerson);
-                        ePerson.setMetadata("orcid",orcid);
-                        ePerson.setMetadata("access_token",token);
-                        ePerson.update();
-                        context.commit();
-                        request.getSession().setAttribute("oauth.authenticated",
-                                Boolean.TRUE);
-                        return AuthenticationMethod.SUCCESS;
-
-                    }
-                    else
-                    {
-                        context.turnOffAuthorisationSystem();
-                        String fname = "";
-                        if (bio != null)
-                        {
-                            // try to grab name from the orcid profile
-                            fname = bio.getName().getGivenNames();
-
-                        }
-                        String lname = "";
-                        if (bio != null)
-                        {
-                            // try to grab name from the orcid profile
-                            lname = bio.getName().getFamilyName();
-                        }
-                        //create new eperson with the email address
-                        EPerson newEPerson = EPerson.create(context);
-                        newEPerson.setEmail(email);
-                        if (fname != null)
-                        {
-                            newEPerson.setFirstName(fname);
-                        }
-                        if (lname != null)
-                        {
-                            newEPerson.setLastName(lname);
-                        }
-                        newEPerson.setCanLogIn(true);
-                        AuthenticationManager.initEPerson(context, request, newEPerson);
-                        newEPerson.setMetadata("orcid",orcid);
-                        newEPerson.setMetadata("access_token",token);
-                        newEPerson.update();
-                        context.commit();
-                        context.setCurrentUser(newEPerson);
-                        context.restoreAuthSystemState();
-
-                        return AuthenticationMethod.SUCCESS;
-                    }
-                }catch (Exception ex)
-                {
-                    log.error("error when try to link orcid:"+orcid+" to eperson:"+email);
-                    return BAD_CREDENTIALS;
-                }
+            //step 3, orcid id doen't exist and user does not login, remind user to create user account and then link the orcid
+            request.getSession().setAttribute("set_orcid",orcid);
+            request.getSession().setAttribute("oauth.authenticated",Boolean.TRUE);
+            return BAD_CREDENTIALS;
 
             }
-            else
-            {
-               //no email fetched from orcid,need check the privacy setup
-                request.getSession().setAttribute("set_orcid",orcid);
-                return BAD_CREDENTIALS;
             }
-
         }
         else
         {

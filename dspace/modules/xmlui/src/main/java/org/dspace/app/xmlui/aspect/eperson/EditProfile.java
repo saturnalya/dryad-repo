@@ -488,19 +488,10 @@ public class EditProfile extends AbstractDSpaceTransformer
            orcidDiv.addContent("There is already a eperson linked to this orcid id:");
            orcidDiv.addContent(request.getParameter("exist_orcid"));
        }
-       if(request.getParameter("exist_email")!=null){
+       if(request.getSession().getAttribute("set_orcid")!=null){
 
-           Item orcidDiv = orcid.addItem("orcid-error","orcid-error");
-           orcidDiv.addContent("There is already a eperson has a same email address as the orcid record:");
-           orcidDiv.addContent(request.getParameter("exist_email"));
+           orcid.addItem().addHidden("set_orcid").setValue(request.getSession().getAttribute("set_orcid").toString());
        }
-       if(request.getParameter("set_orcid")!=null){
-
-           Item orcidDiv = orcid.addItem("orcid-error","orcid-error");
-           orcidDiv.addContent("Please change your orcid setup for privacy level to allow us get the email information:");
-           orcidDiv.addContent(request.getParameter("set_orcid"));
-       }
-
 
        orcid.setHead("Associate Account with ORCID");
        if(defaultOrcidId!=null&&defaultOrcidId.length()>0){
@@ -512,8 +503,15 @@ public class EditProfile extends AbstractDSpaceTransformer
        }
        else
        {
-           orcid.addItem().addContent("Select the following button to connect to ORCID and associate this profile with your ORCID account.");
-           orcid.addItem().addButton("link").setValue("Link to Orcid");
+           if(request.getSession().getAttribute("set_orcid")!=null&&request.getSession().getAttribute("set_orcid").toString().length()>0)
+           {
+               orcid.addItem().addContent("The flowing orcid account will be associated with this eperson account:");
+               orcid.addItem().addContent(request.getSession().getAttribute("set_orcid").toString());
+           }
+           else {
+               orcid.addItem().addContent("Select the following button to connect to ORCID and associate this profile with your ORCID account.");
+               orcid.addItem().addButton("link").setValue("Link to Orcid");
+           }
        }
        List tl = form.addList("terms",List.TYPE_FORM);
        tl.setHead(T_terms);

@@ -106,6 +106,7 @@ public class PasswordLogin extends AbstractDSpaceTransformer implements
 
 	private static final Message T_email_address_help = message("xmlui.EPerson.StartRegistration.email_address_help");
 
+    private static final Message T_no_ocrid_found = message("xmlui.EPerson.StartRegistration.no_orcid_found");
 	/** The email address previously entered */
 	private String email;
 
@@ -246,6 +247,17 @@ public class PasswordLogin extends AbstractDSpaceTransformer implements
 				reason.addPara(characters);
 		}
 
+        if(request.getParameter("exist_orcid")!=null){
+            Division orcidDiv = body.addDivision("orcid-error");
+            orcidDiv.addPara("There is already a eperson linked to this orcid id:");
+            orcidDiv.addPara(request.getParameter("exist_orcid"));
+        }
+        if(request.getParameter("set_orcid")!=null){
+            Division orcidDiv = body.addDivision("orcid-error");
+            orcidDiv.addPara(T_no_ocrid_found);
+            request.getSession().setAttribute("set_orcid",request.getParameter("set_orcid"));
+        }
+
 		Division register = body.addInteractiveDivision("register",
 				contextPath + "/register", Division.METHOD_POST,
 				"register-left");
@@ -295,32 +307,11 @@ public class PasswordLogin extends AbstractDSpaceTransformer implements
                 Item loginSubmitItem = loginList.addItem("loginsubmit-item", "login-row");
                 Button loginSubmitButton = loginSubmitItem.addButton("submit");
                 loginSubmitButton.setValue(T_submit_login);
-
-        Para p = login.addPara();
-                p.addXref("/forgot", T_forgot_link);
-                EventLogger.log(context, "login-form", "previous-email=" + (previousEmail != null ? previousEmail : ""));
+        Para p=login.addPara();
 
         p.addXref("/oauth-login","Oauth login");
-
-
-
-
-        if(request.getParameter("exist_orcid")!=null){
-            Division orcidDiv = body.addDivision("orcid");
-            orcidDiv.addPara().addContent("There is already a eperson linked to this orcid id:");
-            orcidDiv.addPara().addContent(request.getParameter("exist_orcid"));
-        }
-        if(request.getParameter("exist_email")!=null){
-            Division orcidDiv = body.addDivision("orcid");
-            orcidDiv.addPara().addContent("There is already a eperson has a same email address as the orcid record:");
-            orcidDiv.addPara().addContent(request.getParameter("exist_email"));
-        }
-        if(request.getParameter("set_orcid")!=null){
-            Division orcidDiv = body.addDivision("orcid");
-            orcidDiv.addPara().addContent("Please change your orcid setup for privacy level to allow us get the email information:");
-            orcidDiv.addPara().addContent(request.getParameter("set_orcid"));
-        }
-
+                p.addXref("/forgot", T_forgot_link);
+                EventLogger.log(context, "login-form", "previous-email=" + (previousEmail != null ? previousEmail : ""));
 
 	}
 

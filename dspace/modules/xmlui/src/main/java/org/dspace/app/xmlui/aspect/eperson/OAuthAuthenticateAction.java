@@ -175,10 +175,6 @@ public class OAuthAuthenticateAction extends AbstractAction
             {
                 orcidStatue="?exist_orcid="+request.getSession().getAttribute("exist_orcid");
             }
-            if(request.getSession().getAttribute("exist_email")!=null)
-            {
-                orcidStatue="?exist_email="+request.getSession().getAttribute("exist_email");
-            }
             if(request.getSession().getAttribute("set_orcid")!=null)
             {
                 orcidStatue="?set_orcid="+request.getSession().getAttribute("set_orcid");
