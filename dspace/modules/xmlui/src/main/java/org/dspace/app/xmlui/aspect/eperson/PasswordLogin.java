@@ -255,7 +255,6 @@ public class PasswordLogin extends AbstractDSpaceTransformer implements
         if(request.getParameter("set_orcid")!=null){
             Division orcidDiv = body.addDivision("orcid-error");
             orcidDiv.addPara(T_no_ocrid_found);
-            request.getSession().setAttribute("set_orcid",request.getParameter("set_orcid"));
         }
 
 		Division register = body.addInteractiveDivision("register",
