@@ -267,7 +267,7 @@ public class EditProfile extends AbstractDSpaceTransformer
                context.commit();
            }catch (Exception e)
            {
-               log.error("error when remove orcid id on eperson",e);
+               log.error("error when remove orcid id on eperson:"+eperson.getID(),e);
            }
 
        }
@@ -488,10 +488,7 @@ public class EditProfile extends AbstractDSpaceTransformer
            orcidDiv.addContent("There is already a eperson linked to this orcid id:");
            orcidDiv.addContent(request.getParameter("exist_orcid"));
        }
-       if(request.getSession().getAttribute("set_orcid")!=null){
 
-           orcid.addItem().addHidden("set_orcid").setValue(request.getSession().getAttribute("set_orcid").toString());
-       }
 
        orcid.setHead("Associate Account with ORCID");
        if(defaultOrcidId!=null&&defaultOrcidId.length()>0){
@@ -503,15 +500,10 @@ public class EditProfile extends AbstractDSpaceTransformer
        }
        else
        {
-           if(request.getSession().getAttribute("set_orcid")!=null&&request.getSession().getAttribute("set_orcid").toString().length()>0)
-           {
-               orcid.addItem().addContent("The flowing orcid account will be associated with this eperson account:");
-               orcid.addItem().addContent(request.getSession().getAttribute("set_orcid").toString());
-           }
-           else {
-               orcid.addItem().addContent("Select the following button to connect to ORCID and associate this profile with your ORCID account.");
-               orcid.addItem().addButton("link").setValue("Link to Orcid");
-           }
+
+           orcid.addItem().addContent("Select the following button to connect to ORCID and associate this profile with your ORCID account.");
+           orcid.addItem().addButton("link").setValue("Link to Orcid");
+
        }
        List tl = form.addList("terms",List.TYPE_FORM);
        tl.setHead(T_terms);
