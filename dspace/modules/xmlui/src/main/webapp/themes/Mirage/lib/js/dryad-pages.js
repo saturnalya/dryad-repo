@@ -1,3 +1,4 @@
+
 /* JS behaviors for all Dryad pages */
 jQuery(document).ready(function() {
     var modal =jQuery("#aspect_eperson_TermsOfService_div_modal-content").val();
