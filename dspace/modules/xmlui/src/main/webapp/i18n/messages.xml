@@ -3012,7 +3012,7 @@ Dryad is a <strong>nonprofit organization</strong> that provides <strong>long-te
             your publication, add or modify all attached data files, or finalize the submission.
         </div>
 	</message>
-	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Describe publication:</message>
+	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Your publication:</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.2">Add and describe data files:</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.3">Upload data files to partner repositories (optional):</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.4">Checkout and finalize submission:</message>
