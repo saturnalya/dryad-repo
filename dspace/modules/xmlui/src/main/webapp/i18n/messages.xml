@@ -2889,8 +2889,8 @@ Dryad is a <strong>nonprofit organization</strong> that provides <strong>long-te
 	<message key="xmlui.submit.publication.describe.trail">
         <div>
             <ul class="navigation-link">
-                <li>1. Describe Publication</li>
-                <li class="selected"><b>2. Upload Data Files</b></li>
+                <li class="selected"><b>1. Describe Publication</b></li>
+                <li>2. Upload Data Files</li>
                 <li>3. Review</li>
                 <li>4. Checkout &amp; Submit</li>
             </ul>
