@@ -3013,7 +3013,7 @@ Dryad is a <strong>nonprofit organization</strong> that provides <strong>long-te
         </div>
 	</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Your publication:</message>
-	<message key="xmlui.Submission.submit.OverviewStep.steps.2">Add and describe data files:</message>
+	<message key="xmlui.Submission.submit.OverviewStep.steps.2">Your data files:</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.3">Upload data files to partner repositories (optional):</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.4">Checkout and finalize submission:</message>
 	<message key="xmlui.Submission.submit.OverviewStep.button.add-datafile">Add new data file</message>
