@@ -1044,7 +1044,7 @@
 		pool</message>
 
   <message key="xmlui.Submission.workflow.AfterPublicationActionXMLUI.head">Perform task: Exit Publication Blackout</message>
-	<message key="xmlui.Submission.workflow.AfterPublicationActionXMLUI.after_blackout_help">This item is currently 
+	<message key="xmlui.Submission.workflow.AfterPublicationActionXMLUI.after_blackout_help">This item is currently
 	in Publication Blackout.  Once the associated publication appears, select 'Approve - Exit Blackout' to move the
 	item out of Publication Blackout and into the Archive</message>
 	<message key="xmlui.Submission.workflow.AfterPublicationActionXMLUI.after_blackout_submit">Approve - Exit Blackout</message>
@@ -2663,7 +2663,7 @@
 
     <message key="xmlui.dri2xhtml.METS-1.0.license-cc0">Content in the Dryad
         Digital Repository is offered "as is." By downloading files, you agree
-        to the <a href="/pages/policies" target="_blank">Dryad Terms of Service</a>. 
+        to the <a href="/pages/policies" target="_blank">Dryad Terms of Service</a>.
         To the extent possible under law, the authors have waived all copyright
         and related or neighboring rights to this data.</message>
 
@@ -3009,11 +3009,15 @@ Dryad is a <strong>nonprofit organization</strong> that provides <strong>long-te
         </div>
 	</message>
     <message key="xmlui.Submission.submit.OverviewStep.help">
-        <div>                                                                                                                                                
+        <div>
             From this page, you can edit the description of your data package, add additional data files, modify uploaded files, and/or finalize your submission and proceed to checkout.
         </div>
 	</message>
+<<<<<<< HEAD
 	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Your data package</message>
+=======
+	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Your publication</message>
+>>>>>>> 7036eb0d38fe32d0b167be36a4bdef9e5615d01d
 	<message key="xmlui.Submission.submit.OverviewStep.steps.2">Your data files</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.3">Upload data files to partner repositories (optional)</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.4">Checkout and finalize submission</message>
@@ -3026,7 +3030,7 @@ Dryad is a <strong>nonprofit organization</strong> that provides <strong>long-te
 		submission until all the data files are through the submission workflow.</message>
 	<message key="xmlui.Submission.submit.OverviewStep.error.finalize.one-file">You cannot finish the
 		submission until at least one data file is attached to the publication.</message>
-	<message key="xmlui.Submission.submit.OverviewStep.finalize.help">When you are satisfied with your submission, click the button below to proceed to checkout.<br /> 
+	<message key="xmlui.Submission.submit.OverviewStep.finalize.help">When you are satisfied with your submission, click the button below to proceed to checkout.<br />
 	<br />A Dryad curator will review the submission to ensure the descriptions are complete, and that the files meet Dryad criteria for archiving and are not corrupted. After this brief review, your data will be archived in Dryad.</message>
 	<message key="xmlui.Submission.submit.OverviewStep.button.delete-datapackage">Delete entire submission</message>
 	<message key="xmlui.Submission.submit.OverviewStep.button.edit-datapackage">Edit data package description</message>

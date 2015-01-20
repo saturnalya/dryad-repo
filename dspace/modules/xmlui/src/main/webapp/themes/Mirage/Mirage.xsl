@@ -428,6 +428,7 @@
                 </div>
               </div>
             </div>
+
             <!-- START STATISTICS -->
             <div class="home-col-2" style="margin-left: 25px;">
                 <div id="aspect_statistics_StatisticsTransformer_div_home" class="repository">
