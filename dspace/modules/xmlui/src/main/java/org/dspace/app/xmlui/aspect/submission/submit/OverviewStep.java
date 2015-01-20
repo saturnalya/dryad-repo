@@ -84,7 +84,9 @@ public class OverviewStep extends AbstractStep {
             pubDiv.setHead(T_STEPS_HEAD_1);
             //TODO: expand this !
 
-            pubDiv.addPara().addXref(HandleManager.resolveToURL(context, publication.getHandle()), publication.getName());
+            // display a formatted reference to the data package
+            ReferenceSet refSet = pubDiv.addReferenceSet("submission", ReferenceSet.TYPE_SUMMARY_LIST);
+            refSet.addReference(publication);
 
             // display a formatted reference
             ReferenceSet refSet = pubDiv.addReferenceSet("submission", ReferenceSet.TYPE_SUMMARY_LIST);

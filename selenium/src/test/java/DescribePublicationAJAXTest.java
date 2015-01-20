@@ -1,8 +1,10 @@
 package test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -14,6 +16,7 @@ import org.junit.Test;
 import org.openqa.selenium.*;
 
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import org.openqa.selenium.logging.*;
@@ -29,7 +32,7 @@ public class DescribePublicationAJAXTest {
     private StringBuffer verificationErrors = new StringBuffer();
 
     // seconds to wait for an AJAX response and refresh; ms/s; Selenium max timeout
-    private final int ajaxWaitSeconds = 10;
+    private final int ajaxWaitSeconds = 5;
     private final int waitSleepInterval = 1000;
     private final int maxWaitSeconds = 10;
 
@@ -41,13 +44,23 @@ public class DescribePublicationAJAXTest {
             driver = new SafariDriver();
         } else {
             LoggingPreferences logs = new LoggingPreferences();
+            //logs.enable(LogType.DRIVER, Level.INFO);
             logs.enable(LogType.DRIVER, Level.SEVERE);
             logs.enable(LogType.BROWSER, Level.INFO);
             DesiredCapabilities capabilities = DesiredCapabilities.firefox();
             capabilities.setCapability(CapabilityType.LOGGING_PREFS, logs);
-            driver = new FirefoxDriver(capabilities);
+            String ffbin = System.getProperty("firefox_binary");
+            String ffdisp = System.getProperty("firefox_display");
+            if (ffbin != null && !ffbin.equals("")) {
+                FirefoxBinary binary = new FirefoxBinary(new File(ffbin));
+                binary.setEnvironmentProperty("DISPLAY",ffdisp);
+                driver = new FirefoxDriver(binary,null);
+            } else {
+                driver = new FirefoxDriver(capabilities);
+            }
         }
         baseUrl = System.getProperty("selenium_test_url");
+        assertTrue(baseUrl != null && !baseUrl.equals(""));
         driver.manage().timeouts().implicitlyWait(maxWaitSeconds, TimeUnit.SECONDS);
     }
 
@@ -61,14 +74,16 @@ public class DescribePublicationAJAXTest {
     }
 
     // useful constant xpaths: update button, save/exit button, save-for-later, remove-submission
-    private final String update_btn_xpath      = "//input[@class='ds-button-field ds-update-button']";
     private final String save_exit_btn_xpath   = "//input[@id='aspect_submission_StepTransformer_field_submit_cancel']";
     private final String save_later_btn_xpath  = "//input[@id='aspect_submission_submit_SaveOrRemoveStep_field_submit_save']";
     private final String remove_subs_btn_xpath = "//input[@id='aspect_discovery_DiscoverySubmissions_field_submit_submissions_remove']";
+    private final String title_xpath           = "//input[@name='dc_title']";
 
     @Test
     public void testDescribePublicationAJAX() throws Exception {
-        driver.get(baseUrl + "/");
+        String start = baseUrl + "/";
+        driver.get(start);
+        assertTrue(driver.getCurrentUrl().equals(start));
         openConsole();
         login();
         initSubmitData();
@@ -153,7 +168,7 @@ public class DescribePublicationAJAXTest {
           String pred = by.equals("i")
                       ? "[" + author.index + "]"
                       : "[" + ".//span[@class='ds-interpreted-field']" + authpred(by) + "]";    // has a span descendant where name = ...
-          return "//tr[@class='ds-author-input-row']" + pred;
+          return "//tr[@class='ds-edit-reorder-input-row']" + pred;
         }
         public String span_interp(String by) throws Exception {
           return "(//span[@class='ds-interpreted-field'])" + authpred(by);
@@ -168,7 +183,7 @@ public class DescribePublicationAJAXTest {
             return row(by) + "//input[@class='ds-button-field ds-edit-button']";
         }
         public String order_select(String by) throws Exception {
-            return row(by) + "//select[@class='ds-author-order-select']";
+            return row(by) + "//select[@class='ds-edit-reorder-order-select']";
         }
         public String remove_btn(String by) throws Exception {
             return row(by) + "//input[@name='submit_dc_contributor_author_delete']";
@@ -217,16 +232,13 @@ public class DescribePublicationAJAXTest {
 
     private void waitOnXpathsPresent(ArrayList<String> xpaths) throws InterruptedException {
       // wait for form submission to complete
-      for (int second = 0;; second++) {
-        if (second >= ajaxWaitSeconds) fail("timeout");
-        try {
+        for (int second = 0;; second++) {
             boolean done = true;
-            for (String xpath : xpaths) {
+            if (second >= ajaxWaitSeconds) fail("timeout");
+            for (String xpath : xpaths)
                 done = done && isElementPresent(By.xpath(xpath));
-            }
             if (done) break;
-        } catch (Exception e) {}
-            Thread.sleep(waitSleepInterval);
+            sleepMS(waitSleepInterval);
         }
     }
 
@@ -256,21 +268,40 @@ public class DescribePublicationAJAXTest {
         driver.findElement(By.id("aspect_submission_StepTransformer_field_dc_title")).sendKeys(title);
     }
 
+    // put the current thread to sleep for n ms.
+    private void sleepMS(long n) {
+        try {
+            Thread.sleep(n);
+        } catch (Exception e) {}
+    }
+
     private void updateAuthorName(Author author) throws Exception {
+        // click Edit button and let a bit of time pass
         driver.findElement(By.xpath(author.xpath.edit_btn("i"))).click();
+
+        // update author's last-name field
         driver.findElement(By.xpath(author.xpath.input_name_last("i"))).clear();
         driver.findElement(By.xpath(author.xpath.input_name_last("i"))).sendKeys(author.last);
-        driver.findElement(By.xpath(author.xpath.input_name_first("i"))).clear();
-        driver.findElement(By.xpath(author.xpath.input_name_first("i"))).sendKeys(author.first);
 
-        // update and wait for form submission to complete
-        driver.findElement(By.xpath(update_btn_xpath)).click();
-        for (int second = 0;; second++) {
+        // update author's first-name field
+        WebElement input_first = driver.findElement(By.xpath(author.xpath.input_name_first("i")));
+        WebElement span_interp = driver.findElement(By.xpath(author.xpath.span_interp("i")));
+        input_first.clear();
+        input_first.sendKeys(author.first);
+        sleepMS(waitSleepInterval);
+        input_first.sendKeys(Keys.TAB);
+        sleepMS(waitSleepInterval);
+
+        // verify that we had a successful update
+        for (int second = 0; input_first.isDisplayed() && !author.interp.equals(span_interp.getText()); second++) {
             if (second >= ajaxWaitSeconds) fail("timeout");
-            try {
-                if (author.interp.equals(driver.findElement(By.xpath(author.xpath.span_interp("i"))).getText())) { break;}
-            } catch (Exception e) {}
-            Thread.sleep(waitSleepInterval);
+            // send an empty string to the interp input field
+            // so that it has focus, then click away to trigger
+            // the 'lose focus' event
+            input_first.sendKeys("");
+            sleepMS(waitSleepInterval);
+            edit_random_target_click();
+            sleepMS(waitSleepInterval);
         }
     }
 
@@ -310,7 +341,6 @@ public class DescribePublicationAJAXTest {
             }
             paths.add(author.xpath.span_interp("a"));
         }
-        driver.findElement(By.xpath(update_btn_xpath)).click();
         waitOnXpathsPresent(paths);
     }
 
@@ -345,5 +375,10 @@ public class DescribePublicationAJAXTest {
         waitOnXpathsPresent(paths);
         // confirm that requested author was removed
         assertFalse(isElementPresent(By.xpath(author.xpath.span_interp("a"))));
+    }
+
+    private void edit_random_target_click() {
+        driver.findElement(By.xpath(title_xpath)).click();
+        sleepMS(waitSleepInterval);
     }
 }
