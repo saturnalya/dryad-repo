@@ -113,6 +113,13 @@
                   <xsl:value-of select="$title"/>
               </p>
         </div>
+        <xsl:if test=".//dim:field[@element='curatorNotePublic']">
+        <div class="ds-static-div primary">
+            <p class="ds-paragraph">
+                <xsl:value-of select=".//dim:field[@element='curatorNotePublic']"/>
+            </p>
+        </div>
+        </xsl:if>
         <!-- Data Files in package -->
         <xsl:if test="$datafiles">
             <div class="ds-static-div primary">&#160;
@@ -1733,6 +1740,42 @@
                          alt="Deutsche Entomologische Zeitschrift cover"/>
                 </a>
             </xsl:when>
+            <xsl:when test='$journal-name = "Ecography"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.ecography.org')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/Ecog.png"
+                         alt="Ecography cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "Ecological Applications"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.esajournals.org/loi/ecap')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/ecoApp.png"
+                         alt="Ecological Applications cover"/>
+                </a>
+            </xsl:when>
             <xsl:when test='$journal-name = "Ecological Monographs"'>
                 <a target="_blank">
                     <xsl:attribute name="href">
@@ -2100,6 +2143,24 @@
                          alt="Journal of Applied Ecology cover"/>
                 </a>
             </xsl:when>
+            <xsl:when test='$journal-name = "Journal of Avian Biology"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.avianbiology.org')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/JAV.png"
+                         alt="Journal of Avian Biology cover"/>
+                </a>
+            </xsl:when>
             <xsl:when test='$journal-name = "Journal of Ecology"'>
                 <a target="_blank">
                     <xsl:attribute name="href">
@@ -2328,6 +2389,42 @@
                          alt="NeoBiota cover"/>
                 </a>
             </xsl:when>
+            <xsl:when test='$journal-name = "Nordic Journal of Botany"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.nordicjbotany.org')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/NJB.png"
+                         alt="Nordic Journal of Botany cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "Oikos"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.oikosjournal.org')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/Oikos.png"
+                         alt="Oikos cover"/>
+                </a>
+            </xsl:when>
             <xsl:when test='$journal-name = "Open Health Data"'>
                 <a target="_blank">
                     <xsl:attribute name="href">
@@ -2381,6 +2478,24 @@
                          alt="Palaeontology cover"/>
                 </a>
             </xsl:when>
+            <xsl:when test='$journal-name = "Papers in Palaeontology"'>
+	            <a target="_blank">
+	                <xsl:attribute name="href">
+	                    <xsl:choose>
+	                        <xsl:when test="contains($article-doi,'doi:')">
+	                            <xsl:value-of
+	                                    select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+	                        </xsl:when>
+	                        <xsl:otherwise>
+	                            <xsl:value-of
+	                                    select="string('http://onlinelibrary.wiley.com/journal/10.1002/%28ISSN%292056-2802')"/>
+	                        </xsl:otherwise>
+	                    </xsl:choose>
+	                </xsl:attribute>
+	                <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/papersinpalacover.png"
+	                     alt="Papers in Palaeontology cover"/>
+	            </a>
+            </xsl:when>
             <xsl:when test='$journal-name = "Perspectives in Plant Ecology, Evolution and Systematics"'>
                 <a target="_blank">
                     <xsl:attribute name="href">
@@ -2417,7 +2532,8 @@
                          alt="PhytoKeys cover"/>
                 </a>
             </xsl:when>
-            <xsl:when test='$journal-name = "PLoS Biology" or $journal-name = "PLOS Biology"'>
+            <!-- BEGIN PLOS journal covers added 2014-10-14. -->
+            <xsl:when test='$journal-name = "PLoS Biology" or $journal-name = "PLOS Biology"' >
                 <a target="_blank">
                     <xsl:attribute name="href">
                         <xsl:choose>
@@ -2427,12 +2543,12 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of
-                                        select="string('http://www.plosbiology.org')"/>
+                                        select="string('http://journals.plos.org/plosbiology/')"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/PLOS-Biology.png"
-                         alt="PLOS Biology logo"/>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/plosbiology.png"
+                         alt="PLOS Biology cover"/>
                 </a>
             </xsl:when>
             <xsl:when test='$journal-name = "PLoS Computational Biology" or $journal-name = "PLOS Computational Biology"'>
@@ -2445,14 +2561,105 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of
-                                        select="string('http://www.ploscompbiol.org')"/>
+                                        select="string('http://journals.plos.org/ploscompbiol/')"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/PLOS-CompBiology.png"
-                         alt="PLOS Computational Biology logo"/>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/ploscompbiol.png"
+                         alt="PLOS Computational Biology cover"/>
                 </a>
             </xsl:when>
+            <xsl:when test='$journal-name = "PLoS Genetics" or $journal-name = "PLOS Genetics"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://journals.plos.org/plosgenetics/')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/plosgenetics.png"
+                         alt="PLOS Genetics cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "PLoS Medicine" or $journal-name = "PLOS Medicine"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://journals.plos.org/plosmedicine/')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/plosmedicine.png"
+                         alt="PLOS Medicine cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "PLoS Neglected Tropical Diseases" or $journal-name = "PLOS Neglected Tropical Diseases"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://journals.plos.org/plosntds/')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/plosntds.png"
+                         alt="PLOS Neglected Tropical Diseases cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "PLoS ONE" or $journal-name = "PLOS ONE"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.plosone.org')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/plosone.png"
+                         alt="PLOS ONE cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "PLoS Pathogens" or $journal-name = "PLOS Pathogens"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://journals.plos.org/plospathogens/')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/plospath.png"
+                         alt="PLOS Pathogens cover"/>
+                </a>
+            </xsl:when>
+            <!-- END PLOS journal covers added 2014-10-14 -->
             <xsl:when test='starts-with($journal-name,"PLoS Currents") or starts-with($journal-name,"PLOS Currents")'>
                 <a target="_blank">
                     <xsl:attribute name="href">
@@ -2471,96 +2678,6 @@
                          alt="PLOS Currents logo"/>
                 </a>
             </xsl:when>
-            <xsl:when test='$journal-name = "PLoS Genetics" or $journal-name = "PLOS Genetics"'>
-                <a target="_blank">
-                    <xsl:attribute name="href">
-                        <xsl:choose>
-                            <xsl:when test="contains($article-doi,'doi:')">
-                                <xsl:value-of
-                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of
-                                        select="string('http://www.plosgenetics.org')"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/PLOS-Genetics.png"
-                         alt="PLOS Genetics logo"/>
-                </a>
-            </xsl:when>
-            <xsl:when test='$journal-name = "PLoS Medicine" or $journal-name = "PLOS Medicine"'>
-                <a target="_blank">
-                    <xsl:attribute name="href">
-                        <xsl:choose>
-                            <xsl:when test="contains($article-doi,'doi:')">
-                                <xsl:value-of
-                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of
-                                        select="string('http://www.plosmedicine.org')"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/pmedicine.png"
-                         alt="PLOS Medicine logo"/>
-                </a>
-            </xsl:when>
-            <xsl:when test='$journal-name = "PLoS Neglected Tropical Diseases" or $journal-name = "PLOS Neglected Tropical Diseases"'>
-                <a target="_blank">
-                    <xsl:attribute name="href">
-                        <xsl:choose>
-                            <xsl:when test="contains($article-doi,'doi:')">
-                                <xsl:value-of
-                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of
-                                        select="string('http://www.plosntds.org')"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/pntd.png"
-                         alt="PLOS Neglected Tropical Diseases logo"/>
-                </a>
-            </xsl:when>
-            <xsl:when test='$journal-name = "PLoS ONE" or $journal-name = "PLOS ONE"'>
-                <a target="_blank">
-                    <xsl:attribute name="href">
-                        <xsl:choose>
-                            <xsl:when test="contains($article-doi,'doi:')">
-                                <xsl:value-of
-                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of
-                                        select="string('http://www.plosone.org')"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/PLOS-ONE.png"
-                         alt="PLOS ONE logo"/>
-                </a>
-            </xsl:when>
-            <xsl:when test='$journal-name = "PLoS Pathogens" or $journal-name = "PLOS Pathogens"'>
-                <a target="_blank">
-                    <xsl:attribute name="href">
-                        <xsl:choose>
-                            <xsl:when test="contains($article-doi,'doi:')">
-                                <xsl:value-of
-                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of
-                                        select="string('http://www.plospathogens.org')"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
-                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/PLOS-Pathogens.png"
-                         alt="PLOS Pathogens logo"/>
-                </a>
-            </xsl:when>
             <xsl:when test='$journal-name = "Proceedings of the Royal Society B"'>
                 <a target="_blank">
                     <xsl:attribute name="href">
@@ -2577,6 +2694,24 @@
                     </xsl:attribute>
                     <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/ProceedingsB.png"
                          alt="Proceedings of the Royal Society B cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "Royal Society Open Science"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://royalsocietypublishing.org/royal-society-open-science')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/rsos.png"
+                         alt="Royal Society Open Science cover"/>
                 </a>
             </xsl:when>
             <xsl:when test='$journal-name = "Scientific Data"'>
@@ -2630,6 +2765,24 @@
                     </xsl:attribute>
                     <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/SystBiol.png"
                          alt="Systematic Biology cover"/>
+                </a>
+            </xsl:when>
+            <xsl:when test='$journal-name = "Systematic Botany"'>
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="contains($article-doi,'doi:')">
+                                <xsl:value-of
+                                        select="concat('http://dx.doi.org/', substring-after($article-doi, 'doi:'))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of
+                                        select="string('http://www.sysbot.org')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <img class="pub-cover" id="journal-logo" src="/themes/Dryad/images/coverimages/sysbot.png"
+                         alt="Systematic Botany cover"/>
                 </a>
             </xsl:when>
             <xsl:when test='$journal-name = "ZooKeys"'>

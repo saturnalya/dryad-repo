@@ -481,6 +481,7 @@ public class EditProfile extends AbstractDSpaceTransformer
            }
        }
 
+       /* temporarily disable ORCID linking
        List orcid = form.addList("orcid",List.TYPE_FORM);
        if(request.getParameter("exist_orcid")!=null){
 
@@ -505,6 +506,7 @@ public class EditProfile extends AbstractDSpaceTransformer
            orcid.addItem().addButton("link").setValue("Link to Orcid");
 
        }
+       */
        List tl = form.addList("terms",List.TYPE_FORM);
        tl.setHead(T_terms);
        tl.addItem(T_terms_help);
