@@ -88,10 +88,6 @@ public class OverviewStep extends AbstractStep {
             ReferenceSet refSet = pubDiv.addReferenceSet("submission", ReferenceSet.TYPE_SUMMARY_LIST);
             refSet.addReference(publication);
 
-            // display a formatted reference
-            ReferenceSet refSet = pubDiv.addReferenceSet("submission", ReferenceSet.TYPE_SUMMARY_LIST);
-            refSet.addReference(publication);
-
             //add an edit button for the publication (if we aren't archived)
             if(!publication.isArchived()){
                 Para actionsPara = pubDiv.addPara();
