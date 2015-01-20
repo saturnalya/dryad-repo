@@ -3013,11 +3013,7 @@ Dryad is a <strong>nonprofit organization</strong> that provides <strong>long-te
             From this page, you can edit the description of your data package, add additional data files, modify uploaded files, and/or finalize your submission and proceed to checkout.
         </div>
 	</message>
-<<<<<<< HEAD
 	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Your data package</message>
-=======
-	<message key="xmlui.Submission.submit.OverviewStep.steps.1">Your publication</message>
->>>>>>> 7036eb0d38fe32d0b167be36a4bdef9e5615d01d
 	<message key="xmlui.Submission.submit.OverviewStep.steps.2">Your data files</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.3">Upload data files to partner repositories (optional)</message>
 	<message key="xmlui.Submission.submit.OverviewStep.steps.4">Checkout and finalize submission</message>
