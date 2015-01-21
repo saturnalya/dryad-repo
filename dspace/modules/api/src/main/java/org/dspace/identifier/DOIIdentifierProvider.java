@@ -76,7 +76,6 @@ public class DOIIdentifierProvider extends IdentifierProvider implements org.spr
 
     private String[] supportedPrefixes = new String[]{"info:doi/", "doi:" , "http://dx.doi.org/"};
 
- // random edit
     public void afterPropertiesSet() throws Exception {
 
         myHdlPrefix = configurationService.getProperty("handle.prefix");
