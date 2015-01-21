@@ -106,7 +106,7 @@ public class DryadEmailSubmission extends HttpServlet {
                 LOGGER.info(e.getMessage());
                 throw new RuntimeException(e.getMessage());
             }
-        } else if (requestURI.contains("run")) {
+        } else if (requestURI.contains("retrieve")) {
             try {
                 LOGGER.info("running DryadGmailService");
                 ArrayList<MimeMessage> messages = DryadGmailService.processJournalEmails();
