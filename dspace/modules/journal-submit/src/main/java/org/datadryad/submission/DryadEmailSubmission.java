@@ -111,6 +111,7 @@ public class DryadEmailSubmission extends HttpServlet {
                 LOGGER.info("running DryadGmailService");
                 ArrayList<MimeMessage> messages = DryadGmailService.processJournalEmails();
                 if (messages != null) {
+                    LOGGER.info("retrieved " + messages.size() + " messages");
                     for (MimeMessage message : messages) {
                         try {
                             processMimeMessage(message);
