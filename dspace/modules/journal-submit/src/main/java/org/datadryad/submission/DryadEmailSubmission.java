@@ -115,7 +115,7 @@ public class DryadEmailSubmission extends HttpServlet {
                         try {
                             processMimeMessage(message);
                         } catch (Exception details) {
-                            LOGGER.info("Exception thrown: " + details.getMessage() + ", " + details.getClass().getName());
+                            LOGGER.info("Exception thrown while processing MIME message: " + details.getMessage() + ", " + details.getClass().getName());
                         }
                     }
                 }
